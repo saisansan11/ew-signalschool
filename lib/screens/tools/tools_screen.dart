@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../app/constants.dart';
 import '../game/jamming_simulator.dart';
+import 'link_budget_calculator.dart';
+import 'js_ratio_calculator.dart';
+import 'range_calculator.dart';
+import 'power_converter.dart';
+import 'frequency_converter.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -22,7 +27,7 @@ class ToolsScreen extends StatelessWidget {
             // Calculators Section
             _buildSectionTitle('EW Calculators', Icons.calculate),
             const SizedBox(height: 12),
-            _buildCalculatorGrid(),
+            _buildCalculatorGrid(context),
             const SizedBox(height: 24),
 
             // Reference Tables Section
@@ -58,43 +63,68 @@ class ToolsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCalculatorGrid() {
+  Widget _buildCalculatorGrid(BuildContext context) {
     final calculators = [
       _CalcItem(
         icon: Icons.signal_cellular_alt,
         title: 'Link Budget',
         subtitle: 'คำนวณกำลังส่งสัญญาณ',
         color: AppColors.primary,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LinkBudgetCalculator()),
+        ),
       ),
       _CalcItem(
         icon: Icons.flash_on,
         title: 'J/S Ratio',
         subtitle: 'อัตราส่วน Jamming',
         color: AppColors.danger,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const JSRatioCalculator()),
+        ),
       ),
       _CalcItem(
         icon: Icons.radar,
         title: 'ระยะทำการ',
         subtitle: 'ระยะ Jammer/Radio',
         color: AppColors.success,
-      ),
-      _CalcItem(
-        icon: Icons.settings_input_antenna,
-        title: 'Antenna Gain',
-        subtitle: 'คำนวณ Gain & Pattern',
-        color: AppColors.warning,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RangeCalculator()),
+        ),
       ),
       _CalcItem(
         icon: Icons.waves,
         title: 'Frequency',
         subtitle: 'แปลงหน่วยความถี่',
         color: AppColors.tabLearning,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FrequencyConverter()),
+        ),
       ),
       _CalcItem(
         icon: Icons.power,
         title: 'Power (dB)',
         subtitle: 'แปลง Watt/dBm/dBW',
         color: AppColors.info,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PowerConverter()),
+        ),
+      ),
+      _CalcItem(
+        icon: Icons.settings_input_antenna,
+        title: 'Antenna Gain',
+        subtitle: 'คำนวณ Gain & Pattern',
+        color: AppColors.warning,
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('เร็วๆ นี้')),
+          );
+        },
       ),
     ];
 
@@ -116,43 +146,46 @@ class ToolsScreen extends StatelessWidget {
   }
 
   Widget _buildCalcCard(_CalcItem calc) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: calc.color.withAlpha(30),
-              borderRadius: BorderRadius.circular(AppSizes.radiusS),
+    return GestureDetector(
+      onTap: calc.onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: calc.color.withAlpha(30),
+                borderRadius: BorderRadius.circular(AppSizes.radiusS),
+              ),
+              child: Icon(calc.icon, color: calc.color, size: 24),
             ),
-            child: Icon(calc.icon, color: calc.color, size: 24),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            calc.title,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: 12),
+            Text(
+              calc.title,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            calc.subtitle,
-            style: const TextStyle(
-              color: AppColors.textMuted,
-              fontSize: 12,
+            const SizedBox(height: 4),
+            Text(
+              calc.subtitle,
+              style: const TextStyle(
+                color: AppColors.textMuted,
+                fontSize: 12,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -375,12 +408,14 @@ class _CalcItem {
   final String title;
   final String subtitle;
   final Color color;
+  final VoidCallback? onTap;
 
   _CalcItem({
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.color,
+    this.onTap,
   });
 }
 
