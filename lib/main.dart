@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'app/constants.dart';
 import 'screens/splash/splash_screen.dart';
 import 'services/progress_service.dart';
 import 'services/auth_service.dart';
+import 'services/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +12,7 @@ void main() async {
   // Initialize services
   await ProgressService.init();
   await AuthService.init();
+  await themeProvider.init();
 
   // Update login streak
   await ProgressService.updateLoginStreak();
@@ -33,11 +34,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'RTA EW Simulator',
-      theme: appTheme(),
-      home: const SplashScreen(),
+    return ListenableBuilder(
+      listenable: themeProvider,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'RTA EW Simulator',
+          theme: themeProvider.theme,
+          home: const SplashScreen(),
+        );
+      },
     );
   }
 }

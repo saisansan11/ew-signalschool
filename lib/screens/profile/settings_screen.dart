@@ -4,6 +4,7 @@ import '../../app/constants.dart';
 import '../../services/auth_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/settings_service.dart';
+import '../../services/theme_provider.dart';
 import '../auth/auth_screen.dart';
 import '../main_shell.dart';
 
@@ -146,14 +147,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   value: _darkMode,
                   onChanged: (value) async {
                     await SettingsService.setDarkMode(value);
+                    themeProvider.setDarkMode(value);
                     setState(() => _darkMode = value);
                     _showSnackBar(
                       value ? 'เปลี่ยนเป็นโหมดมืด' : 'เปลี่ยนเป็นโหมดสว่าง',
                     );
-                    // Note: จะต้อง restart app เพื่อให้ theme เปลี่ยน
-                    if (!value) {
-                      _showThemeChangeDialog();
-                    }
                   },
                   activeTrackColor: AppColors.primary.withAlpha(100),
                   activeThumbColor: AppColors.primary,
@@ -503,36 +501,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Navigator.pop(context);
         _showSnackBar('เปลี่ยนขนาดตัวอักษรเป็น $label');
       },
-    );
-  }
-
-  void _showThemeChangeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.info_outline, color: AppColors.info),
-            SizedBox(width: 10),
-            Text(
-              'เปลี่ยนธีม',
-              style: TextStyle(color: AppColors.textPrimary),
-            ),
-          ],
-        ),
-        content: const Text(
-          'การเปลี่ยนธีมจะมีผลเมื่อเปิดแอปใหม่\n\nหมายเหตุ: แอปนี้ออกแบบมาสำหรับโหมดมืดโดยเฉพาะ แนะนำให้ใช้โหมดมืดเพื่อประสบการณ์ที่ดีที่สุด',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('เข้าใจแล้ว'),
-          ),
-        ],
-      ),
     );
   }
 

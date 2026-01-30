@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../app/constants.dart';
+import '../../services/theme_provider.dart';
 import '../radio/prc624_menu.dart';
 import '../radio/prc710_menu.dart';
 import '../radio/cnr900_menu.dart';
@@ -14,55 +15,70 @@ class FieldScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.danger,
-        title: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.shield, size: 22),
-            SizedBox(width: 8),
-            Text('FIELD MODE'),
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.nightlight_round),
-            onPressed: () {
-              // Toggle night mode
-            },
-            tooltip: 'Night Mode',
+    return ListenableBuilder(
+      listenable: themeProvider,
+      builder: (context, child) {
+        final isDark = themeProvider.isDarkMode;
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.danger,
+            title: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.shield, size: 22),
+                SizedBox(width: 8),
+                Text('FIELD MODE'),
+              ],
+            ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: Icon(isDark ? Icons.light_mode : Icons.nightlight_round),
+                onPressed: () {
+                  themeProvider.toggleDarkMode();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        themeProvider.isDarkMode ? 'โหมดมืด (Night Mode)' : 'โหมดสว่าง (Day Mode)',
+                      ),
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+                tooltip: isDark ? 'Day Mode' : 'Night Mode',
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Warning Banner
-            _buildWarningBanner(),
-            const SizedBox(height: 20),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSizes.paddingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Warning Banner
+                _buildWarningBanner(),
+                const SizedBox(height: 20),
 
-            // Emergency Section
-            _buildEmergencySection(context),
-            const SizedBox(height: 24),
+                // Emergency Section
+                _buildEmergencySection(context),
+                const SizedBox(height: 24),
 
-            // Checklists Section
-            _buildChecklistsSection(context),
-            const SizedBox(height: 24),
+                // Checklists Section
+                _buildChecklistsSection(context),
+                const SizedBox(height: 24),
 
-            // Quick Equipment Guide
-            _buildEquipmentSection(context),
-            const SizedBox(height: 24),
+                // Quick Equipment Guide
+                _buildEquipmentSection(context),
+                const SizedBox(height: 24),
 
-            // EPM Procedures
-            _buildEpmSection(context),
-          ],
-        ),
-      ),
+                // EPM Procedures
+                _buildEpmSection(context),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
