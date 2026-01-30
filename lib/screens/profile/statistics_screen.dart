@@ -23,9 +23,10 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -158,7 +159,10 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               ),
               // Level Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.amber,
                   borderRadius: BorderRadius.circular(20),
@@ -194,10 +198,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                   ),
                   Text(
                     '$xpForNext XP ถึงเลเวลถัดไป',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
               ),
@@ -266,10 +267,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             builder: (context, value, child) {
               return Transform.scale(
                 scale: value,
-                child: Opacity(
-                  opacity: value,
-                  child: child,
-                ),
+                child: Opacity(opacity: value, child: child),
               );
             },
             child: _buildOverviewCard(entry.value),
@@ -309,10 +307,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
           ),
           Text(
             item.label,
-            style: const TextStyle(
-              color: AppColors.textMuted,
-              fontSize: 11,
-            ),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
           ),
         ],
       ),
@@ -321,8 +316,18 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
   Widget _buildLevelProgressSection() {
     final levels = [
-      _LevelData(1, 'พื้นฐาน', ProgressService.getLevelProgress(1), Colors.green),
-      _LevelData(2, 'ปานกลาง', ProgressService.getLevelProgress(2), Colors.orange),
+      _LevelData(
+        1,
+        'พื้นฐาน',
+        ProgressService.getLevelProgress(1),
+        Colors.green,
+      ),
+      _LevelData(
+        2,
+        'ปานกลาง',
+        ProgressService.getLevelProgress(2),
+        Colors.orange,
+      ),
       _LevelData(3, 'ขั้นสูง', ProgressService.getLevelProgress(3), Colors.red),
     ];
 
@@ -395,7 +400,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                               child: LinearProgressIndicator(
                                 value: value,
                                 backgroundColor: AppColors.surfaceLight,
-                                valueColor: AlwaysStoppedAnimation<Color>(level.color),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  level.color,
+                                ),
                                 minHeight: 8,
                               ),
                             ),
@@ -431,18 +438,12 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             SizedBox(height: 12),
             Text(
               'ยังไม่มีผลการทดสอบ',
-              style: TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 14),
             ),
             SizedBox(height: 4),
             Text(
               'ลองทำแบบทดสอบเพื่อดูผลคะแนน',
-              style: TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
             ),
           ],
         ),
@@ -519,10 +520,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                           const SizedBox(width: 4),
                           Text(
                             passed ? 'ผ่านเกณฑ์' : 'ยังไม่ผ่านเกณฑ์ (80%)',
-                            style: TextStyle(
-                              color: color,
-                              fontSize: 12,
-                            ),
+                            style: TextStyle(color: color, fontSize: 12),
                           ),
                         ],
                       ),
@@ -631,9 +629,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                   Expanded(
                     child: Text(
                       item.label,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
                   Text(
@@ -645,8 +641,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                   ),
                 ],
               ),
-              if (!isLast)
-                const Divider(height: 24, color: AppColors.border),
+              if (!isLast) const Divider(height: 24, color: AppColors.border),
             ],
           );
         }).toList(),
@@ -722,10 +717,10 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
   String _formatStudyTime(int minutes) {
     if (minutes < 60) {
-      return '${minutes}น.';
+      return '$minutesน.';
     }
     final hours = minutes ~/ 60;
-    return '${hours}ช.ม.';
+    return '$hoursช.ม.';
   }
 
   String _formatStudyTimeDetailed(int minutes) {
@@ -770,11 +765,7 @@ class _StatItem {
   final String label;
   final String value;
 
-  _StatItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+  _StatItem({required this.icon, required this.label, required this.value});
 }
 
 // Weekly Activity Chart Painter
@@ -782,15 +773,11 @@ class _WeeklyChartPainter extends CustomPainter {
   final int dayIndex;
   final Color primaryColor;
 
-  _WeeklyChartPainter({
-    required this.dayIndex,
-    required this.primaryColor,
-  });
+  _WeeklyChartPainter({required this.dayIndex, required this.primaryColor});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..style = PaintingStyle.fill;
 
     // Simulated activity data for the week
     final random = math.Random(42); // Fixed seed for consistent display

@@ -99,10 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            AppColors.primary.withAlpha(30),
-            AppColors.background,
-          ],
+          colors: [AppColors.primary.withAlpha(30), AppColors.background],
         ),
       ),
       child: SafeArea(
@@ -140,11 +137,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.warning,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.background, width: 2),
+                        border: Border.all(
+                          color: AppColors.background,
+                          width: 2,
+                        ),
                       ),
                       child: Text(
                         'Lv.${ProgressService.getLevel()}',
@@ -207,7 +210,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   side: BorderSide(color: AppColors.primary.withAlpha(100)),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -232,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.star, color: AppColors.warning, size: 18),
+            const Icon(Icons.star, color: AppColors.warning, size: 18),
             const SizedBox(width: 6),
             Text(
               '$xp XP',
@@ -244,10 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             const SizedBox(width: 12),
             Text(
               'เหลือ ${xpForNext - xpInLevel} XP สู่ Level ${level + 1}',
-              style: const TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
             ),
           ],
         ),
@@ -259,7 +262,9 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: AppColors.surface,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.warning),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppColors.warning,
+              ),
               minHeight: 6,
             ),
           ),
@@ -295,7 +300,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                   color: AppColors.primary.withAlpha(30),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.analytics, color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.analytics,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -361,7 +370,12 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildStatCard(IconData icon, String value, String label, Color color) {
+  Widget _buildStatCard(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -383,10 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textMuted,
-              fontSize: 11,
-            ),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
           ),
         ],
       ),
@@ -446,9 +457,17 @@ class _ProfileScreenState extends State<ProfileScreen>
           // Level Progress Indicators
           Row(
             children: [
-              _buildLevelIndicator('พื้นฐาน', Colors.green, _getLevelProgress(0)),
+              _buildLevelIndicator(
+                'พื้นฐาน',
+                Colors.green,
+                _getLevelProgress(0),
+              ),
               const SizedBox(width: 12),
-              _buildLevelIndicator('ยุทธวิธี', Colors.orange, _getLevelProgress(1)),
+              _buildLevelIndicator(
+                'ยุทธวิธี',
+                Colors.orange,
+                _getLevelProgress(1),
+              ),
               const SizedBox(width: 12),
               _buildLevelIndicator('ขั้นสูง', Colors.red, _getLevelProgress(2)),
             ],
@@ -645,17 +664,33 @@ class _ProfileScreenState extends State<ProfileScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _buildQuizScoreItem('Level 1: พื้นฐาน', quizScores['quiz_level1'], Colors.green),
+          _buildQuizScoreItem(
+            'Level 1: พื้นฐาน',
+            quizScores['quiz_level1'],
+            Colors.green,
+          ),
           const SizedBox(height: 10),
-          _buildQuizScoreItem('Level 2: ยุทธวิธี', quizScores['quiz_level2'], Colors.orange),
+          _buildQuizScoreItem(
+            'Level 2: ยุทธวิธี',
+            quizScores['quiz_level2'],
+            Colors.orange,
+          ),
           const SizedBox(height: 10),
-          _buildQuizScoreItem('Level 3: ขั้นสูง', quizScores['quiz_level3'], Colors.red),
+          _buildQuizScoreItem(
+            'Level 3: ขั้นสูง',
+            quizScores['quiz_level3'],
+            Colors.red,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildQuizScoreItem(String title, Map<String, int>? score, Color color) {
+  Widget _buildQuizScoreItem(
+    String title,
+    Map<String, int>? score,
+    Color color,
+  ) {
     final hasScore = score != null;
     final percent = score?['percent'] ?? 0;
     final passed = percent >= 70;
@@ -664,12 +699,16 @@ class _ProfileScreenState extends State<ProfileScreen>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: hasScore
-            ? (passed ? Colors.green.withAlpha(20) : Colors.orange.withAlpha(20))
+            ? (passed
+                  ? Colors.green.withAlpha(20)
+                  : Colors.orange.withAlpha(20))
             : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: hasScore
-              ? (passed ? Colors.green.withAlpha(50) : Colors.orange.withAlpha(50))
+              ? (passed
+                    ? Colors.green.withAlpha(50)
+                    : Colors.orange.withAlpha(50))
               : AppColors.border,
         ),
       ),
@@ -697,7 +736,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 Text(
                   hasScore
-                      ? '${score!['score']}/${score['total']} คะแนน'
+                      ? '${score['score']}/${score['total']} คะแนน'
                       : 'ยังไม่ได้ทำ',
                   style: const TextStyle(
                     color: AppColors.textMuted,
@@ -919,7 +958,10 @@ class _ProfileScreenState extends State<ProfileScreen>
           children: [
             Icon(Icons.radar, color: AppColors.primary),
             SizedBox(width: 10),
-            Text('EW SIMULATOR', style: TextStyle(color: AppColors.textPrimary)),
+            Text(
+              'EW SIMULATOR',
+              style: TextStyle(color: AppColors.textPrimary),
+            ),
           ],
         ),
         content: const Column(

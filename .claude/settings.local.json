@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(taskkill:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: RTA EW Simulator - Complete learning platform\n\nComplete Flutter application for Electronic Warfare training:\n\nFeatures:\n- 3-level learning curriculum \\(Basic, Intermediate, Advanced\\)\n- Interactive lessons with animations \\(ESM, ECM, ECCM, DF\\)\n- Quiz system with scoring and achievements\n- Tactical simulator and spectrum analyzer\n- User authentication with PIN system\n- Profile management with statistics tracking\n- Achievement system with XP rewards\n\nTech Stack:\n- Flutter/Dart\n- SharedPreferences for local storage\n- Custom animations and painters\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(timeout 3 cat:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: remove git submodule and fix profile layout\n\n- Convert embedded git repo to regular files\n- Fix profile header overflow by increasing expandedHeight\n- Adjust padding for better responsive layout\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(flutter build:*)",
+      "Bash(git checkout:*)",
+      "Bash(git reset:*)",
+      "Bash(bash:*)"
+    ]
+  }
+}

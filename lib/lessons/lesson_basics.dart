@@ -626,16 +626,16 @@ class _Lesson3_ESMState extends State<Lesson3_ESM>
           ),
           child: AnimatedBuilder(
             animation: _controller,
-            builder: (c, _) => CustomPaint(
-              painter: ESMProcessPainter(_controller.value),
-            ),
+            builder: (c, _) =>
+                CustomPaint(painter: ESMProcessPainter(_controller.value)),
           ),
         ),
 
         const SizedBox(height: 20),
         _Box(
           title: "ขั้นตอน ESM",
-          desc: "1. Search (ค้นหา) - กวาดความถี่เพื่อหาสัญญาณ\n"
+          desc:
+              "1. Search (ค้นหา) - กวาดความถี่เพื่อหาสัญญาณ\n"
               "2. Intercept (ดักรับ) - บันทึกและวิเคราะห์สัญญาณ\n"
               "3. Identify (ระบุ) - จำแนกชนิดและเจ้าของสัญญาณ\n"
               "4. Locate (หาตำแหน่ง) - ใช้ DF หาพิกัดแหล่งกำเนิด",
@@ -699,16 +699,16 @@ class _Lesson3_ESMState extends State<Lesson3_ESM>
           ),
           child: AnimatedBuilder(
             animation: _controller,
-            builder: (c, _) => CustomPaint(
-              painter: DFTriangulationPainter(_controller.value),
-            ),
+            builder: (c, _) =>
+                CustomPaint(painter: DFTriangulationPainter(_controller.value)),
           ),
         ),
 
         const SizedBox(height: 15),
         _Box(
           title: "เทคนิค DF ที่ใช้",
-          desc: "• Amplitude Comparison - เปรียบเทียบความแรงสัญญาณ\n"
+          desc:
+              "• Amplitude Comparison - เปรียบเทียบความแรงสัญญาณ\n"
               "• Phase Interferometry - วัดเฟสต่างระหว่างเสาอากาศ\n"
               "• Time Difference of Arrival (TDOA) - วัดเวลาที่สัญญาณมาถึง\n"
               "• Frequency Difference of Arrival (FDOA) - ใช้ Doppler Effect",
@@ -826,9 +826,9 @@ class _Lesson4_ECMState extends State<Lesson4_ECM>
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
           ),
-          child: Column(
+          child: const Column(
             children: [
-              const Text(
+              Text(
                 "J/S = Pj × Gj × Rts² / (Ps × Gs × Rjt²)",
                 style: TextStyle(
                   color: Colors.white,
@@ -837,8 +837,8 @@ class _Lesson4_ECMState extends State<Lesson4_ECM>
                   fontFamily: 'monospace',
                 ),
               ),
-              const Divider(color: Colors.white24),
-              const Text(
+              Divider(color: Colors.white24),
+              Text(
                 "Pj = กำลังส่ง Jammer | Gj = Gain เสาอากาศ Jammer\n"
                 "Ps = กำลังส่งเป้าหมาย | Gs = Gain เสาอากาศเป้าหมาย\n"
                 "Rts = ระยะ Target-Station | Rjt = ระยะ Jammer-Target",
@@ -1008,16 +1008,16 @@ class _Lesson5_ECCMState extends State<Lesson5_ECCM>
           ),
           child: AnimatedBuilder(
             animation: _controller,
-            builder: (c, _) => CustomPaint(
-              painter: FHSSVisualizerPainter(_controller.value),
-            ),
+            builder: (c, _) =>
+                CustomPaint(painter: FHSSVisualizerPainter(_controller.value)),
           ),
         ),
 
         const SizedBox(height: 15),
         _Box(
           title: "Frequency Hopping Spread Spectrum",
-          desc: "กระโดดความถี่ 50-1000+ ครั้ง/วินาที\n\n"
+          desc:
+              "กระโดดความถี่ 50-1000+ ครั้ง/วินาที\n\n"
               "• ใช้รหัสลับ (Pseudo-Random Code) กำหนดลำดับ\n"
               "• Jammer ต้อง Barrage ทุกความถี่ (พลังงานมหาศาล)\n"
               "• ตัวอย่าง: SINCGARS กระโดด 111 ครั้ง/วินาที",
@@ -1141,7 +1141,8 @@ class Lesson6_Radio extends StatelessWidget {
         const SizedBox(height: 10),
         _Box(
           title: "Single Channel Ground and Airborne Radio System",
-          desc: "ระบบวิทยุยุทธวิธีมาตรฐาน NATO:\n\n"
+          desc:
+              "ระบบวิทยุยุทธวิธีมาตรฐาน NATO:\n\n"
               "• ย่านความถี่: 30-87.975 MHz (VHF FM)\n"
               "• ช่องสัญญาณ: 2,320 ช่อง (ห่างกัน 25 kHz)\n"
               "• FHSS: 111 hops/second\n"
@@ -1279,15 +1280,14 @@ class _Lesson7_AntiDroneState extends State<Lesson7_AntiDrone>
             borderRadius: BorderRadius.circular(15),
             border: Border.all(color: Colors.cyan.withOpacity(0.5)),
           ),
-          child: CustomPaint(
-            painter: DroneFrequencyPainter(),
-          ),
+          child: CustomPaint(painter: DroneFrequencyPainter()),
         ),
 
         const SizedBox(height: 15),
         _Box(
           title: "ความถี่หลักของโดรน",
-          desc: "📡 2.4 GHz - Command & Control (RC)\n"
+          desc:
+              "📡 2.4 GHz - Command & Control (RC)\n"
               "📹 5.8 GHz - Video Downlink (FPV)\n"
               "🛰️ 1575.42 MHz - GPS L1\n"
               "📱 4G/5G LTE - โดรนบางรุ่น\n\n"
@@ -1296,7 +1296,10 @@ class _Lesson7_AntiDroneState extends State<Lesson7_AntiDrone>
         ),
 
         const SizedBox(height: 20),
-        _SubHeader("Kill Chain: Detect → Track → Identify → Neutralize", Colors.white),
+        _SubHeader(
+          "Kill Chain: Detect → Track → Identify → Neutralize",
+          Colors.white,
+        ),
         const SizedBox(height: 15),
 
         // Kill Chain Animation
@@ -1309,9 +1312,8 @@ class _Lesson7_AntiDroneState extends State<Lesson7_AntiDrone>
           ),
           child: AnimatedBuilder(
             animation: _controller,
-            builder: (c, _) => CustomPaint(
-              painter: KillChainPainter(_controller.value),
-            ),
+            builder: (c, _) =>
+                CustomPaint(painter: KillChainPainter(_controller.value)),
           ),
         ),
 
@@ -1355,7 +1357,8 @@ class _Lesson7_AntiDroneState extends State<Lesson7_AntiDrone>
         const SizedBox(height: 20),
         _Box(
           title: "⚠️ ข้อพึงระวัง",
-          desc: "• การ Jam 2.4 GHz อาจกระทบ Wi-Fi พลเรือน\n"
+          desc:
+              "• การ Jam 2.4 GHz อาจกระทบ Wi-Fi พลเรือน\n"
               "• GPS Jamming มีผลต่อระบบอื่นด้วย\n"
               "• ต้องระบุ Friend/Foe ก่อนต่อต้าน\n"
               "• โดรน Failsafe อาจ RTH, Hover, หรือ Land",
@@ -1412,7 +1415,8 @@ class _Lesson8_GPSState extends State<Lesson8_GPS>
 
         _Box(
           title: "ความถี่สัญญาณ GPS",
-          desc: "L1: 1575.42 MHz - C/A Code (พลเรือน)\n"
+          desc:
+              "L1: 1575.42 MHz - C/A Code (พลเรือน)\n"
               "L2: 1227.60 MHz - P(Y) Code (ทหาร)\n"
               "L5: 1176.45 MHz - Safety-of-Life\n\n"
               "⚠️ สัญญาณจากดาวเทียมอ่อนมาก (~-130 dBm)\n"
@@ -1521,7 +1525,8 @@ class _Lesson8_GPSState extends State<Lesson8_GPS>
         const SizedBox(height: 20),
         _Box(
           title: "กรณีศึกษา: Spoofing",
-          desc: "• 2011: Iran ยึด RQ-170 Sentinel ด้วย GPS Spoofing\n"
+          desc:
+              "• 2011: Iran ยึด RQ-170 Sentinel ด้วย GPS Spoofing\n"
               "• 2017: Black Sea เรือ 20+ ลำรายงานตำแหน่งผิด\n"
               "• 2019: Tel Aviv Airport ถูก Spoof จากซีเรีย\n"
               "• 2022-ปัจจุบัน: Ukraine ใช้ GPS Jamming ป้องกัน",
@@ -1620,7 +1625,8 @@ class Lesson9_CaseStudies extends StatelessWidget {
         const SizedBox(height: 20),
         _Box(
           title: "สรุปบทเรียน",
-          desc: "1. EW เป็น Force Multiplier ไม่ใช่ Stand-Alone\n"
+          desc:
+              "1. EW เป็น Force Multiplier ไม่ใช่ Stand-Alone\n"
               "2. ต้องผสมผสาน ESM-ECM-EPM อย่างเหมาะสม\n"
               "3. ข้าศึกปรับตัวตลอด → ต้องพัฒนาต่อเนื่อง\n"
               "4. Training และ Doctrine สำคัญเท่าอุปกรณ์\n"
@@ -1691,7 +1697,11 @@ Widget _CaseStudyCard({
         const Divider(color: Colors.white10),
         Text(
           content,
-          style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 12,
+            height: 1.5,
+          ),
         ),
       ],
     ),
@@ -1756,11 +1766,7 @@ class ESMProcessPainter extends CustomPainter {
         8 + pulse * 4,
         Paint()..color = Colors.red.withOpacity(0.3 + pulse * 0.4),
       );
-      canvas.drawCircle(
-        pos,
-        5,
-        Paint()..color = Colors.red,
-      );
+      canvas.drawCircle(pos, 5, Paint()..color = Colors.red);
     }
 
     // Center station
@@ -1798,11 +1804,7 @@ class DFTriangulationPainter extends CustomPainter {
 
     // Draw stations
     for (var station in stations) {
-      canvas.drawCircle(
-        station,
-        8,
-        Paint()..color = Colors.green,
-      );
+      canvas.drawCircle(station, 8, Paint()..color = Colors.green);
     }
 
     // Animated target indicator
@@ -1812,27 +1814,42 @@ class DFTriangulationPainter extends CustomPainter {
       10 + pulse * 5,
       Paint()..color = Colors.red.withOpacity(0.3 + pulse * 0.4),
     );
-    canvas.drawCircle(
-      target,
-      6,
-      Paint()..color = Colors.red,
-    );
+    canvas.drawCircle(target, 6, Paint()..color = Colors.red);
 
     // Draw labels
-    _drawText(canvas, "DF-1", stations[0] + const Offset(-15, 15), Colors.green);
-    _drawText(canvas, "DF-2", stations[1] + const Offset(-15, 15), Colors.green);
-    _drawText(canvas, "DF-3", stations[2] + const Offset(-15, -20), Colors.green);
+    _drawText(
+      canvas,
+      "DF-1",
+      stations[0] + const Offset(-15, 15),
+      Colors.green,
+    );
+    _drawText(
+      canvas,
+      "DF-2",
+      stations[1] + const Offset(-15, 15),
+      Colors.green,
+    );
+    _drawText(
+      canvas,
+      "DF-3",
+      stations[2] + const Offset(-15, -20),
+      Colors.green,
+    );
     _drawText(canvas, "Target", target + const Offset(-20, 15), Colors.red);
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1912,18 +1929,28 @@ class JammingVisualizerPainter extends CustomPainter {
     }
 
     // Labels
-    _drawText(canvas, "Freq →", Offset(size.width - 50, size.height - 10), Colors.white54);
-    _drawText(canvas, "Target", Offset(targetX - 20, size.height - 10), Colors.red);
+    _drawText(
+      canvas,
+      "Freq →",
+      Offset(size.width - 50, size.height - 10),
+      Colors.white54,
+    );
+    _drawText(
+      canvas,
+      "Target",
+      Offset(targetX - 20, size.height - 10),
+      Colors.red,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(color: color, fontSize: 10),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1940,7 +1967,8 @@ class FHSSVisualizerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Frequency channels
     final channels = [0.2, 0.4, 0.6, 0.8, 0.3, 0.7, 0.5, 0.9];
-    int currentChannel = (progress * channels.length * 3).toInt() % channels.length;
+    int currentChannel =
+        (progress * channels.length * 3).toInt() % channels.length;
 
     // Draw channel grid
     for (int i = 0; i < 10; i++) {
@@ -1964,11 +1992,13 @@ class FHSSVisualizerPainter extends CustomPainter {
       canvas.drawCircle(
         Offset(x, y),
         isCurrent ? 12 : 6,
-        Paint()..color = isCurrent ? Colors.green : Colors.green.withOpacity(0.3),
+        Paint()
+          ..color = isCurrent ? Colors.green : Colors.green.withOpacity(0.3),
       );
 
       if (i > 0) {
-        double prevX = 40 + ((i - 1) * (size.width - 80) / (channels.length - 1));
+        double prevX =
+            40 + ((i - 1) * (size.width - 80) / (channels.length - 1));
         double prevY = size.height * (1 - channels[i - 1]);
         canvas.drawLine(
           Offset(prevX, prevY),
@@ -1981,17 +2011,26 @@ class FHSSVisualizerPainter extends CustomPainter {
     }
 
     // Label
-    _drawText(canvas, "FHSS: ${currentChannel + 1}/8", const Offset(10, 10), Colors.green);
+    _drawText(
+      canvas,
+      "FHSS: ${currentChannel + 1}/8",
+      const Offset(10, 10),
+      Colors.green,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -2005,9 +2044,24 @@ class DroneFrequencyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Frequency bands
     final bands = [
-      {'label': 'GPS L1', 'pos': 0.15, 'color': Colors.green, 'freq': '1.5 GHz'},
-      {'label': '2.4 GHz', 'pos': 0.4, 'color': Colors.cyan, 'freq': 'RC Control'},
-      {'label': '5.8 GHz', 'pos': 0.7, 'color': Colors.orange, 'freq': 'FPV Video'},
+      {
+        'label': 'GPS L1',
+        'pos': 0.15,
+        'color': Colors.green,
+        'freq': '1.5 GHz',
+      },
+      {
+        'label': '2.4 GHz',
+        'pos': 0.4,
+        'color': Colors.cyan,
+        'freq': 'RC Control',
+      },
+      {
+        'label': '5.8 GHz',
+        'pos': 0.7,
+        'color': Colors.orange,
+        'freq': 'FPV Video',
+      },
     ];
 
     // Draw axis
@@ -2047,18 +2101,27 @@ class DroneFrequencyPainter extends CustomPainter {
 
       // Labels
       _drawText(canvas, band['label'] as String, Offset(x - 20, 5), color);
-      _drawText(canvas, band['freq'] as String, Offset(x - 25, size.height - 20), Colors.white54);
+      _drawText(
+        canvas,
+        band['freq'] as String,
+        Offset(x - 25, size.height - 20),
+        Colors.white54,
+      );
     }
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -2110,12 +2173,16 @@ class KillChainPainter extends CustomPainter {
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }

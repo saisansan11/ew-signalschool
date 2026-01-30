@@ -24,6 +24,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # แก้ไขตรงนี้ให้แล้วครับ: โหลดทั้งโฟลเดอร์ assets เลย
   assets:
     - assets/
+    - assets/images/
