@@ -26,11 +26,14 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Check Flutter version
+        run: flutter --version
+
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --verbose
 
       - name: Build web
-        run: flutter build web --release --base-href "/ew-signalschool/"
+        run: flutter build web --release --base-href "/ew-signalschool/" --verbose
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
