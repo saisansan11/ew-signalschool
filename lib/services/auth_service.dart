@@ -351,15 +351,89 @@ class MilitaryRanks {
   static List<String> get all => [...enlisted, ...officers, ...civilian];
 }
 
-/// List of common units
+/// List of Signal Corps units (เหล่าสื่อสาร)
 class MilitaryUnits {
-  static const List<String> units = [
-    'กรม ทส.ทบ.',
-    'พัน ทส.๑',
-    'พัน ทส.๒',
-    'พัน ทส.๓',
-    'กรม ทส.ทอ.',
-    'กรม ทส.ทร.',
+  // ==========================================
+  // กรมการสื่อสารทหารบก และหน่วยขึ้นตรง
+  // ==========================================
+  static const List<String> signalDepartment = [
+    'สส. (กรมการสื่อสารทหารบก)',
+    'ส.๑ (กรมทหารสื่อสารที่ ๑)',
+  ];
+
+  // ==========================================
+  // กองพันทหารสื่อสาร - ขึ้นตรง ส.๑
+  // ==========================================
+  static const List<String> signalBattalionsS1 = [
+    'ส.พัน ๑๐๑',
+    'ส.พัน ๑๐๒',
+  ];
+
+  // ==========================================
+  // กองพันทหารสื่อสาร - กองทัพภาค
+  // ==========================================
+  static const List<String> signalBattalionsRegion = [
+    'ส.พัน ๒๑ (ทภ.๑)',
+    'ส.พัน ๒๒ (ทภ.๒)',
+    'ส.พัน ๒๓ (ทภ.๓)',
+    'ส.พัน ๒๔ (ทภ.๔)',
+  ];
+
+  // ==========================================
+  // กองพันทหารสื่อสาร - กองพลทหารราบ
+  // ==========================================
+  static const List<String> signalBattalionsDivision = [
+    'ส.พัน ๑ (พล.ร.๑)',
+    'ส.พัน ๒ (พล.ร.๒ รอ.)',
+    'ส.พัน ๓ (พล.ร.๓)',
+    'ส.พัน ๔ (พล.ร.๔)',
+    'ส.พัน ๕ (พล.ร.๕)',
+    'ส.พัน ๖ (พล.ร.๖)',
+    'ส.พัน ๗ (พล.ร.๗)',
+    'ส.พัน ๙ (พล.ร.๙)',
+    'ส.พัน ๑๕ (พล.ร.๑๕)',
+  ];
+
+  // ==========================================
+  // กองพันทหารสื่อสาร - กองพลพิเศษ
+  // ==========================================
+  static const List<String> signalBattalionsSpecial = [
+    'ส.พัน ๑๑ (พล.ม.๑)',
+    'ส.พัน ๑๒ (พล.ม.๒ รอ.)',
+    'ส.พัน ๑๓ (พล.ม.๓)',
+    'ส.พัน ๑๔ (พล.ปตอ.)',
+    'ส.พัน ๑๐ (พล.ป.)',
+    'ส.พัน ๑๖ (นปอ.)',
+  ];
+
+  // ==========================================
+  // หน่วยอื่น
+  // ==========================================
+  static const List<String> others = [
+    'บก.ทบ.',
+    'ยก.ทบ.',
+    'กบ.ทบ.',
+    'ศสส.',
     'หน่วยอื่น',
   ];
+
+  /// All units combined for dropdown
+  static List<String> get units => [
+    ...signalDepartment,
+    ...signalBattalionsS1,
+    ...signalBattalionsRegion,
+    ...signalBattalionsDivision,
+    ...signalBattalionsSpecial,
+    ...others,
+  ];
+
+  /// Get unit category
+  static String getCategory(String unit) {
+    if (signalDepartment.contains(unit)) return 'กรมการสื่อสารทหารบก';
+    if (signalBattalionsS1.contains(unit)) return 'กองพันทหารสื่อสาร (ส.๑)';
+    if (signalBattalionsRegion.contains(unit)) return 'กองพันทหารสื่อสาร (ทภ.)';
+    if (signalBattalionsDivision.contains(unit)) return 'กองพันทหารสื่อสาร (พล.ร.)';
+    if (signalBattalionsSpecial.contains(unit)) return 'กองพันทหารสื่อสาร (หน่วยพิเศษ)';
+    return 'อื่นๆ';
+  }
 }
