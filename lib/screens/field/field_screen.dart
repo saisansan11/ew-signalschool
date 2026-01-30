@@ -5,6 +5,9 @@ import '../radio/prc710_menu.dart';
 import '../radio/cnr900_menu.dart';
 import '../radio/cnr900t_menu.dart';
 import 'drone_field_screen.dart';
+import 'gps_jam_screen.dart';
+import 'comm_jam_screen.dart';
+import 'checklist_screen.dart';
 
 class FieldScreen extends StatelessWidget {
   const FieldScreen({super.key});
@@ -48,7 +51,7 @@ class FieldScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Checklists Section
-            _buildChecklistsSection(),
+            _buildChecklistsSection(context),
             const SizedBox(height: 24),
 
             // Quick Equipment Guide
@@ -56,7 +59,7 @@ class FieldScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // EPM Procedures
-            _buildEpmSection(),
+            _buildEpmSection(context),
           ],
         ),
       ),
@@ -106,20 +109,34 @@ class FieldScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _buildEmergencyButton(
+          context: context,
           icon: Icons.gps_off,
           title: 'ถูก GPS Jam',
           subtitle: 'ขั้นตอนเมื่อสูญเสีย GPS',
           color: AppColors.danger,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const GpsJamScreen()),
+            );
+          },
         ),
         const SizedBox(height: 8),
         _buildEmergencyButton(
+          context: context,
           icon: Icons.signal_wifi_off,
           title: 'ถูก Comm Jam',
           subtitle: 'ขั้นตอนเมื่อถูกรบกวนการสื่อสาร',
           color: AppColors.warning,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CommJamScreen()),
+            );
+          },
         ),
         const SizedBox(height: 8),
-        _buildEmergencyButtonWithNav(
+        _buildEmergencyButton(
           context: context,
           icon: Icons.flight,
           title: 'พบโดรนข้าศึก',
@@ -137,55 +154,6 @@ class FieldScreen extends StatelessWidget {
   }
 
   Widget _buildEmergencyButton({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withAlpha(20),
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(color: color.withAlpha(100)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withAlpha(30),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: color.withAlpha(180), fontSize: 13),
-                ),
-              ],
-            ),
-          ),
-          Icon(Icons.chevron_right, color: color),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmergencyButtonWithNav({
     required BuildContext context,
     required IconData icon,
     required String title,
@@ -239,7 +207,7 @@ class FieldScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChecklistsSection() {
+  Widget _buildChecklistsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -262,31 +230,34 @@ class FieldScreen extends StatelessWidget {
           children: [
             Expanded(
               child: _buildChecklistCard(
+                context: context,
                 icon: Icons.play_arrow,
                 title: 'ก่อน\nปฏิบัติ',
                 items: 8,
-                completed: 0,
                 color: AppColors.primary,
+                type: ChecklistType.pre,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _buildChecklistCard(
+                context: context,
                 icon: Icons.loop,
                 title: 'ระหว่าง\nปฏิบัติ',
                 items: 6,
-                completed: 0,
                 color: AppColors.warning,
+                type: ChecklistType.during,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _buildChecklistCard(
+                context: context,
                 icon: Icons.stop,
                 title: 'หลัง\nปฏิบัติ',
                 items: 5,
-                completed: 0,
                 color: AppColors.success,
+                type: ChecklistType.post,
               ),
             ),
           ],
@@ -296,50 +267,61 @@ class FieldScreen extends StatelessWidget {
   }
 
   Widget _buildChecklistCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required int items,
-    required int completed,
     required Color color,
+    required ChecklistType type,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withAlpha(30),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 22),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChecklistScreen(type: type),
           ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              height: 1.2,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withAlpha(30),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 22),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '$completed/$items',
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 10),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                height: 1.2,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              '0/$items',
+              style: TextStyle(
+                color: color,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -435,7 +417,12 @@ class FieldScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const Prc624MenuScreen()),
+                        );
+                      },
                       icon: const Icon(Icons.menu_book, size: 18),
                       label: const Text('คู่มือเต็ม'),
                       style: OutlinedButton.styleFrom(
@@ -447,7 +434,12 @@ class FieldScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const Prc624MenuScreen()),
+                        );
+                      },
                       icon: const Icon(Icons.play_circle, size: 18),
                       label: const Text('จำลอง'),
                       style: ElevatedButton.styleFrom(
@@ -508,7 +500,7 @@ class FieldScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEpmSection() {
+  Widget _buildEpmSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -554,7 +546,12 @@ class FieldScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CommJamScreen()),
+                );
+              },
               icon: const Icon(Icons.menu_book),
               label: const Text('ดูขั้นตอนเต็ม'),
               style: ElevatedButton.styleFrom(
