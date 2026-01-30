@@ -20,7 +20,7 @@ class FieldScreen extends StatelessWidget {
       builder: (context, child) {
         final isDark = themeProvider.isDarkMode;
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: isDark ? AppColors.background : AppColorsLight.background,
           appBar: AppBar(
             backgroundColor: AppColors.danger,
             title: const Row(

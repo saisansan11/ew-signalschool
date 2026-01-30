@@ -41,12 +41,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = themeProvider.isDarkMode;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.background : AppColorsLight.background,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
-        title: const Text('ตั้งค่า'),
+        backgroundColor: isDark ? AppColors.surface : AppColorsLight.surface,
+        title: Text('ตั้งค่า', style: TextStyle(color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary)),
         centerTitle: true,
+        iconTheme: IconThemeData(color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

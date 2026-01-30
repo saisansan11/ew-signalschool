@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app/constants.dart';
 import '../../services/auth_service.dart';
 import '../../services/progress_service.dart';
+import '../../services/theme_provider.dart';
 import 'settings_screen.dart';
 import 'edit_profile_screen.dart';
 import 'achievements_screen.dart';
@@ -36,16 +37,17 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     final user = AuthService.getCurrentUser();
+    final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.background : AppColorsLight.background,
       body: CustomScrollView(
         slivers: [
           // Custom App Bar with Profile Header
           SliverAppBar(
             expandedHeight: 340,
             pinned: true,
-            backgroundColor: AppColors.surface,
+            backgroundColor: isDark ? AppColors.surface : AppColorsLight.surface,
             flexibleSpace: FlexibleSpaceBar(
               background: _buildProfileHeader(user),
             ),

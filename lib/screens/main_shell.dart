@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app/constants.dart';
+import '../services/theme_provider.dart';
 import 'home/home_screen.dart';
 import 'learning/learning_screen.dart';
 import 'tools/tools_screen.dart';
@@ -59,41 +60,51 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: const Border(
-            top: BorderSide(color: AppColors.border, width: 1),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(50),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+    return ListenableBuilder(
+      listenable: themeProvider,
+      builder: (context, child) {
+        final isDark = themeProvider.isDarkMode;
+        final surfaceColor = isDark ? AppColors.surface : AppColorsLight.surface;
+        final borderColor = isDark ? AppColors.border : AppColorsLight.border;
+
+        return Scaffold(
+          body: IndexedStack(index: _currentIndex, children: _screens),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              border: Border(
+                top: BorderSide(color: borderColor, width: 1),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(isDark ? 50 : 20),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: SafeArea(
-          child: SizedBox(
-            height: AppSizes.bottomNavHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(
-                _navItems.length,
-                (index) => _buildNavItem(index),
+            child: SafeArea(
+              child: SizedBox(
+                height: AppSizes.bottomNavHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(
+                    _navItems.length,
+                    (index) => _buildNavItem(index, isDark),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildNavItem(int index) {
+  Widget _buildNavItem(int index, bool isDark) {
     final item = _navItems[index];
     final isSelected = _currentIndex == index;
+    final mutedColor = isDark ? AppColors.textMuted : AppColorsLight.textMuted;
 
     return GestureDetector(
       onTap: () {
@@ -115,7 +126,7 @@ class _MainShellState extends State<MainShell> {
           children: [
             Icon(
               isSelected ? item.activeIcon : item.icon,
-              color: isSelected ? item.color : AppColors.textMuted,
+              color: isSelected ? item.color : mutedColor,
               size: 22,
             ),
             const SizedBox(height: 2),
@@ -124,7 +135,7 @@ class _MainShellState extends State<MainShell> {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? item.color : AppColors.textMuted,
+                color: isSelected ? item.color : mutedColor,
               ),
             ),
           ],
