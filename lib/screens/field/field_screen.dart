@@ -4,6 +4,7 @@ import '../radio/prc624_menu.dart';
 import '../radio/prc710_menu.dart';
 import '../radio/cnr900_menu.dart';
 import '../radio/cnr900t_menu.dart';
+import 'drone_field_screen.dart';
 
 class FieldScreen extends StatelessWidget {
   const FieldScreen({super.key});
@@ -43,7 +44,7 @@ class FieldScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Emergency Section
-            _buildEmergencySection(),
+            _buildEmergencySection(context),
             const SizedBox(height: 24),
 
             // Checklists Section
@@ -85,7 +86,7 @@ class FieldScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmergencySection() {
+  Widget _buildEmergencySection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -118,11 +119,18 @@ class FieldScreen extends StatelessWidget {
           color: AppColors.warning,
         ),
         const SizedBox(height: 8),
-        _buildEmergencyButton(
+        _buildEmergencyButtonWithNav(
+          context: context,
           icon: Icons.flight,
           title: 'พบโดรนข้าศึก',
           subtitle: 'ขั้นตอนต่อต้านโดรน',
           color: AppColors.primary,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DroneFieldScreen()),
+            );
+          },
         ),
       ],
     );
@@ -173,6 +181,60 @@ class FieldScreen extends StatelessWidget {
           ),
           Icon(Icons.chevron_right, color: color),
         ],
+      ),
+    );
+  }
+
+  Widget _buildEmergencyButtonWithNav({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withAlpha(20),
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(color: color.withAlpha(100)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withAlpha(30),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: color.withAlpha(180), fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: color),
+          ],
+        ),
       ),
     );
   }
