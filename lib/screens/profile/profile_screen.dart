@@ -43,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         slivers: [
           // Custom App Bar with Profile Header
           SliverAppBar(
-            expandedHeight: 280,
+            expandedHeight: 340,
             pinned: true,
             backgroundColor: AppColors.surface,
             flexibleSpace: FlexibleSpaceBar(
@@ -107,9 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Avatar with Level Badge
               Stack(

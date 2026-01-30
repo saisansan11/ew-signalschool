@@ -1,0 +1,39 @@
+name: military_sim
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.1.0
+  audioplayers: ^5.2.1
+  model_viewer_plus: ^1.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    # โฟลเดอร์รูปภาพและเสียง
+    - assets/sounds/
+    - assets/images/
+    
+    # โมเดล 3D (PRC-624)
+    - assets/models/prc624.glb
+    - assets/models/body.glb
+    - assets/models/antenna_base.glb
+    - assets/models/antenna_whip.glb
+    - assets/models/battery.glb
+    
+    # ⚠️ ปิดส่วนของ 710 ไว้ก่อนจนกว่าจะมีไฟล์
+    # - assets/models/prc710.glb
