@@ -9,6 +9,7 @@ import 'flashcard_screen.dart';
 import 'quiz_screen.dart';
 import 'animated_org_chart.dart';
 import 'map_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -200,7 +201,12 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         // Settings button
         IconButton(
-          onPressed: () => _showSettingsSheet(context),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
+          },
           icon: Container(
             width: 40,
             height: 40,
@@ -932,110 +938,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void _showSettingsSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(
-                color: AppColors.border,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Icon(Icons.tune, color: AppColors.primary),
-                  const SizedBox(width: 12),
-                  Text('ตั้งค่า', style: AppTextStyles.headlineMedium),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.error.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.refresh, color: AppColors.error),
-              ),
-              title: const Text('รีเซ็ตความก้าวหน้า'),
-              subtitle: Text(
-                'ลบข้อมูลการเรียนทั้งหมด',
-                style: AppTextStyles.labelSmall,
-              ),
-              onTap: () async {
-                Navigator.pop(context);
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: AppColors.surface,
-                    title: const Text('ยืนยันการรีเซ็ต'),
-                    content: const Text(
-                        'คุณต้องการลบข้อมูลความก้าวหน้าทั้งหมดหรือไม่?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('ยกเลิก'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: Text(
-                          'รีเซ็ต',
-                          style: TextStyle(color: AppColors.error),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirm == true) {
-                  await ProgressService.instance.resetProgress();
-                  if (mounted) setState(() {});
-                }
-              },
-            ),
-            ListTile(
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.info.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.info_outline, color: AppColors.info),
-              ),
-              title: const Text('เกี่ยวกับแอป'),
-              subtitle: Text('เวอร์ชัน 1.0.0', style: AppTextStyles.labelSmall),
-              onTap: () {
-                Navigator.pop(context);
-                showAboutDialog(
-                  context: context,
-                  applicationName: 'Unit Org App',
-                  applicationVersion: '1.0.0',
-                  applicationLegalese: '© 2025 Royal Thai Army',
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _FeatureItem {

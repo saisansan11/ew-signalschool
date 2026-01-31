@@ -413,6 +413,233 @@ class SignalCorpsData {
       category: 'อักษรย่อ',
       difficulty: 1,
     ),
+
+    // สงครามอิเล็กทรอนิกส์ (Electronic Warfare)
+    UnitFlashcard(
+      id: 'fc_ew_esm',
+      question: 'ESM ย่อมาจากอะไร?',
+      answer: 'Electronic Support Measures\nมาตรการสนับสนุนทางอิเล็กทรอนิกส์',
+      hint: 'การตรวจจับและวิเคราะห์สัญญาณ',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_ew_ecm',
+      question: 'ECM ย่อมาจากอะไร?',
+      answer: 'Electronic Countermeasures\nมาตรการตอบโต้ทางอิเล็กทรอนิกส์',
+      hint: 'การรบกวนสัญญาณข้าศึก',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_ew_eccm',
+      question: 'ECCM ย่อมาจากอะไร?',
+      answer: 'Electronic Counter-Countermeasures\nมาตรการตอบโต้การตอบโต้ทางอิเล็กทรอนิกส์',
+      hint: 'การป้องกันสัญญาณของฝ่ายเรา',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 3,
+    ),
+    UnitFlashcard(
+      id: 'fc_ew_sigint',
+      question: 'SIGINT คืออะไร?',
+      answer: 'Signal Intelligence\nข่าวกรองสัญญาณ',
+      hint: 'การรวบรวมข่าวสารจากการดักฟังสัญญาณ',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 3,
+    ),
+    UnitFlashcard(
+      id: 'fc_ew_comint',
+      question: 'COMINT คืออะไร?',
+      answer: 'Communications Intelligence\nข่าวกรองการสื่อสาร',
+      hint: 'ข่าวกรองจากการดักฟังการสื่อสาร',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 3,
+    ),
+    UnitFlashcard(
+      id: 'fc_ew_elint',
+      question: 'ELINT คืออะไร?',
+      answer: 'Electronic Intelligence\nข่าวกรองอิเล็กทรอนิกส์',
+      hint: 'ข่าวกรองจากเรดาร์และสัญญาณอื่น',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 3,
+    ),
+    UnitFlashcard(
+      id: 'fc_ew_jamming',
+      question: 'Jamming (การรบกวนสัญญาณ) คืออะไร?',
+      answer: 'การส่งสัญญาณรบกวนเพื่อขัดขวางการสื่อสารของข้าศึก',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+
+    // กองทัพภาค
+    UnitFlashcard(
+      id: 'fc_area_1',
+      question: 'ทภ.1 รับผิดชอบพื้นที่ใด?',
+      answer: 'ภาคกลางและภาคตะวันออก\nกองบัญชาการที่ กรุงเทพฯ',
+      hint: 'รวมกรุงเทพและปริมณฑล',
+      category: 'กองทัพภาค',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_area_2',
+      question: 'ทภ.2 รับผิดชอบพื้นที่ใด?',
+      answer: 'ภาคตะวันออกเฉียงเหนือ (อีสาน)\nกองบัญชาการที่ นครราชสีมา',
+      hint: 'พื้นที่อีสานทั้งหมด',
+      category: 'กองทัพภาค',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_area_3',
+      question: 'ทภ.3 รับผิดชอบพื้นที่ใด?',
+      answer: 'ภาคเหนือ\nกองบัญชาการที่ พิษณุโลก',
+      hint: 'พื้นที่ภาคเหนือทั้งหมด',
+      category: 'กองทัพภาค',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_area_4',
+      question: 'ทภ.4 รับผิดชอบพื้นที่ใด?',
+      answer: 'ภาคใต้\nกองบัญชาการที่ นครศรีธรรมราช',
+      hint: 'พื้นที่ภาคใต้ทั้งหมด',
+      category: 'กองทัพภาค',
+      difficulty: 2,
+    ),
+
+    // หน่วยส่วนกลาง
+    UnitFlashcard(
+      id: 'fc_central_school',
+      question: 'โรงเรียนทหารสื่อสารมีหน้าที่หลักอะไร?',
+      answer: 'ผลิตนายทหารสื่อสาร\nอบรมหลักสูตรเฉพาะทาง\nวิจัยและพัฒนาด้านการสื่อสาร',
+      hint: 'สถาบันการศึกษาของเหล่าทหารสื่อสาร',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_central_center',
+      question: 'ศูนย์การสื่อสาร (ศส.กส.) มีหน้าที่หลักอะไร?',
+      answer: 'ควบคุมการสื่อสารของ ทบ.\nดำเนินการสื่อสารดาวเทียม\nบริการโทรคมนาคมทหาร',
+      hint: 'ศูนย์ควบคุมการสื่อสารหลัก',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_central_factory',
+      question: 'กองโรงงานซ่อมสร้างเครื่องสื่อสาร (กรส.กส.) มีหน้าที่หลักอะไร?',
+      answer: 'ซ่อมบำรุงขั้นคลัง\nผลิตอุปกรณ์สื่อสาร\nทดสอบและควบคุมคุณภาพ',
+      hint: 'หน่วยซ่อมและผลิตอุปกรณ์',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_central_ew',
+      question: 'ศูนย์สงครามอิเล็กทรอนิกส์ (ศสอ.) มีหน้าที่หลักอะไร?',
+      answer: 'วางแผนและปฏิบัติการ EW\nดำเนินการ ESM/ECM/ECCM\nข่าวกรองสัญญาณ',
+      hint: 'หน่วยปฏิบัติการสงครามอิเล็กทรอนิกส์',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 3,
+    ),
+
+    // ความถี่และคลื่นวิทยุ
+    UnitFlashcard(
+      id: 'fc_freq_hf',
+      question: 'HF (High Frequency) มีย่านความถี่เท่าไร?',
+      answer: '3-30 MHz\nใช้สื่อสารระยะไกลผ่านชั้นบรรยากาศ',
+      hint: 'ใช้สำหรับการสื่อสารระยะไกล',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_freq_vhf',
+      question: 'VHF (Very High Frequency) มีย่านความถี่เท่าไร?',
+      answer: '30-300 MHz\nใช้สื่อสารระยะสายตา',
+      hint: 'ใช้สำหรับการสื่อสารทั่วไปในระยะใกล้-กลาง',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_freq_uhf',
+      question: 'UHF (Ultra High Frequency) มีย่านความถี่เท่าไร?',
+      answer: '300-3000 MHz\nใช้สื่อสารเฉพาะทางและดาวเทียม',
+      hint: 'ใช้สำหรับดาวเทียมและการสื่อสารพิเศษ',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_freq_los',
+      question: 'Line of Sight (LOS) หมายความว่าอย่างไร?',
+      answer: 'การสื่อสารระยะสายตา\nสัญญาณเดินทางเป็นเส้นตรง\nถูกขัดขวางโดยสิ่งกีดขวาง',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+
+    // ระเบียบปฏิบัติวิทยุ
+    UnitFlashcard(
+      id: 'fc_radio_pro_roger',
+      question: '"Roger" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      answer: 'รับทราบ/เข้าใจแล้ว\n(Received and understood)',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    UnitFlashcard(
+      id: 'fc_radio_pro_wilco',
+      question: '"Wilco" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      answer: 'จะปฏิบัติตาม\n(Will comply)',
+      hint: 'มาจาก Will Comply',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    UnitFlashcard(
+      id: 'fc_radio_pro_over',
+      question: '"Over" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      answer: 'จบข้อความ รอคำตอบ\n(End of transmission, awaiting reply)',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    UnitFlashcard(
+      id: 'fc_radio_pro_out',
+      question: '"Out" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      answer: 'จบการสื่อสาร\n(End of communication)',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    UnitFlashcard(
+      id: 'fc_radio_pro_say_again',
+      question: '"Say Again" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      answer: 'ขอให้พูดซ้ำ\n(Please repeat)',
+      hint: 'ห้ามใช้คำว่า Repeat',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    UnitFlashcard(
+      id: 'fc_radio_pro_break',
+      question: '"Break" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      answer: 'แยกข้อความ/หยุดชั่วคราว',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+
+    // อุปกรณ์สื่อสาร
+    UnitFlashcard(
+      id: 'fc_equip_prc',
+      question: 'PRC ย่อมาจากอะไร?',
+      answer: 'Portable Radio Communication\nวิทยุสื่อสารแบบพกพา',
+      category: 'อุปกรณ์สื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_equip_vrc',
+      question: 'VRC ย่อมาจากอะไร?',
+      answer: 'Vehicular Radio Communication\nวิทยุสื่อสารประจำยานพาหนะ',
+      category: 'อุปกรณ์สื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_equip_satcom',
+      question: 'SATCOM ย่อมาจากอะไร?',
+      answer: 'Satellite Communication\nการสื่อสารผ่านดาวเทียม',
+      category: 'อุปกรณ์สื่อสาร',
+      difficulty: 2,
+    ),
   ];
 
   // =============================================
@@ -582,6 +809,298 @@ class SignalCorpsData {
       explanation: '1 กองพันประกอบด้วย 4-6 กองร้อย',
       category: 'โครงสร้าง',
       difficulty: 1,
+    ),
+
+    // สงครามอิเล็กทรอนิกส์
+    QuizQuestion(
+      id: 'q_ew_1',
+      question: 'ESM (Electronic Support Measures) หมายถึงอะไร?',
+      options: [
+        'การรบกวนสัญญาณข้าศึก',
+        'การตรวจจับและวิเคราะห์สัญญาณ',
+        'การป้องกันสัญญาณของเรา',
+        'การส่งสัญญาณหลอกลวง'
+      ],
+      correctIndex: 1,
+      explanation: 'ESM = Electronic Support Measures คือมาตรการสนับสนุนทางอิเล็กทรอนิกส์ ใช้ตรวจจับและวิเคราะห์สัญญาณ',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_ew_2',
+      question: 'ECM (Electronic Countermeasures) หมายถึงอะไร?',
+      options: [
+        'การตรวจจับสัญญาณ',
+        'การสื่อสารเข้ารหัส',
+        'การรบกวนสัญญาณข้าศึก',
+        'การซ่อมบำรุงอุปกรณ์'
+      ],
+      correctIndex: 2,
+      explanation: 'ECM = Electronic Countermeasures คือมาตรการตอบโต้ทางอิเล็กทรอนิกส์ ใช้รบกวนสัญญาณข้าศึก',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_ew_3',
+      question: 'SIGINT ย่อมาจากอะไร?',
+      options: [
+        'Signal Intelligence',
+        'Signal Integration',
+        'Signal Interception',
+        'Signal Interface'
+      ],
+      correctIndex: 0,
+      explanation: 'SIGINT = Signal Intelligence คือข่าวกรองสัญญาณ',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_ew_4',
+      question: 'การ Jamming หมายถึงอะไร?',
+      options: [
+        'การเข้ารหัสสัญญาณ',
+        'การส่งสัญญาณรบกวน',
+        'การถอดรหัสสัญญาณ',
+        'การซ่อมบำรุงเครื่อง'
+      ],
+      correctIndex: 1,
+      explanation: 'Jamming คือการส่งสัญญาณรบกวนเพื่อขัดขวางการสื่อสารของข้าศึก',
+      category: 'สงครามอิเล็กทรอนิกส์',
+      difficulty: 2,
+    ),
+
+    // กองทัพภาค
+    QuizQuestion(
+      id: 'q_area_1',
+      question: 'กองทัพภาคที่ 2 (ทภ.2) รับผิดชอบพื้นที่ใด?',
+      options: [
+        'ภาคกลาง',
+        'ภาคเหนือ',
+        'ภาคตะวันออกเฉียงเหนือ',
+        'ภาคใต้'
+      ],
+      correctIndex: 2,
+      explanation: 'ทภ.2 รับผิดชอบภาคตะวันออกเฉียงเหนือ (อีสาน) มีกองบัญชาการที่ค่ายสุรนารี จ.นครราชสีมา',
+      category: 'กองทัพภาค',
+      difficulty: 1,
+    ),
+    QuizQuestion(
+      id: 'q_area_2',
+      question: 'ค่ายสมเด็จพระนเรศวรมหาราช ตั้งอยู่จังหวัดใด?',
+      options: [
+        'เชียงใหม่',
+        'พิษณุโลก',
+        'ลำปาง',
+        'นครราชสีมา'
+      ],
+      correctIndex: 1,
+      explanation: 'ค่ายสมเด็จพระนเรศวรมหาราช ตั้งอยู่ที่ จ.พิษณุโลก เป็นที่ตั้งของ ทภ.3',
+      category: 'กองทัพภาค',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_area_3',
+      question: 'กองทัพภาคที่ 4 (ทภ.4) มีกองบัญชาการอยู่ที่ใด?',
+      options: [
+        'สงขลา',
+        'สุราษฎร์ธานี',
+        'นครศรีธรรมราช',
+        'ภูเก็ต'
+      ],
+      correctIndex: 2,
+      explanation: 'ทภ.4 มีกองบัญชาการที่ค่ายวชิราวุธ จ.นครศรีธรรมราช',
+      category: 'กองทัพภาค',
+      difficulty: 2,
+    ),
+
+    // ความถี่วิทยุ
+    QuizQuestion(
+      id: 'q_freq_1',
+      question: 'VHF (Very High Frequency) มีย่านความถี่เท่าไร?',
+      options: [
+        '3-30 MHz',
+        '30-300 MHz',
+        '300-3000 MHz',
+        '3-30 GHz'
+      ],
+      correctIndex: 1,
+      explanation: 'VHF = 30-300 MHz ใช้สำหรับสื่อสารระยะสายตา',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_freq_2',
+      question: 'ย่านความถี่ใดใช้สำหรับการสื่อสารระยะไกลผ่านชั้นบรรยากาศ?',
+      options: [
+        'VHF',
+        'UHF',
+        'HF',
+        'SHF'
+      ],
+      correctIndex: 2,
+      explanation: 'HF (3-30 MHz) สามารถสะท้อนกับชั้นบรรยากาศไอโอโนสเฟียร์ ใช้สื่อสารระยะไกล',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_freq_3',
+      question: 'Line of Sight (LOS) หมายความว่าอย่างไร?',
+      options: [
+        'การสื่อสารผ่านดาวเทียม',
+        'การสื่อสารระยะสายตา',
+        'การสื่อสารผ่านสายโทรศัพท์',
+        'การสื่อสารดิจิทัล'
+      ],
+      correctIndex: 1,
+      explanation: 'LOS = Line of Sight คือการสื่อสารระยะสายตา สัญญาณเดินทางเป็นเส้นตรง',
+      category: 'ความถี่วิทยุ',
+      difficulty: 2,
+    ),
+
+    // ระเบียบปฏิบัติวิทยุ
+    QuizQuestion(
+      id: 'q_radio_1',
+      question: '"Roger" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      options: [
+        'จบการสื่อสาร',
+        'รับทราบ/เข้าใจแล้ว',
+        'ขอให้พูดซ้ำ',
+        'จะปฏิบัติตาม'
+      ],
+      correctIndex: 1,
+      explanation: 'Roger = Received and understood หมายถึงรับทราบและเข้าใจแล้ว',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    QuizQuestion(
+      id: 'q_radio_2',
+      question: '"Wilco" ในการสื่อสารวิทยุหมายความว่าอย่างไร?',
+      options: [
+        'รับทราบแล้ว',
+        'ขอให้พูดซ้ำ',
+        'จะปฏิบัติตาม',
+        'รอสักครู่'
+      ],
+      correctIndex: 2,
+      explanation: 'Wilco = Will comply หมายถึงจะปฏิบัติตาม',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    QuizQuestion(
+      id: 'q_radio_3',
+      question: 'ต้องการให้ผู้รับพูดซ้ำ ควรพูดว่าอย่างไร?',
+      options: [
+        'Repeat',
+        'Say Again',
+        'Copy',
+        'Roger'
+      ],
+      correctIndex: 1,
+      explanation: 'ใช้ "Say Again" ห้ามใช้ "Repeat" เพราะ Repeat ใช้สำหรับสั่งยิงซ้ำในทางทหาร',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+    QuizQuestion(
+      id: 'q_radio_4',
+      question: '"Over" และ "Out" ต่างกันอย่างไร?',
+      options: [
+        'Over = จบสื่อสาร, Out = รอคำตอบ',
+        'Over = รอคำตอบ, Out = จบสื่อสาร',
+        'Over และ Out ใช้แทนกันได้',
+        'ทั้งสองหมายถึงจบสื่อสาร'
+      ],
+      correctIndex: 1,
+      explanation: 'Over = จบข้อความ รอคำตอบ, Out = จบการสื่อสาร ไม่ใช้ Over Out ด้วยกัน',
+      category: 'ระเบียบปฏิบัติวิทยุ',
+      difficulty: 1,
+    ),
+
+    // หน่วยส่วนกลาง
+    QuizQuestion(
+      id: 'q_central_1',
+      question: 'โรงเรียนทหารสื่อสาร (รร.ส.สส.) มีหน้าที่หลักอะไร?',
+      options: [
+        'ซ่อมบำรุงอุปกรณ์',
+        'ควบคุมการสื่อสาร',
+        'ผลิตนายทหารสื่อสาร',
+        'ปฏิบัติการสงครามอิเล็กทรอนิกส์'
+      ],
+      correctIndex: 2,
+      explanation: 'รร.ส.สส. มีหน้าที่ผลิตนายทหารสื่อสาร อบรมหลักสูตรเฉพาะทาง และวิจัยพัฒนา',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_central_2',
+      question: 'ศสอ. ย่อมาจากอะไร?',
+      options: [
+        'ศูนย์สื่อสารอากาศ',
+        'ศูนย์สงครามอิเล็กทรอนิกส์',
+        'ศูนย์สนับสนุนการรบ',
+        'ศูนย์สารสนเทศ'
+      ],
+      correctIndex: 1,
+      explanation: 'ศสอ. = ศูนย์สงครามอิเล็กทรอนิกส์ เป็นหน่วยปฏิบัติการ EW ของ ทบ.',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_central_3',
+      question: 'กรมการทหารสื่อสาร (กส.) ตั้งอยู่ที่ใด?',
+      options: [
+        'สนามเป้า',
+        'สะพานแดง',
+        'ราชดำเนิน',
+        'พหลโยธิน'
+      ],
+      correctIndex: 1,
+      explanation: 'กรมการทหารสื่อสาร ตั้งอยู่ที่ สะพานแดง เขตบางซื่อ กรุงเทพมหานคร',
+      category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+
+    // อุปกรณ์สื่อสาร
+    QuizQuestion(
+      id: 'q_equip_1',
+      question: 'PRC ย่อมาจากอะไร?',
+      options: [
+        'Portable Radio Communication',
+        'Personal Radio Control',
+        'Private Radio Channel',
+        'Programmable Radio Circuit'
+      ],
+      correctIndex: 0,
+      explanation: 'PRC = Portable Radio Communication คือวิทยุสื่อสารแบบพกพา',
+      category: 'อุปกรณ์สื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_equip_2',
+      question: 'VRC ย่อมาจากอะไร?',
+      options: [
+        'Variable Radio Control',
+        'Vehicular Radio Communication',
+        'Voice Radio Channel',
+        'Visual Radio Communication'
+      ],
+      correctIndex: 1,
+      explanation: 'VRC = Vehicular Radio Communication คือวิทยุสื่อสารประจำยานพาหนะ',
+      category: 'อุปกรณ์สื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_equip_3',
+      question: 'SATCOM หมายถึงอะไร?',
+      options: [
+        'การสื่อสารผ่านดาวเทียม',
+        'การสื่อสารทางเสียง',
+        'การสื่อสารทางสาย',
+        'การสื่อสารทางแสง'
+      ],
+      correctIndex: 0,
+      explanation: 'SATCOM = Satellite Communication คือการสื่อสารผ่านดาวเทียม',
+      category: 'อุปกรณ์สื่อสาร',
+      difficulty: 2,
     ),
   ];
 
