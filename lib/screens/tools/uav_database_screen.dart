@@ -257,6 +257,10 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
                             width: double.infinity,
                             height: 160,
                             fit: BoxFit.cover,
+                            headers: const {
+                              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                              'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                            },
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
                               return Container(
@@ -538,6 +542,10 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
                       width: double.infinity,
                       height: 200,
                       fit: BoxFit.cover,
+                      headers: const {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                      },
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
                         return Container(
@@ -821,7 +829,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Medium-altitude long-endurance (MALE) UAV ที่ประสบความสำเร็จในสงครามยูเครน สามารถทำลายยานเกราะและระบบป้องกันภัยทางอากาศได้อย่างมีประสิทธิภาพ',
       combatHistory: ['Libya 2019-2020', 'Syria 2020', 'Nagorno-Karabakh 2020', 'Ukraine 2022-2024'],
       counterMeasures: ['GPS Jamming', 'C-Band Disruption', 'EW Systems (Krasukha)', 'SAM Systems'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Bayraktar_TB2_UAV.jpg/1280px-Bayraktar_TB2_UAV.jpg',
+      // Wikipedia images blocked by CORS - using fallback icon
     ),
     UAVData(
       name: 'Bayraktar Akinci',
@@ -848,7 +856,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Heavy UCAV รุ่นใหม่ล่าสุดของ Baykar สามารถบรรทุกอาวุธหนักและมีระบบ AESA Radar',
       combatHistory: ['Ukraine 2024'],
       counterMeasures: ['Advanced EW Required', 'Multi-layer Air Defense'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Bayraktar_Akıncı_%28cropped%29.jpg/1280px-Bayraktar_Akıncı_%28cropped%29.jpg',
+      // CORS blocked - using icon
     ),
 
     // === USA ===
@@ -877,7 +885,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Hunter-killer UAV หลักของกองทัพสหรัฐ ใช้งานอย่างแพร่หลายในการต่อต้านการก่อการร้าย',
       combatHistory: ['Afghanistan', 'Iraq', 'Syria', 'Yemen', 'Libya', 'Somalia'],
       counterMeasures: ['High-end EW Systems', 'S-400 Class SAM'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c0/MQ-9_Reaper_in_flight_%282007%29.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'RQ-4 Global Hawk',
@@ -904,7 +912,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'High-altitude long-endurance (HALE) ISR platform ที่บินได้สูงที่สุดในโลก',
       combatHistory: ['Global Operations'],
       counterMeasures: ['Advanced SAM (S-400)', 'High-altitude Interceptors'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Global_Hawk_1.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'MQ-1C Gray Eagle',
@@ -931,7 +939,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Army version ของ Predator สำหรับสนับสนุนกองกำลังภาคพื้นดิน',
       combatHistory: ['Afghanistan', 'Iraq', 'Provided to Ukraine 2024'],
       counterMeasures: ['Standard EW', 'SHORAD Systems'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/MQ-1C_Gray_Eagle.jpg/1280px-MQ-1C_Gray_Eagle.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'Switchblade 600',
@@ -958,7 +966,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Loitering munition ที่สามารถทำลายรถถังได้ ส่งให้ยูเครนจำนวนมาก',
       combatHistory: ['Ukraine 2022-2024'],
       counterMeasures: ['GPS Jamming', 'RF Jamming', 'Small Arms'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Switchblade_Launcher_and_Missile.jpg/1280px-Switchblade_Launcher_and_Missile.jpg',
+      // CORS blocked - using icon
     ),
 
     // === IRAN ===
@@ -987,7 +995,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Kamikaze drone ราคาถูกที่รัสเซียใช้โจมตียูเครนเป็นจำนวนมาก (เรียก Geran-2)',
       combatHistory: ['Ukraine 2022-2024 (by Russia)', 'Middle East'],
       counterMeasures: ['GPS/GLONASS Jamming', 'MANPADS', 'Small Arms', 'Gepard SPAAG'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Shahed_136_drone.jpg/1280px-Shahed_136_drone.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'Mohajer-6',
@@ -1014,7 +1022,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Iranian combat UAV ที่ส่งให้รัสเซียและใช้โดย Houthi',
       combatHistory: ['Yemen (Houthi)', 'Ukraine (by Russia)'],
       counterMeasures: ['Standard EW', 'SHORAD'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Mohajer-6_MAKS-2019.jpg/1280px-Mohajer-6_MAKS-2019.jpg',
+      // CORS blocked - using icon
     ),
 
     // === RUSSIA ===
@@ -1043,7 +1051,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Tactical recon UAV หลักของรัสเซีย ใช้มากที่สุดในยูเครน',
       combatHistory: ['Syria', 'Ukraine 2022-2024'],
       counterMeasures: ['Standard GPS Jamming', 'RF Jamming', 'Small Arms', 'FPV Interception'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Army-2022-304.jpg/1280px-Army-2022-304.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'Lancet',
@@ -1070,7 +1078,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Russian loitering munition ที่ทำลายยุทโธปกรณ์ยูเครนได้มาก',
       combatHistory: ['Ukraine 2022-2024'],
       counterMeasures: ['EW Jamming', 'Laser Dazzlers', 'Small Arms'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/ZALA_Lancet_-_KUB_-_Army2021-7.jpg/1280px-ZALA_Lancet_-_KUB_-_Army2021-7.jpg',
+      // CORS blocked - using icon
     ),
 
     // === ISRAEL ===
@@ -1099,7 +1107,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'MALE UAV ขนาดใหญ่ที่สุดของอิสราเอล สามารถติดอาวุธได้',
       combatHistory: ['Gaza Operations', 'Various'],
       counterMeasures: ['Advanced EW', 'High-end SAM'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/IAI_Eitan_UAV.jpg/1280px-IAI_Eitan_UAV.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'Harop',
@@ -1126,7 +1134,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Loitering munition anti-radiation ที่ออกแบบมาเพื่อทำลายระบบ radar',
       combatHistory: ['Nagorno-Karabakh 2020 (Azerbaijan)'],
       counterMeasures: ['Radar Shutdown', 'Decoys', 'CIWS'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/IAI_Harop_PAS_2013_01.jpg/1280px-IAI_Harop_PAS_2013_01.jpg',
+      // CORS blocked - using icon
     ),
 
     // === CHINA ===
@@ -1155,7 +1163,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'MQ-9 equivalent ของจีน ส่งออกไปหลายประเทศในตะวันออกกลางและแอฟริกา',
       combatHistory: ['Libya', 'UAE', 'Egypt', 'Saudi Arabia'],
       counterMeasures: ['Standard EW', 'SAM Systems'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/CAIG_Wing_Loong_II_at_Airshow_China_2016.jpg/1280px-CAIG_Wing_Loong_II_at_Airshow_China_2016.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'DJI Mavic 3',
@@ -1182,7 +1190,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Consumer drone ที่ถูกใช้แพร่หลายในสงครามยูเครน ทั้งสองฝ่าย',
       combatHistory: ['Ukraine 2022-2024 (Both sides)'],
       counterMeasures: ['DJI Aeroscope', '2.4/5.8 GHz Jamming', 'DroneGun'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/DJI_Mavic_3_drone_in_flight.jpg/1280px-DJI_Mavic_3_drone_in_flight.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'DJI Matrice 30T',
@@ -1209,7 +1217,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Enterprise drone สำหรับ ISR ดัดแปลงสำหรับการทหาร',
       combatHistory: ['Ukraine 2022-2024'],
       counterMeasures: ['DJI Aeroscope', 'RF Jamming', 'GPS Spoofing'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/DJI_Matrice_300_RTK.jpg/1280px-DJI_Matrice_300_RTK.jpg',
+      // CORS blocked - using icon
     ),
 
     // === UKRAINE ===
@@ -1238,7 +1246,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Ukrainian mini combat UAV ที่ประสบความสำเร็จในการโจมตี',
       combatHistory: ['Ukraine 2022-2024'],
       counterMeasures: ['EW Jamming', 'Visual Detection'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Punisher_drone_1.jpg/1280px-Punisher_drone_1.jpg',
+      // CORS blocked - using icon
     ),
     UAVData(
       name: 'Beaver (UJ-22)',
@@ -1265,7 +1273,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Ukrainian long-range strike UAV ใช้โจมตีลึกเข้าไปในรัสเซีย',
       combatHistory: ['Deep strikes into Russia 2023-2024'],
       counterMeasures: ['GPS Jamming', 'Air Defense'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/UJ-22_Airborne.jpg/1280px-UJ-22_Airborne.jpg',
+      // CORS blocked - using icon
     ),
 
     // === FPV DRONES ===
@@ -1294,7 +1302,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
       description: 'Modified racing drones เป็น kamikaze ราคาถูกที่เปลี่ยนสงครามยูเครน',
       combatHistory: ['Ukraine 2022-2024 (Dominant weapon)'],
       counterMeasures: ['EW Jamming (5.8 GHz)', 'Shotguns', 'Nets', 'Anti-FPV Drones'],
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Racing_Drone.jpg/1280px-Racing_Drone.jpg',
+      // CORS blocked - using icon
     ),
   ];
 }
