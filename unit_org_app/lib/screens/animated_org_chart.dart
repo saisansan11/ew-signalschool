@@ -90,7 +90,8 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('ผังการจัดหน่วย กส.', style: AppTextStyles.titleLarge),
+        title:
+            const Text('ผังการจัดหน่วย สส.', style: AppTextStyles.titleLarge),
         actions: [
           IconButton(
             icon: const Icon(Icons.unfold_more),
@@ -107,10 +108,12 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
       body: AnimatedBuilder(
         animation: _entryAnimation,
         builder: (context, child) {
+          // Clamp value because easeOutBack curve can overshoot beyond 0.0-1.0
+          final animValue = _entryAnimation.value.clamp(0.0, 1.0);
           return Opacity(
-            opacity: _entryAnimation.value,
+            opacity: animValue,
             child: Transform.translate(
-              offset: Offset(0, 30 * (1 - _entryAnimation.value)),
+              offset: Offset(0, 30 * (1 - animValue)),
               child: _buildContent(),
             ),
           );
@@ -630,7 +633,8 @@ class _UnitDetailSheet extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(unit.name, style: AppTextStyles.headlineMedium),
+                              Text(unit.name,
+                                  style: AppTextStyles.headlineMedium),
                               Text(
                                 '${unit.nameEn} (${unit.abbreviation})',
                                 style: AppTextStyles.bodyMedium.copyWith(

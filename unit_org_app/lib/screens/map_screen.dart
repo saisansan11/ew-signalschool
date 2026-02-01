@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../app/constants.dart';
 import '../data/rta_signal_corps.dart';
 
@@ -13,66 +13,156 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   SignalUnit? _selectedUnit;
-  String _selectedRegion = 'all';
+  bool _showingDetail = false;
+  bool _isSatellite = true;
 
   late AnimationController _pulseController;
-  late AnimationController _glowController;
   late Animation<double> _pulseAnimation;
 
-  final TransformationController _transformController = TransformationController();
+  final MapController _mapController = MapController();
 
-  // Thailand map bounds (approximate)
-  static const double _mapMinLat = 5.5;
-  static const double _mapMaxLat = 20.5;
-  static const double _mapMinLng = 97.5;
-  static const double _mapMaxLng = 105.5;
-
-  final List<Map<String, dynamic>> _regions = [
-    {'id': 'all', 'name': 'ทั้งหมด', 'color': AppColors.primary},
-    {'id': 'central', 'name': 'ส่วนกลาง', 'color': AppColors.signalCorps},
-    {'id': 'area1', 'name': 'ทภ.1', 'color': const Color(0xFF4CAF50)},
-    {'id': 'area2', 'name': 'ทภ.2', 'color': const Color(0xFF2196F3)},
-    {'id': 'area3', 'name': 'ทภ.3', 'color': const Color(0xFFFF9800)},
-    {'id': 'area4', 'name': 'ทภ.4', 'color': const Color(0xFFE91E63)},
-  ];
+  // Thailand center
+  static const LatLng _thailandCenter = LatLng(13.7563, 100.5018);
+  static const double _initialZoom = 5.5;
 
   @override
   void initState() {
     super.initState();
-    _initAnimations();
-  }
-
-  void _initAnimations() {
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat(reverse: true);
 
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-
-    _glowController = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _pulseController.dispose();
-    _glowController.dispose();
-    _transformController.dispose();
     super.dispose();
   }
 
-  Offset _latLngToPosition(double lat, double lng, Size size) {
-    final x = (lng - _mapMinLng) / (_mapMaxLng - _mapMinLng) * size.width;
-    final y = (1 - (lat - _mapMinLat) / (_mapMaxLat - _mapMinLat)) * size.height;
-    return Offset(x, y);
+  void _selectUnit(SignalUnit unit) {
+    setState(() {
+      _selectedUnit = unit;
+      _showingDetail = true;
+    });
+
+    // Animate to unit location
+    _mapController.move(
+      LatLng(unit.location.latitude, unit.location.longitude),
+      9.0,
+    );
   }
 
-  List<SignalUnit> get _filteredUnits {
+  void _closeDetail() {
+    setState(() {
+      _showingDetail = false;
+      _selectedUnit = null;
+    });
+  }
+
+  void _resetView() {
+    _mapController.move(_thailandCenter, _initialZoom);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('แผนที่หน่วยทหารสื่อสาร',
+            style: AppTextStyles.titleLarge),
+        actions: [
+          // Toggle satellite/map view
+          IconButton(
+            icon: Icon(_isSatellite ? Icons.satellite_alt : Icons.map),
+            onPressed: () {
+              setState(() {
+                _isSatellite = !_isSatellite;
+              });
+            },
+            tooltip: _isSatellite ? 'แผนที่ธรรมดา' : 'ภาพดาวเทียม',
+          ),
+          IconButton(
+            icon: const Icon(Icons.my_location),
+            onPressed: _resetView,
+            tooltip: 'รีเซ็ตมุมมอง',
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          // Flutter Map
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _thailandCenter,
+              initialZoom: _initialZoom,
+              minZoom: 4.0,
+              maxZoom: 18.0,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
+              ),
+              onTap: (_, __) {
+                if (_showingDetail) {
+                  _closeDetail();
+                }
+              },
+            ),
+            children: [
+              // Tile layer - ESRI Satellite or OpenStreetMap
+              TileLayer(
+                urlTemplate: _isSatellite
+                    ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                    : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.unit_org_app',
+                maxZoom: 18,
+              ),
+
+              // Labels overlay for satellite view
+              if (_isSatellite)
+                TileLayer(
+                  urlTemplate:
+                      'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+                  userAgentPackageName: 'com.example.unit_org_app',
+                  maxZoom: 18,
+                ),
+
+              // Unit markers
+              MarkerLayer(
+                markers: _buildMarkers(),
+              ),
+            ],
+          ),
+
+          // Legend
+          Positioned(
+            left: 16,
+            bottom: 16,
+            child: _buildLegend(),
+          ),
+
+          // Zoom controls
+          Positioned(
+            right: 16,
+            bottom: 100,
+            child: _buildZoomControls(),
+          ),
+
+          // Detail overlay
+          if (_showingDetail && _selectedUnit != null)
+            _buildDetailOverlay(_selectedUnit!),
+        ],
+      ),
+    );
+  }
+
+  List<Marker> _buildMarkers() {
     final allUnits = RTASignalCorps.allCombinedUnits
         .where((u) =>
             u.level == UnitLevel.department ||
@@ -80,377 +170,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             u.level == UnitLevel.school)
         .toList();
 
-    if (_selectedRegion == 'all') return allUnits;
+    // Group units by proximity to add offset for overlapping markers
+    final processedUnits = _addOffsetForOverlappingUnits(allUnits);
 
-    return allUnits.where((unit) {
-      // Filter logic based on unit ID patterns
-      switch (_selectedRegion) {
-        case 'central':
-          return unit.id.startsWith('dept_') ||
-                 unit.id.contains('_hq') ||
-                 unit.abbreviation.contains('กส.');
-        case 'area1':
-          return unit.id.contains('_1') || unit.abbreviation.contains('1');
-        case 'area2':
-          return unit.id.contains('_2') || unit.abbreviation.contains('2');
-        case 'area3':
-          return unit.id.contains('_3') || unit.abbreviation.contains('3');
-        case 'area4':
-          return unit.id.contains('_4') || unit.abbreviation.contains('4');
-        default:
-          return true;
-      }
-    }).toList();
-  }
-
-  void _selectUnit(SignalUnit unit) {
-    HapticFeedback.mediumImpact();
-    setState(() {
-      _selectedUnit = unit;
-    });
-    _showUnitDetail(unit);
-  }
-
-  void _showUnitDetail(SignalUnit unit) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => _UnitDetailSheet(
-        unit: unit,
-        onChildTap: (childUnit) {
-          Navigator.pop(context);
-          _selectUnit(childUnit);
-        },
-      ),
-    );
-  }
-
-  void _resetView() {
-    HapticFeedback.lightImpact();
-    _transformController.value = Matrix4.identity();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // Background glow
-          _buildBackgroundEffects(),
-
-          // Main content
-          SafeArea(
-            child: Column(
-              children: [
-                // App bar
-                _buildAppBar(),
-
-                // Region filter
-                _buildRegionFilter(),
-
-                // Map area
-                Expanded(
-                  child: _buildMapArea(),
-                ),
-              ],
-            ),
-          ),
-
-          // Legend
-          Positioned(
-            left: 16,
-            bottom: MediaQuery.of(context).padding.bottom + 16,
-            child: _buildLegend(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBackgroundEffects() {
-    return AnimatedBuilder(
-      animation: _glowController,
-      builder: (context, child) {
-        return Stack(
-          children: [
-            Positioned(
-              top: -100 + (_glowController.value * 20),
-              right: -80,
-              child: Container(
-                width: 300,
-                height: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.signalCorps.withValues(alpha: 0.15),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -50,
-              left: -50,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.1),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.paddingM,
-        vertical: AppSizes.paddingS,
-      ),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Title
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'แผนที่หน่วยทหารสื่อสาร',
-                  style: AppTextStyles.titleLarge,
-                ),
-                Text(
-                  '${_filteredUnits.length} หน่วย',
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Reset view button
-          GestureDetector(
-            onTap: _resetView,
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Icon(
-                Icons.zoom_out_map_rounded,
-                size: 22,
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.2, end: 0);
-  }
-
-  Widget _buildRegionFilter() {
-    return Container(
-      height: 44,
-      margin: const EdgeInsets.symmetric(vertical: AppSizes.paddingS),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-        itemCount: _regions.length,
-        itemBuilder: (context, index) {
-          final region = _regions[index];
-          final isSelected = _selectedRegion == region['id'];
-
-          return GestureDetector(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              setState(() {
-                _selectedRegion = region['id'] as String;
-                _selectedUnit = null;
-              });
-            },
-            child: AnimatedContainer(
-              duration: AppDurations.fast,
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                gradient: isSelected
-                    ? LinearGradient(
-                        colors: [
-                          (region['color'] as Color).withValues(alpha: 0.3),
-                          (region['color'] as Color).withValues(alpha: 0.15),
-                        ],
-                      )
-                    : null,
-                color: isSelected ? null : AppColors.surface,
-                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                border: Border.all(
-                  color: isSelected
-                      ? (region['color'] as Color)
-                      : AppColors.border,
-                ),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: (region['color'] as Color).withValues(alpha: 0.2),
-                          blurRadius: 8,
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: region['color'] as Color,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    region['name'] as String,
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: isSelected
-                          ? region['color'] as Color
-                          : AppColors.textSecondary,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            )
-                .animate(delay: Duration(milliseconds: index * 50))
-                .fadeIn()
-                .slideX(begin: 0.1, end: 0),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildMapArea() {
-    return Container(
-      margin: const EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        child: InteractiveViewer(
-          transformationController: _transformController,
-          boundaryMargin: const EdgeInsets.all(50),
-          minScale: 0.5,
-          maxScale: 4.0,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final size = Size(constraints.maxWidth, constraints.maxHeight);
-              return Stack(
-                children: [
-                  // Thailand map background
-                  _buildMapBackground(size),
-
-                  // Unit markers
-                  ..._buildUnitMarkers(size),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    ).animate().fadeIn(duration: 500.ms, delay: 200.ms).scale(
-          begin: const Offset(0.95, 0.95),
-          end: const Offset(1, 1),
-        );
-  }
-
-  Widget _buildMapBackground(Size size) {
-    return Container(
-      width: size.width,
-      height: size.height,
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: Alignment.center,
-          radius: 1.2,
-          colors: [
-            AppColors.surfaceLight,
-            AppColors.surface,
-          ],
-        ),
-      ),
-      child: CustomPaint(
-        painter: ThailandMapPainter(),
-        size: size,
-      ),
-    );
-  }
-
-  List<Widget> _buildUnitMarkers(Size size) {
-    final units = _filteredUnits;
-
-    return units.asMap().entries.map((entry) {
-      final index = entry.key;
-      final unit = entry.value;
-
-      final pos = _latLngToPosition(
-        unit.location.latitude,
-        unit.location.longitude,
-        size,
-      );
-
+    return processedUnits.map((unitData) {
+      final unit = unitData.unit;
+      final offset = unitData.offset;
       final isSelected = _selectedUnit?.id == unit.id;
-      final markerSize = unit.level == UnitLevel.department ? 28.0 : 22.0;
+      final markerSize = unit.level == UnitLevel.department ? 44.0 : 36.0;
 
-      return Positioned(
-        left: pos.dx - markerSize / 2,
-        top: pos.dy - markerSize / 2,
+      return Marker(
+        point: LatLng(
+          unit.location.latitude + offset.dy * 0.05,
+          unit.location.longitude + offset.dx * 0.05,
+        ),
+        width: markerSize + 20,
+        height: markerSize + 20,
         child: GestureDetector(
           onTap: () => _selectUnit(unit),
           child: AnimatedBuilder(
@@ -463,89 +198,156 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               );
             },
           ),
-        )
-            .animate(delay: Duration(milliseconds: 300 + (index * 30)))
-            .fadeIn()
-            .scale(begin: const Offset(0, 0), end: const Offset(1, 1)),
+        ),
       );
     }).toList();
   }
 
+  List<_UnitWithOffset> _addOffsetForOverlappingUnits(List<SignalUnit> units) {
+    final result = <_UnitWithOffset>[];
+    final processed = <String, bool>{};
+
+    for (int i = 0; i < units.length; i++) {
+      final unit = units[i];
+      if (processed[unit.id] == true) continue;
+
+      // Find units at similar locations
+      final nearby = <SignalUnit>[];
+      for (int j = i; j < units.length; j++) {
+        final other = units[j];
+        if (processed[other.id] == true) continue;
+
+        final distance = _calculateDistance(
+          unit.location.latitude,
+          unit.location.longitude,
+          other.location.latitude,
+          other.location.longitude,
+        );
+
+        if (distance < 0.3) {
+          // Within ~30km
+          nearby.add(other);
+          processed[other.id] = true;
+        }
+      }
+
+      // Add offsets for overlapping units in a circular pattern
+      if (nearby.length == 1) {
+        result.add(_UnitWithOffset(nearby[0], Offset.zero));
+      } else {
+        for (int k = 0; k < nearby.length; k++) {
+          if (k == 0) {
+            result.add(_UnitWithOffset(nearby[k], Offset.zero));
+          } else {
+            final angle = (k * 2 * 3.14159) / (nearby.length - 1);
+            final offsetX = 0.8 * (angle < 3.14159 ? 1 : -1) * ((k % 2) + 1);
+            final offsetY = 0.8 * (k % 2 == 0 ? 1 : -1);
+            result.add(_UnitWithOffset(nearby[k], Offset(offsetX, offsetY)));
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  double _calculateDistance(
+      double lat1, double lng1, double lat2, double lng2) {
+    return ((lat1 - lat2).abs() + (lng1 - lng2).abs());
+  }
+
   Widget _buildMarker(SignalUnit unit, double size, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                unit.color,
-                unit.color.withValues(alpha: 0.8),
-              ],
-            ),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isSelected ? Colors.white : Colors.white70,
-              width: isSelected ? 3 : 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: unit.color.withValues(alpha: isSelected ? 0.6 : 0.4),
-                blurRadius: isSelected ? 16 : 8,
-                spreadRadius: isSelected ? 2 : 0,
-              ),
-            ],
-          ),
-          child: Icon(
-            Icons.cell_tower_rounded,
-            size: size * 0.55,
+    return Center(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: unit.color,
+          shape: BoxShape.circle,
+          border: Border.all(
             color: Colors.white,
+            width: isSelected ? 4 : 3,
           ),
-        ),
-        if (isSelected) ...[
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-              border: Border.all(color: unit.color, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: unit.color.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                ),
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
-            child: Text(
-              unit.abbreviation,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: unit.color,
+            if (isSelected)
+              BoxShadow(
+                color: unit.color.withValues(alpha: 0.7),
+                blurRadius: 12,
+                spreadRadius: 2,
               ),
-            ),
+          ],
+        ),
+        child: Icon(
+          Icons.cell_tower,
+          size: size * 0.5,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildZoomControls() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(AppSizes.radiusM),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
-      ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.add, color: AppColors.textPrimary),
+            onPressed: () {
+              final currentZoom = _mapController.camera.zoom;
+              _mapController.move(
+                _mapController.camera.center,
+                currentZoom + 1,
+              );
+            },
+            tooltip: 'ซูมเข้า',
+          ),
+          Container(height: 1, width: 30, color: AppColors.border),
+          IconButton(
+            icon: const Icon(Icons.remove, color: AppColors.textPrimary),
+            onPressed: () {
+              final currentZoom = _mapController.camera.zoom;
+              _mapController.move(
+                _mapController.camera.center,
+                currentZoom - 1,
+              );
+            },
+            tooltip: 'ซูมออก',
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLegend() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
+        borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 12,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -553,36 +355,28 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 4,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: AppColors.signalCorps,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'สัญลักษณ์',
-                style: AppTextStyles.titleSmall,
-              ),
-            ],
+          const Text(
+            'สัญลักษณ์',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: AppColors.textPrimary,
+            ),
           ),
-          const SizedBox(height: 10),
-          ..._regions.skip(1).map((region) => _legendItem(
-                region['color'] as Color,
-                region['name'] as String,
-              )),
+          const SizedBox(height: 8),
+          _legendItem(AppColors.signalCorps, 'กส. (ส่วนกลาง)'),
+          _legendItem(const Color(0xFF4CAF50), 'ทภ.1'),
+          _legendItem(const Color(0xFF2196F3), 'ทภ.2'),
+          _legendItem(const Color(0xFFFF9800), 'ทภ.3'),
+          _legendItem(const Color(0xFFE91E63), 'ทภ.4'),
         ],
       ),
-    ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideX(begin: -0.2, end: 0);
+    );
   }
 
   Widget _legendItem(Color color, String label) {
     return Padding(
-      padding: const EdgeInsets.only(top: 6),
+      padding: const EdgeInsets.only(top: 4),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -590,593 +384,326 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             width: 14,
             height: 14,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [color, color.withValues(alpha: 0.7)],
-              ),
+              color: color,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white54, width: 1),
+              border: Border.all(color: Colors.white, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: color.withValues(alpha: 0.3),
-                  blurRadius: 4,
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 2,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Text(
             label,
-            style: AppTextStyles.labelSmall,
+            style:
+                const TextStyle(fontSize: 11, color: AppColors.textSecondary),
           ),
         ],
       ),
     );
   }
-}
 
-/// Unit Detail Bottom Sheet
-class _UnitDetailSheet extends StatelessWidget {
-  final SignalUnit unit;
-  final void Function(SignalUnit) onChildTap;
-
-  const _UnitDetailSheet({
-    required this.unit,
-    required this.onChildTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.65,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppSizes.radiusXXL),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: unit.color.withValues(alpha: 0.2),
-                blurRadius: 30,
-                offset: const Offset(0, -10),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Handle
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(top: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-
-              // Content
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(AppSizes.paddingL),
-                  physics: const BouncingScrollPhysics(),
-                  children: [
-                    // Header
-                    _buildHeader(context),
-                    const SizedBox(height: 24),
-
-                    // Info cards
-                    _buildInfoCards(),
-                    const SizedBox(height: 24),
-
-                    // Description
-                    _SectionTitle(title: 'รายละเอียด'),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(AppSizes.paddingM),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-                        border: Border.all(color: AppColors.border),
+  Widget _buildDetailOverlay(SignalUnit unit) {
+    return AnimatedOpacity(
+      opacity: _showingDetail ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: GestureDetector(
+        onTap: _closeDetail,
+        child: Container(
+          color: Colors.black54,
+          child: Center(
+            child: GestureDetector(
+              onTap: () {}, // Prevent closing when tapping card
+              child: AnimatedScale(
+                scale: _showingDetail ? 1.0 : 0.8,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutBack,
+                child: Container(
+                  margin: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
+                  constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusXL),
+                    border: Border.all(color: unit.color, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: unit.color.withValues(alpha: 0.3),
+                        blurRadius: 30,
+                        spreadRadius: 0,
                       ),
-                      child: Text(
-                        unit.description,
-                        style: AppTextStyles.bodyLarge.copyWith(height: 1.6),
-                      ),
-                    ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
-
-                    // Missions
-                    if (unit.missions.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      _SectionTitle(title: 'ภารกิจ'),
-                      const SizedBox(height: 12),
-                      ...unit.missions.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final mission = entry.value;
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 10),
-                          padding: const EdgeInsets.all(AppSizes.paddingM),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                unit.color.withValues(alpha: 0.1),
-                                unit.color.withValues(alpha: 0.05),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                            border: Border.all(
-                              color: unit.color.withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 26,
-                                height: 26,
-                                decoration: BoxDecoration(
-                                  color: unit.color.withValues(alpha: 0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: unit.color,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  mission,
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                            .animate(delay: Duration(milliseconds: 200 + (index * 50)))
-                            .fadeIn()
-                            .slideX(begin: 0.1, end: 0);
-                      }),
                     ],
-
-                    // Child units
-                    if (unit.childUnitIds.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      _SectionTitle(title: 'หน่วยรอง'),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: unit.childUnitIds.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final id = entry.value;
-                          final childUnit = RTASignalCorps.getUnitById(id);
-                          if (childUnit == null) return const SizedBox();
-
-                          return GestureDetector(
-                            onTap: () => onChildTap(childUnit),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 8,
-                              ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header
+                        Row(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    childUnit.color.withValues(alpha: 0.15),
-                                    childUnit.color.withValues(alpha: 0.08),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                                border: Border.all(
-                                  color: childUnit.color.withValues(alpha: 0.3),
-                                ),
+                                color: unit.color.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: unit.color, width: 2),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                              child: Icon(
+                                Icons.cell_tower,
+                                size: 24,
+                                color: unit.color,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: childUnit.color.withValues(alpha: 0.3),
-                                      shape: BoxShape.circle,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
                                     ),
-                                    child: Icon(
-                                      Icons.cell_tower_rounded,
-                                      size: 12,
-                                      color: childUnit.color,
+                                    decoration: BoxDecoration(
+                                      color: unit.color.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      unit.level.thaiName,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: unit.color,
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(height: 4),
                                   Text(
-                                    childUnit.abbreviation,
-                                    style: AppTextStyles.bodyMedium.copyWith(
-                                      fontWeight: FontWeight.w600,
+                                    unit.name,
+                                    style: AppTextStyles.titleMedium,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    unit.abbreviation,
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      color: AppColors.textMuted,
                                     ),
                                   ),
                                 ],
                               ),
-                            )
-                                .animate(delay: Duration(milliseconds: 300 + (index * 30)))
-                                .fadeIn()
-                                .scale(
-                                  begin: const Offset(0.8, 0.8),
-                                  end: const Offset(1, 1),
+                            ),
+                            IconButton(
+                              onPressed: _closeDetail,
+                              icon: const Icon(Icons.close),
+                              color: AppColors.textMuted,
+                              iconSize: 20,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Location
+                        _infoRow(
+                          Icons.location_on,
+                          'ที่ตั้ง',
+                          unit.location.fullAddress,
+                          unit.color,
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Coordinates
+                        _infoRow(
+                          Icons.gps_fixed,
+                          'พิกัด',
+                          '${unit.location.latitude.toStringAsFixed(4)}°N, ${unit.location.longitude.toStringAsFixed(4)}°E',
+                          unit.color,
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Commander
+                        _infoRow(
+                          Icons.military_tech,
+                          'ผู้บังคับบัญชา',
+                          unit.commanderRank,
+                          unit.color,
+                        ),
+
+                        if (unit.personnelMin != null) ...[
+                          const SizedBox(height: 10),
+                          _infoRow(
+                            Icons.people,
+                            'กำลังพล',
+                            unit.personnelRange,
+                            unit.color,
+                          ),
+                        ],
+
+                        const SizedBox(height: 16),
+                        const Divider(color: AppColors.border),
+                        const SizedBox(height: 12),
+
+                        // Description
+                        const Text('รายละเอียด',
+                            style: AppTextStyles.titleSmall),
+                        const SizedBox(height: 6),
+                        Text(
+                          unit.description,
+                          style: AppTextStyles.bodySmall,
+                        ),
+
+                        // Missions
+                        if (unit.missions.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          const Text('ภารกิจ', style: AppTextStyles.titleSmall),
+                          const SizedBox(height: 6),
+                          ...unit.missions.take(3).map(
+                                (m) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle,
+                                        size: 14,
+                                        color: unit.color,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(m,
+                                            style: AppTextStyles.bodySmall),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                    const SizedBox(height: 40),
-                  ],
+                              ),
+                          if (unit.missions.length > 3)
+                            Text(
+                              '...และอีก ${unit.missions.length - 3} ภารกิจ',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textMuted,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                        ],
+
+                        // Child units
+                        if (unit.childUnitIds.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          const Text('หน่วยรอง',
+                              style: AppTextStyles.titleSmall),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: unit.childUnitIds.take(6).map((id) {
+                              final childUnit = RTASignalCorps.getUnitById(id);
+                              if (childUnit == null) return const SizedBox();
+                              return _childUnitChip(childUnit);
+                            }).toList(),
+                          ),
+                          if (unit.childUnitIds.length > 6)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Text(
+                                '...และอีก ${unit.childUnitIds.length - 6} หน่วย',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.textMuted,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingL),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            unit.color.withValues(alpha: 0.15),
-            unit.color.withValues(alpha: 0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(
-          color: unit.color.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Icon with glow
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  unit.color.withValues(alpha: 0.4),
-                  unit.color.withValues(alpha: 0.2),
-                ],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: unit.color.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.cell_tower_rounded,
-              size: 36,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: unit.color,
-                        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                      ),
-                      child: Text(
-                        unit.level.symbol,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      unit.level.thaiName,
-                      style: AppTextStyles.labelMedium.copyWith(
-                        color: unit.color,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  unit.name,
-                  style: AppTextStyles.headlineMedium,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${unit.nameEn} (${unit.abbreviation})',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0);
-  }
-
-  Widget _buildInfoCards() {
-    return Column(
-      children: [
-        // Location card
-        _InfoCard(
-          icon: Icons.location_on_rounded,
-          title: 'ที่ตั้ง',
-          value: unit.location.fullAddress,
-          color: AppColors.primary,
-        ),
-        const SizedBox(height: 12),
-
-        // Row with Commander and Personnel
-        Row(
-          children: [
-            Expanded(
-              child: _InfoCard(
-                icon: Icons.military_tech_rounded,
-                title: 'ผู้บังคับบัญชา',
-                value: unit.commanderRank,
-                color: AppColors.officer,
-                compact: true,
-              ),
-            ),
-            if (unit.personnelMin != null) ...[
-              const SizedBox(width: 12),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.people_rounded,
-                  title: 'กำลังพล',
-                  value: unit.personnelRange,
-                  color: AppColors.infantry,
-                  compact: true,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
-    ).animate().fadeIn(duration: 400.ms, delay: 100.ms);
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String title;
-
-  const _SectionTitle({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _infoRow(IconData icon, String label, String value, Color color) {
     return Row(
       children: [
         Container(
-          width: 4,
-          height: 20,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
-            color: AppColors.signalCorps,
-            borderRadius: BorderRadius.circular(2),
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(6),
           ),
+          child: Icon(icon, size: 16, color: color),
         ),
         const SizedBox(width: 10),
-        Text(title, style: AppTextStyles.titleLarge),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              Text(
+                value,
+                style: AppTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
-}
 
-class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final Color color;
-  final bool compact;
-
-  const _InfoCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.color,
-    this.compact = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(compact ? AppSizes.paddingS : AppSizes.paddingM),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.15),
-            color.withValues(alpha: 0.05),
+  Widget _childUnitChip(SignalUnit unit) {
+    return GestureDetector(
+      onTap: () => _selectUnit(unit),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceLight,
+          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              unit.level.symbol,
+              style: TextStyle(fontSize: 9, color: unit.color),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              unit.abbreviation,
+              style:
+                  const TextStyle(fontSize: 10, color: AppColors.textPrimary),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: compact ? 36 : 42,
-            height: compact ? 36 : 42,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            ),
-            child: Icon(icon, color: color, size: compact ? 18 : 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.labelSmall,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: compact
-                      ? AppTextStyles.titleSmall.copyWith(color: color)
-                      : AppTextStyles.titleMedium.copyWith(color: color),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 }
 
-/// Custom painter for Thailand map outline
-class ThailandMapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill;
+class _UnitWithOffset {
+  final SignalUnit unit;
+  final Offset offset;
 
-    // Gradient fill
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    paint.shader = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        AppColors.surfaceLight,
-        AppColors.surface,
-      ],
-    ).createShader(rect);
-
-    final borderPaint = Paint()
-      ..color = AppColors.signalCorps.withValues(alpha: 0.3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    final glowPaint = Paint()
-      ..color = AppColors.signalCorps.withValues(alpha: 0.1)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-
-    // Thailand shape points
-    final points = [
-      Offset(0.45 * size.width, 0.05 * size.height),
-      Offset(0.55 * size.width, 0.08 * size.height),
-      Offset(0.65 * size.width, 0.15 * size.height),
-      Offset(0.70 * size.width, 0.25 * size.height),
-      Offset(0.75 * size.width, 0.30 * size.height),
-      Offset(0.70 * size.width, 0.40 * size.height),
-      Offset(0.65 * size.width, 0.45 * size.height),
-      Offset(0.60 * size.width, 0.50 * size.height),
-      Offset(0.55 * size.width, 0.55 * size.height),
-      Offset(0.50 * size.width, 0.60 * size.height),
-      Offset(0.48 * size.width, 0.70 * size.height),
-      Offset(0.45 * size.width, 0.80 * size.height),
-      Offset(0.42 * size.width, 0.90 * size.height),
-      Offset(0.40 * size.width, 0.95 * size.height),
-      Offset(0.38 * size.width, 0.90 * size.height),
-      Offset(0.35 * size.width, 0.80 * size.height),
-      Offset(0.33 * size.width, 0.70 * size.height),
-      Offset(0.30 * size.width, 0.60 * size.height),
-      Offset(0.28 * size.width, 0.50 * size.height),
-      Offset(0.25 * size.width, 0.40 * size.height),
-      Offset(0.30 * size.width, 0.30 * size.height),
-      Offset(0.35 * size.width, 0.20 * size.height),
-      Offset(0.38 * size.width, 0.12 * size.height),
-      Offset(0.42 * size.width, 0.08 * size.height),
-    ];
-
-    final path = Path();
-    path.moveTo(points[0].dx, points[0].dy);
-    for (int i = 1; i < points.length; i++) {
-      final prev = points[i - 1];
-      final curr = points[i];
-      final controlX = (prev.dx + curr.dx) / 2;
-      final controlY = (prev.dy + curr.dy) / 2;
-      path.quadraticBezierTo(prev.dx, prev.dy, controlX, controlY);
-    }
-    path.close();
-
-    // Draw glow first
-    canvas.drawPath(path, glowPaint);
-    // Then fill
-    canvas.drawPath(path, paint);
-    // Then border
-    canvas.drawPath(path, borderPaint);
-
-    // Draw region labels
-    _drawRegionLabels(canvas, size);
-  }
-
-  void _drawRegionLabels(Canvas canvas, Size size) {
-    final textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-    );
-
-    final regions = [
-      ('ภาคเหนือ', Offset(0.40 * size.width, 0.15 * size.height)),
-      ('ภาคอีสาน', Offset(0.62 * size.width, 0.30 * size.height)),
-      ('ภาคกลาง', Offset(0.45 * size.width, 0.48 * size.height)),
-      ('ภาคใต้', Offset(0.40 * size.width, 0.82 * size.height)),
-    ];
-
-    for (final (label, offset) in regions) {
-      textPainter.text = TextSpan(
-        text: label,
-        style: TextStyle(
-          color: AppColors.textMuted.withValues(alpha: 0.6),
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.5,
-        ),
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(offset.dx - textPainter.width / 2, offset.dy),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  _UnitWithOffset(this.unit, this.offset);
 }

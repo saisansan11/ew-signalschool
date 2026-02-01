@@ -4,7 +4,6 @@ import '../app/constants.dart';
 import '../data/signal_corps_data.dart';
 import '../data/rta_signal_corps.dart';
 import '../services/progress_service.dart';
-import '../widgets/glass_card.dart';
 import 'flashcard_screen.dart';
 import 'quiz_screen.dart';
 import 'animated_org_chart.dart';
@@ -18,27 +17,11 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
-
+class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _initAnimations();
     _initProgress();
-  }
-
-  void _initAnimations() {
-    _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
   }
 
   void _initProgress() async {
@@ -47,807 +30,340 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // Background gradient effect
-          _buildBackgroundEffects(),
-
-          // Main content
-          SafeArea(
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSizes.paddingM),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        _buildHeader(),
-                        const SizedBox(height: 24),
-                        _buildBranchCard(),
-                        const SizedBox(height: 32),
-                        _buildSectionTitle('เครื่องมือเรียนรู้', Icons.school),
-                        const SizedBox(height: 16),
-                        _buildFeatureGrid(),
-                        const SizedBox(height: 32),
-                        _buildSectionTitle('สถิติการเรียน', Icons.analytics),
-                        const SizedBox(height: 16),
-                        _buildStatsRow(),
-                        const SizedBox(height: 32),
-                        _buildSectionTitle('ความก้าวหน้า', Icons.trending_up),
-                        const SizedBox(height: 16),
-                        _buildProgressSection(),
-                        const SizedBox(height: 32),
-                        _buildSectionTitle('หมวดหมู่', Icons.category),
-                        const SizedBox(height: 16),
-                        _buildCategoryList(),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSizes.paddingM),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    _buildHeader(),
+                    const SizedBox(height: 28),
+                    _buildHeroCard(),
+                    const SizedBox(height: 20),
+                    _buildBentoGrid(),
+                    const SizedBox(height: 28),
+                    _buildStatsSection(),
+                    const SizedBox(height: 28),
+                    _buildCategoriesSection(),
+                    const SizedBox(height: 32),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBackgroundEffects() {
-    return Stack(
-      children: [
-        // Top right glow
-        Positioned(
-          top: -100,
-          right: -100,
-          child: AnimatedBuilder(
-            animation: _pulseAnimation,
-            builder: (context, child) {
-              return Container(
-                width: 300 * _pulseAnimation.value,
-                height: 300 * _pulseAnimation.value,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.signalCorps.withValues(alpha: 0.15),
-                      AppColors.signalCorps.withValues(alpha: 0.0),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        // Bottom left glow
-        Positioned(
-          bottom: -50,
-          left: -50,
-          child: Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.primary.withValues(alpha: 0.0),
-                ],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildHeader() {
     return Row(
       children: [
-        // Logo with glow effect
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: AppColors.signalGradient,
-            borderRadius: BorderRadius.circular(AppSizes.radiusL),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.signalCorps.withValues(alpha: 0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.radar,
-            color: Colors.white,
-            size: 28,
-          ),
-        )
-            .animate()
-            .fadeIn(duration: 400.ms)
-            .scale(begin: const Offset(0.5, 0.5), curve: Curves.easeOutBack),
-        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'การจัดหน่วยทหาร',
-                style: AppTextStyles.headlineLarge,
-              ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
-              const SizedBox(height: 4),
-              Text(
-                'Royal Thai Army Signal Corps',
-                style: AppTextStyles.bodyMedium.copyWith(
+                'สวัสดี 👋',
+                style: AppTextStyles.bodyLarge.copyWith(
                   color: AppColors.textMuted,
                 ),
-              ).animate().fadeIn(delay: 200.ms).slideX(begin: -0.1),
+              ).animate().fadeIn(duration: 400.ms),
+              const SizedBox(height: 4),
+              const Text(
+                'เรียนรู้การจัดหน่วย',
+                style: AppTextStyles.displayLarge,
+              ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
             ],
           ),
         ),
-        // Settings button
-        IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
-            );
-          },
-          icon: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppSizes.radiusM),
-              border: Border.all(color: AppColors.border),
-            ),
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SettingsScreen()),
+          ),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BentoDecoration.card(),
             child: const Icon(
-              Icons.tune,
+              Icons.tune_rounded,
               color: AppColors.textSecondary,
-              size: 20,
             ),
           ),
-        ).animate().fadeIn(delay: 300.ms),
+        ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.8, 0.8)),
       ],
     );
   }
 
-  Widget _buildBranchCard() {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingL),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.signalCorps.withValues(alpha: 0.15),
-            AppColors.signalCorps.withValues(alpha: 0.05),
+  Widget _buildHeroCard() {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const AnimatedOrgChartScreen()),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BentoDecoration.gradientCard(
+          gradient: AppColors.sunsetGradient,
+          borderRadius: AppSizes.radiusXL,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                    ),
+                    child: const Text(
+                      'กรมการทหารสื่อสาร',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'ดูผังการจัด\nหน่วยทหาร',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Text(
+                        '${RTASignalCorps.allCombinedUnits.length} หน่วย',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.white.withValues(alpha: 0.9),
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(AppSizes.radiusL),
+              ),
+              child: const Icon(
+                Icons.account_tree_rounded,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(
-          color: AppColors.signalCorps.withValues(alpha: 0.3),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.signalCorps.withValues(alpha: 0.1),
-            blurRadius: 32,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Branch emblem
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.signalCorps.withValues(alpha: 0.3),
-                  AppColors.signalCorps.withValues(alpha: 0.1),
-                ],
-              ),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.signalCorps,
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.signalCorps.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.cell_tower,
-              color: AppColors.signalCorps,
-              size: 32,
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'เหล่าทหารสื่อสาร',
-                  style: AppTextStyles.labelMedium.copyWith(
-                    color: AppColors.signalCorps,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'กรมการทหารสื่อสาร',
-                  style: AppTextStyles.headlineMedium.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Signal Department • กส.',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  gradient: AppColors.signalGradient,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.signalCorps.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                    ),
-                  ],
-                ),
-                child: const Text(
-                  'กส.',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    size: 12,
-                    color: AppColors.textMuted,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'สะพานแดง',
-                    style: AppTextStyles.labelSmall,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
       ),
     )
         .animate()
-        .fadeIn(delay: 200.ms, duration: 400.ms)
+        .fadeIn(delay: 200.ms, duration: 500.ms)
         .slideY(begin: 0.1, curve: Curves.easeOut);
   }
 
-  Widget _buildSectionTitle(String title, IconData icon) {
-    return Row(
+  Widget _buildBentoGrid() {
+    return Column(
       children: [
-        Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(AppSizes.radiusS),
-          ),
-          child: Icon(icon, color: AppColors.primary, size: 16),
-        ),
-        const SizedBox(width: 12),
-        Text(title, style: AppTextStyles.titleLarge),
-      ],
-    );
-  }
-
-  Widget _buildFeatureGrid() {
-    final features = [
-      _FeatureItem(
-        icon: Icons.map_outlined,
-        title: 'แผนที่หน่วย',
-        subtitle: 'ที่ตั้งทั่วประเทศ',
-        color: AppColors.primary,
-        screen: const MapScreen(),
-      ),
-      _FeatureItem(
-        icon: Icons.account_tree_outlined,
-        title: 'ผังการจัด',
-        subtitle: 'โครงสร้างหน่วย',
-        color: AppColors.signalCorps,
-        screen: const AnimatedOrgChartScreen(),
-      ),
-      _FeatureItem(
-        icon: Icons.style_outlined,
-        title: 'Flashcards',
-        subtitle: 'ท่องจำการ์ดพลิก',
-        color: AppColors.accent,
-        onTap: () => _showFlashcardOptions(context),
-      ),
-      _FeatureItem(
-        icon: Icons.quiz_outlined,
-        title: 'ทดสอบ',
-        subtitle: 'ทดสอบความรู้',
-        color: AppColors.warning,
-        onTap: () => _showQuizOptions(context),
-      ),
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.15,
-      ),
-      itemCount: features.length,
-      itemBuilder: (context, index) {
-        final feature = features[index];
-        return FeatureCard(
-          icon: feature.icon,
-          title: feature.title,
-          subtitle: feature.subtitle,
-          color: feature.color,
-          onTap: feature.onTap ??
-              () => Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => feature.screen!,
-                      transitionsBuilder: (_, animation, __, child) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0, 0.05),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOut,
-                            )),
-                            child: child,
-                          ),
-                        );
-                      },
-                      transitionDuration: AppDurations.pageTransition,
-                    ),
-                  ),
-        )
-            .animate()
-            .fadeIn(delay: (300 + index * 50).ms, duration: 400.ms)
-            .slideY(begin: 0.1, curve: Curves.easeOut);
-      },
-    );
-  }
-
-  Widget _buildStatsRow() {
-    final totalUnits = RTASignalCorps.allCombinedUnits.length;
-    final totalFlashcards = SignalCorpsData.flashcards.length;
-    final totalQuestions = SignalCorpsData.quizQuestions.length;
-
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            icon: Icons.account_tree,
-            value: totalUnits.toString(),
-            label: 'หน่วย',
-            color: AppColors.signalCorps,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildStatCard(
-            icon: Icons.style,
-            value: totalFlashcards.toString(),
-            label: 'Flashcards',
-            color: AppColors.accent,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildStatCard(
-            icon: Icons.quiz,
-            value: totalQuestions.toString(),
-            label: 'คำถาม',
-            color: AppColors.warning,
-          ),
-        ),
-      ],
-    ).animate().fadeIn(delay: 500.ms, duration: 400.ms);
-  }
-
-  Widget _buildStatCard({
-    required IconData icon,
-    required String value,
-    required String label,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+        // Row 1: Two cards side by side
+        Row(
+          children: [
+            Expanded(
+              child: _BentoCard(
+                height: 160,
+                backgroundColor: AppColors.bentoSky,
+                icon: Icons.map_rounded,
+                iconColor: AppColors.primary,
+                title: 'แผนที่',
+                subtitle: 'ที่ตั้งหน่วยทั่วประเทศ',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MapScreen()),
+                ),
+              ),
             ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(height: 12),
-          AnimatedCounter(
-            value: int.parse(value),
-            style: AppTextStyles.headlineMedium.copyWith(color: color),
-            duration: const Duration(milliseconds: 1000),
-          ),
-          const SizedBox(height: 4),
-          Text(label, style: AppTextStyles.labelSmall),
-        ],
-      ),
-    );
+            const SizedBox(width: AppSizes.bentoGap),
+            Expanded(
+              child: _BentoCard(
+                height: 160,
+                backgroundColor: AppColors.bentoMint,
+                icon: Icons.style_rounded,
+                iconColor: AppColors.accent,
+                title: 'Flashcards',
+                subtitle: '${SignalCorpsData.flashcards.length} การ์ด',
+                onTap: () => _showFlashcardOptions(context),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSizes.bentoGap),
+        // Row 2: One wide card
+        _BentoCard(
+          height: 120,
+          backgroundColor: AppColors.bentoCream,
+          icon: Icons.quiz_rounded,
+          iconColor: AppColors.accentOrange,
+          title: 'ทดสอบความรู้',
+          subtitle: '${SignalCorpsData.quizQuestions.length} คำถาม • เริ่มทดสอบ',
+          isWide: true,
+          onTap: () => _showQuizOptions(context),
+        ),
+      ],
+    )
+        .animate()
+        .fadeIn(delay: 350.ms, duration: 500.ms)
+        .slideY(begin: 0.1, curve: Curves.easeOut);
   }
 
-  Widget _buildProgressSection() {
+  Widget _buildStatsSection() {
     final progress = ProgressService.instance;
     final stats = progress.getStats();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Streak card
-        Container(
-          padding: const EdgeInsets.all(AppSizes.paddingM),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.warning.withValues(alpha: 0.15),
-                AppColors.warning.withValues(alpha: 0.05),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(AppSizes.radiusL),
-            border: Border.all(
-              color: AppColors.warning.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                ),
-                child: const Icon(
-                  Icons.local_fire_department,
-                  color: AppColors.warning,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Streak ปัจจุบัน',
-                      style: AppTextStyles.labelMedium,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          '${stats.currentStreak}',
-                          style: AppTextStyles.headlineLarge.copyWith(
-                            color: AppColors.warning,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'วัน',
-                          style: AppTextStyles.titleMedium.copyWith(
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'เรียนแล้ว',
-                    style: AppTextStyles.labelSmall,
-                  ),
-                  Text(
-                    '${stats.flashcardsKnown} การ์ด',
-                    style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.accent,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        // Progress bars
         Row(
           children: [
-            Expanded(
-              child: _buildMiniProgress(
-                label: 'Flashcard',
-                value: stats.flashcardsKnown,
-                total: SignalCorpsData.flashcards.length,
-                color: AppColors.accent,
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: AppColors.accentPink.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(AppSizes.radiusS),
+              ),
+              child: const Icon(
+                Icons.insights_rounded,
+                color: AppColors.accentPink,
+                size: 18,
               ),
             ),
             const SizedBox(width: 12),
+            const Text('ความก้าวหน้า', style: AppTextStyles.headlineSmall),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
             Expanded(
-              child: _buildMiniProgress(
+              child: _StatCard(
+                icon: Icons.local_fire_department_rounded,
+                value: '${stats.currentStreak}',
+                label: 'Streak',
+                color: AppColors.accentOrange,
+                bgColor: AppColors.bentoCream,
+              ),
+            ),
+            const SizedBox(width: AppSizes.bentoGap),
+            Expanded(
+              child: _StatCard(
+                icon: Icons.check_circle_rounded,
+                value: '${stats.flashcardsKnown}',
+                label: 'เรียนแล้ว',
+                color: AppColors.accent,
+                bgColor: AppColors.bentoMint,
+              ),
+            ),
+            const SizedBox(width: AppSizes.bentoGap),
+            Expanded(
+              child: _StatCard(
+                icon: Icons.emoji_events_rounded,
+                value: '${stats.quizzesTaken}',
                 label: 'Quiz',
-                value: stats.quizzesTaken,
-                total: 10,
-                color: AppColors.warning,
+                color: AppColors.accentPurple,
+                bgColor: AppColors.bentoLavender,
               ),
             ),
           ],
         ),
       ],
-    ).animate().fadeIn(delay: 600.ms, duration: 400.ms);
-  }
-
-  Widget _buildMiniProgress({
-    required String label,
-    required int value,
-    required int total,
-    required Color color,
-  }) {
-    final progress = total > 0 ? (value / total).clamp(0.0, 1.0) : 0.0;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(label, style: AppTextStyles.titleSmall),
-              Text(
-                '$value/$total',
-                style: AppTextStyles.labelMedium.copyWith(color: color),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: color.withValues(alpha: 0.15),
-              valueColor: AlwaysStoppedAnimation(color),
-              minHeight: 6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryList() {
-    return Column(
-      children: SignalCorpsData.flashcardCategories.asMap().entries.map((entry) {
-        final index = entry.key;
-        final category = entry.value;
-        final flashcardCount =
-            SignalCorpsData.getFlashcardsByCategory(category).length;
-        final quizCount = SignalCorpsData.getQuizByCategory(category).length;
-
-        return _buildCategoryTile(
-          category: category,
-          flashcardCount: flashcardCount,
-          quizCount: quizCount,
-          index: index,
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildCategoryTile({
-    required String category,
-    required int flashcardCount,
-    required int quizCount,
-    required int index,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(AppSizes.paddingM),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppSizes.radiusM),
-            ),
-            child: Icon(
-              _getCategoryIcon(category),
-              color: AppColors.primary,
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(category, style: AppTextStyles.titleMedium),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    _buildCategoryChip(
-                      '$flashcardCount การ์ด',
-                      AppColors.accent,
-                    ),
-                    const SizedBox(width: 8),
-                    _buildCategoryChip(
-                      '$quizCount คำถาม',
-                      AppColors.warning,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildActionButton(
-                icon: Icons.style,
-                color: AppColors.accent,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FlashcardScreen(category: category),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              _buildActionButton(
-                icon: Icons.quiz,
-                color: AppColors.warning,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => QuizScreen(category: category),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     )
         .animate()
-        .fadeIn(delay: (700 + index * 50).ms, duration: 300.ms)
-        .slideX(begin: 0.05);
+        .fadeIn(delay: 500.ms, duration: 400.ms)
+        .slideY(begin: 0.1, curve: Curves.easeOut);
   }
 
-  Widget _buildCategoryChip(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      child: Text(
-        label,
-        style: AppTextStyles.labelSmall.copyWith(
-          color: color,
-          fontSize: 10,
+  Widget _buildCategoriesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: AppColors.accentIndigo.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(AppSizes.radiusS),
+              ),
+              child: const Icon(
+                Icons.category_rounded,
+                color: AppColors.accentIndigo,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text('หมวดหมู่', style: AppTextStyles.headlineSmall),
+          ],
         ),
-      ),
+        const SizedBox(height: 16),
+        ...SignalCorpsData.flashcardCategories.asMap().entries.map((entry) {
+          final index = entry.key;
+          final category = entry.value;
+          return _CategoryTile(
+            category: category,
+            flashcardCount:
+                SignalCorpsData.getFlashcardsByCategory(category).length,
+            quizCount: SignalCorpsData.getQuizByCategory(category).length,
+            delay: 600 + index * 80,
+            onFlashcardTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FlashcardScreen(category: category),
+              ),
+            ),
+            onQuizTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => QuizScreen(category: category),
+              ),
+            ),
+          );
+        }),
+      ],
     );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Icon(icon, color: color, size: 20),
-      ),
-    );
-  }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'โครงสร้าง':
-        return Icons.account_tree;
-      case 'ยศ':
-        return Icons.military_tech;
-      case 'อุปกรณ์':
-        return Icons.settings_input_antenna;
-      case 'ภารกิจ':
-        return Icons.flag;
-      default:
-        return Icons.folder;
-    }
   }
 
   void _showFlashcardOptions(BuildContext context) {
@@ -855,13 +371,13 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => _OptionsBottomSheet(
+      builder: (context) => _OptionsSheet(
         title: 'เลือกหมวด Flashcard',
-        icon: Icons.style,
+        icon: Icons.style_rounded,
         color: AppColors.accent,
         options: [
           _SheetOption(
-            icon: Icons.all_inclusive,
+            icon: Icons.all_inclusive_rounded,
             title: 'ทั้งหมด',
             subtitle: '${SignalCorpsData.flashcards.length} การ์ด',
             onTap: () {
@@ -899,13 +415,13 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => _OptionsBottomSheet(
+      builder: (context) => _OptionsSheet(
         title: 'เลือกหมวด Quiz',
-        icon: Icons.quiz,
-        color: AppColors.warning,
+        icon: Icons.quiz_rounded,
+        color: AppColors.accentOrange,
         options: [
           _SheetOption(
-            icon: Icons.all_inclusive,
+            icon: Icons.all_inclusive_rounded,
             title: 'ทั้งหมด',
             subtitle: '${SignalCorpsData.quizQuestions.length} คำถาม',
             onTap: () {
@@ -938,26 +454,312 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'โครงสร้าง':
+        return Icons.account_tree_rounded;
+      case 'ยศ':
+        return Icons.military_tech_rounded;
+      case 'อุปกรณ์':
+        return Icons.settings_input_antenna_rounded;
+      case 'ภารกิจ':
+        return Icons.flag_rounded;
+      default:
+        return Icons.folder_rounded;
+    }
+  }
 }
 
-class _FeatureItem {
+// Bento Card Widget
+class _BentoCard extends StatelessWidget {
+  final double height;
+  final Color backgroundColor;
   final IconData icon;
+  final Color iconColor;
   final String title;
   final String subtitle;
-  final Color color;
-  final Widget? screen;
+  final bool isWide;
   final VoidCallback? onTap;
 
-  const _FeatureItem({
+  const _BentoCard({
+    required this.height,
+    required this.backgroundColor,
     required this.icon,
+    required this.iconColor,
     required this.title,
     required this.subtitle,
-    required this.color,
-    this.screen,
+    this.isWide = false,
     this.onTap,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: height,
+        padding: const EdgeInsets.all(16),
+        decoration: BentoDecoration.coloredCard(
+          backgroundColor: backgroundColor,
+          borderRadius: AppSizes.radiusXL,
+        ),
+        child: isWide
+            ? Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: iconColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                    ),
+                    child: Icon(icon, color: iconColor, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: AppTextStyles.titleLarge.copyWith(
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: iconColor,
+                    size: 20,
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: iconColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                    ),
+                    child: Icon(icon, color: iconColor, size: 24),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTextStyles.titleMedium.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: AppColors.textMuted,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
 }
 
+// Stat Card Widget
+class _StatCard extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+  final Color bgColor;
+
+  const _StatCard({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+    required this.bgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BentoDecoration.coloredCard(
+        backgroundColor: bgColor,
+        borderRadius: AppSizes.radiusL,
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: AppTextStyles.headlineLarge.copyWith(color: color),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: AppTextStyles.labelSmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Category Tile Widget
+class _CategoryTile extends StatelessWidget {
+  final String category;
+  final int flashcardCount;
+  final int quizCount;
+  final int delay;
+  final VoidCallback onFlashcardTap;
+  final VoidCallback onQuizTap;
+
+  const _CategoryTile({
+    required this.category,
+    required this.flashcardCount,
+    required this.quizCount,
+    required this.delay,
+    required this.onFlashcardTap,
+    required this.onQuizTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BentoDecoration.card(borderRadius: AppSizes.radiusL),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+            ),
+            child: Icon(
+              _getCategoryIcon(category),
+              color: AppColors.primary,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(category, style: AppTextStyles.titleMedium),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    _buildChip('$flashcardCount การ์ด', AppColors.accent),
+                    const SizedBox(width: 8),
+                    _buildChip('$quizCount คำถาม', AppColors.accentOrange),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildActionBtn(
+                Icons.style_rounded,
+                AppColors.accent,
+                onFlashcardTap,
+              ),
+              const SizedBox(width: 8),
+              _buildActionBtn(
+                Icons.quiz_rounded,
+                AppColors.accentOrange,
+                onQuizTap,
+              ),
+            ],
+          ),
+        ],
+      ),
+    )
+        .animate()
+        .fadeIn(delay: delay.ms, duration: 300.ms)
+        .slideX(begin: 0.05);
+  }
+
+  Widget _buildChip(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionBtn(IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+        ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+    );
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'โครงสร้าง':
+        return Icons.account_tree_rounded;
+      case 'ยศ':
+        return Icons.military_tech_rounded;
+      case 'อุปกรณ์':
+        return Icons.settings_input_antenna_rounded;
+      case 'ภารกิจ':
+        return Icons.flag_rounded;
+      default:
+        return Icons.folder_rounded;
+    }
+  }
+}
+
+// Options Sheet
 class _SheetOption {
   final IconData icon;
   final String title;
@@ -972,13 +774,13 @@ class _SheetOption {
   });
 }
 
-class _OptionsBottomSheet extends StatelessWidget {
+class _OptionsSheet extends StatelessWidget {
   final String title;
   final IconData icon;
   final Color color;
   final List<_SheetOption> options;
 
-  const _OptionsBottomSheet({
+  const _OptionsSheet({
     required this.title,
     required this.icon,
     required this.color,
@@ -993,7 +795,7 @@ class _OptionsBottomSheet extends StatelessWidget {
       ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1012,15 +814,15 @@ class _OptionsBottomSheet extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   ),
-                  child: Icon(icon, color: color),
+                  child: Icon(icon, color: color, size: 24),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Text(title, style: AppTextStyles.headlineMedium),
               ],
             ),
@@ -1037,16 +839,16 @@ class _OptionsBottomSheet extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     ),
                     child: Icon(option.icon, color: AppColors.primary),
                   ),
                   title: Text(option.title, style: AppTextStyles.titleMedium),
                   subtitle:
                       Text(option.subtitle, style: AppTextStyles.labelSmall),
-                  trailing: Icon(
-                    Icons.chevron_right,
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
                     color: AppColors.textMuted,
                   ),
                   onTap: option.onTap,
