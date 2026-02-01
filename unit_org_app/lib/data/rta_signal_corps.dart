@@ -35,7 +35,7 @@ class RTASignalCorps {
         'ฝึกศึกษาบุคลากรด้านการสื่อสาร',
         'ดำเนินการด้านสงครามอิเล็กทรอนิกส์',
       ],
-      childUnitIds: ['signal_center', 'signal_school', 'signal_factory', 'ew_center'],
+      childUnitIds: ['signal_center', 'signal_school', 'signal_factory', 'ew_center', 'signal_regiment_1'],
       color: Color(0xFFFF9500),
     ),
 
@@ -455,6 +455,82 @@ class RTASignalCorps {
       childUnitIds: [],
       color: Color(0xFFFF5722),
     ),
+
+    // กรมทหารสื่อสารที่ 1 (สส.1)
+    // ที่ตั้ง: ค่ายกำแพงเพชรอัครโยธิน ตำบลสวนหลวง อำเภอกระทุ่มแบน จังหวัดสมุทรสาคร
+    SignalUnit(
+      id: 'signal_regiment_1',
+      name: 'กรมทหารสื่อสารที่ 1',
+      nameEn: '1st Signal Regiment',
+      abbreviation: 'สส.1',
+      level: UnitLevel.department,
+      parentId: 'signal_dept',
+      location: UnitLocation(
+        name: 'ค่ายกำแพงเพชรอัครโยธิน',
+        province: 'สมุทรสาคร',
+        district: 'กระทุ่มแบน',
+        latitude: 13.6533,
+        longitude: 100.2597,
+      ),
+      commanderRank: 'พันเอก',
+      description: 'กรมทหารสื่อสารที่ 1 เป็นหน่วยสื่อสารระดับกรม สนับสนุนการปฏิบัติการของกองทัพบก',
+      missions: [
+        'สนับสนุนการสื่อสารให้กับหน่วยทหารในพื้นที่รับผิดชอบ',
+        'ฝึกทหารใหม่สายทหารสื่อสาร',
+        'ซ่อมบำรุงอุปกรณ์สื่อสาร',
+        'สนับสนุนการฝึกและการศึกษาทางทหาร',
+      ],
+      childUnitIds: ['signal_bn_101', 'signal_bn_102'],
+      color: Color(0xFFFF9500),
+    ),
+
+    // กองพันทหารสื่อสารที่ 101 กรมทหารสื่อสารที่ 1
+    SignalUnit(
+      id: 'signal_bn_101',
+      name: 'กองพันทหารสื่อสารที่ 101',
+      nameEn: '101st Signal Battalion',
+      abbreviation: 'ส.พัน.101',
+      level: UnitLevel.battalion,
+      parentId: 'signal_regiment_1',
+      location: UnitLocation(
+        name: 'ค่ายกำแพงเพชรอัครโยธิน',
+        province: 'สมุทรสาคร',
+        district: 'กระทุ่มแบน',
+        latitude: 13.6533,
+        longitude: 100.2597,
+      ),
+      commanderRank: 'พันโท',
+      description: 'กองพันทหารสื่อสารที่ 101 กรมทหารสื่อสารที่ 1',
+      missions: ['สนับสนุนการสื่อสารและฝึกทหารใหม่'],
+      childUnitIds: [],
+      personnelMin: 300,
+      personnelMax: 500,
+      color: Color(0xFFFF9500),
+    ),
+
+    // กองพันทหารสื่อสารที่ 102 กรมทหารสื่อสารที่ 1
+    SignalUnit(
+      id: 'signal_bn_102',
+      name: 'กองพันทหารสื่อสารที่ 102',
+      nameEn: '102nd Signal Battalion',
+      abbreviation: 'ส.พัน.102',
+      level: UnitLevel.battalion,
+      parentId: 'signal_regiment_1',
+      location: UnitLocation(
+        name: 'ค่ายกำแพงเพชรอัครโยธิน',
+        province: 'สมุทรสาคร',
+        district: 'กระทุ่มแบน',
+        latitude: 13.6533,
+        longitude: 100.2597,
+      ),
+      commanderRank: 'พันโท',
+      description: 'กองพันทหารสื่อสารที่ 102 กรมทหารสื่อสารที่ 1',
+      missions: ['สนับสนุนการสื่อสารและฝึกทหารใหม่'],
+      childUnitIds: [],
+      personnelMin: 300,
+      personnelMax: 500,
+      color: Color(0xFFFF9500),
+    ),
   ];
 
   // =============================================
@@ -468,23 +544,25 @@ class RTASignalCorps {
     // ส.พัน.1, ส.พัน.2, ส.พัน.9, ส.พัน.21
     // =============================================
 
+    // กองพันทหารสื่อสารที่ 1 รักษาพระองค์ (ส.พัน.1 รอ.)
+    // ที่ตั้ง: ถนนนางลิ้นจี่ แขวงทุ่งมหาเมฆ เขตสาทร กรุงเทพฯ
     SignalUnit(
       id: 'signal_bn_1',
-      name: 'กองพันทหารสื่อสารที่ 1',
-      nameEn: '1st Signal Battalion',
-      abbreviation: 'ส.พัน.1',
+      name: 'กองพันทหารสื่อสารที่ 1 รักษาพระองค์',
+      nameEn: '1st Signal Battalion (Royal Guard)',
+      abbreviation: 'ส.พัน.1 รอ.',
       level: UnitLevel.battalion,
       parentId: '1st_army_area',
       location: UnitLocation(
-        name: 'กรุงเทพมหานคร',
+        name: 'ถนนนางลิ้นจี่',
         province: 'กรุงเทพมหานคร',
-        district: 'ดุสิต',
-        latitude: 13.7780,
-        longitude: 100.5120,
+        district: 'สาทร',
+        latitude: 13.7130,
+        longitude: 100.5430,
       ),
       commanderRank: 'พันโท',
-      description: 'กองพันทหารสื่อสารที่ 1 สนับสนุน ทภ.1',
-      missions: ['สนับสนุนการสื่อสารให้ ทภ.1'],
+      description: 'กองพันทหารสื่อสารที่ 1 รักษาพระองค์ สนับสนุน กองพลที่ 1 รักษาพระองค์',
+      missions: ['สนับสนุนการสื่อสารให้ พล.1 รอ. และ ทภ.1'],
       childUnitIds: [],
       personnelMin: 300,
       personnelMax: 500,
@@ -492,6 +570,8 @@ class RTASignalCorps {
       color: Color(0xFF4CAF50),
     ),
 
+    // กองพันทหารสื่อสารที่ 2 (ส.พัน.2)
+    // ที่ตั้ง: ค่ายจักรพงษ์ ตำบลดงพระราม อำเภอเมืองปราจีนบุรี จังหวัดปราจีนบุรี
     SignalUnit(
       id: 'signal_bn_2',
       name: 'กองพันทหารสื่อสารที่ 2',
@@ -503,12 +583,12 @@ class RTASignalCorps {
         name: 'ค่ายจักรพงษ์',
         province: 'ปราจีนบุรี',
         district: 'เมืองปราจีนบุรี',
-        latitude: 14.0579,
-        longitude: 101.3731,
+        latitude: 14.0500,
+        longitude: 101.3700,
       ),
       commanderRank: 'พันโท',
-      description: 'กองพันทหารสื่อสารที่ 2 สนับสนุน ทภ.1',
-      missions: ['สนับสนุนการสื่อสารให้ ทภ.1'],
+      description: 'กองพันทหารสื่อสารที่ 2 สนับสนุน กองพลทหารราบที่ 2 รอ. และ ทภ.1',
+      missions: ['สนับสนุนการสื่อสารให้ พล.ร.2 รอ. และ ทภ.1 (ส่วนหน้า)'],
       childUnitIds: [],
       personnelMin: 300,
       personnelMax: 500,
@@ -516,6 +596,8 @@ class RTASignalCorps {
       color: Color(0xFF4CAF50),
     ),
 
+    // กองพันทหารสื่อสารที่ 9 (ส.พัน.9)
+    // ที่ตั้ง: ค่ายสุรสีห์ ตำบลลาดหญ้า อำเภอเมืองกาญจนบุรี จังหวัดกาญจนบุรี
     SignalUnit(
       id: 'signal_bn_9',
       name: 'กองพันทหารสื่อสารที่ 9',
@@ -527,8 +609,8 @@ class RTASignalCorps {
         name: 'ค่ายสุรสีห์',
         province: 'กาญจนบุรี',
         district: 'เมืองกาญจนบุรี',
-        latitude: 14.0200,
-        longitude: 99.5300,
+        latitude: 14.4781,
+        longitude: 99.4303,
       ),
       commanderRank: 'พันโท',
       description: 'กองพันทหารสื่อสารที่ 9 สนับสนุน ทภ.1',
@@ -540,6 +622,8 @@ class RTASignalCorps {
       color: Color(0xFF4CAF50),
     ),
 
+    // กองพันทหารสื่อสารที่ 21 (ส.พัน.21)
+    // ที่ตั้ง: ค่ายนวมินทราชินี ตำบลบ้านสวน อำเภอเมืองชลบุรี จังหวัดชลบุรี
     SignalUnit(
       id: 'signal_bn_21',
       name: 'กองพันทหารสื่อสารที่ 21',
@@ -551,7 +635,7 @@ class RTASignalCorps {
         name: 'ค่ายนวมินทราชินี',
         province: 'ชลบุรี',
         district: 'เมืองชลบุรี',
-        latitude: 13.3622,
+        latitude: 13.3611,
         longitude: 100.9847,
       ),
       commanderRank: 'พันโท',
