@@ -44,10 +44,10 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
   String _antennaMode = 'omni'; // omni, directional
 
   // === Detected Signals ===
-  List<DetectedSignal> _signals = [];
+  final List<DetectedSignal> _signals = [];
   DetectedSignal? _selectedSignal;
-  List<Drone> _drones = [];
-  List<String> _eventLog = [];
+  final List<Drone> _drones = [];
+  final List<String> _eventLog = [];
 
   // === Timers ===
   Timer? _gameTimer;
@@ -56,8 +56,8 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
   final Random _rng = Random();
 
   // === Map ===
-  Offset _jammerPos = const Offset(50, 50);
-  Offset _protectedArea = const Offset(50, 50);
+  final Offset _jammerPos = const Offset(50, 50);
+  final Offset _protectedArea = const Offset(50, 50);
   double _protectionRadius = 20.0;
 
   @override
@@ -395,7 +395,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'คะแนนรวม',
               style: TextStyle(color: AppColors.textSecondary),
             ),

@@ -181,10 +181,10 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
                         color: AppColors.danger.withAlpha(30),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.warning_amber, size: 14, color: AppColors.danger),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             'ข้อมูล EW',
                             style: TextStyle(
@@ -332,7 +332,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.shield, size: 12, color: Colors.white),
+                            const Icon(Icons.shield, size: 12, color: Colors.white),
                             const SizedBox(width: 4),
                             Text(
                               drone.threatLevel!,
@@ -398,7 +398,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.wifi_tethering, size: 18, color: AppColors.danger),
+                          const Icon(Icons.wifi_tethering, size: 18, color: AppColors.danger),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
@@ -413,7 +413,7 @@ class _UAVDatabaseScreenState extends State<UAVDatabaseScreen> with SingleTicker
                                 ),
                                 Text(
                                   drone.controlFreq!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppColors.danger,
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,

@@ -51,7 +51,7 @@ class FrequencyChartScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, color: AppColors.primary, size: 24),
+          const Icon(Icons.info_outline, color: AppColors.primary, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -158,12 +158,12 @@ class FrequencyChartScreen extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.warning_amber, size: 16, color: AppColors.danger),
+                        const Icon(Icons.warning_amber, size: 16, color: AppColors.danger),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             band.ewNotes!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.danger,
                               fontSize: 12,
                             ),

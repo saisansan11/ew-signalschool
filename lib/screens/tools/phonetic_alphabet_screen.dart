@@ -131,7 +131,7 @@ class _PhoneticAlphabetScreenState extends State<PhoneticAlphabetScreen> {
           // Letter
           Text(
             item.letter,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.primary,
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -205,7 +205,7 @@ class _PhoneticAlphabetScreenState extends State<PhoneticAlphabetScreen> {
         children: [
           Text(
             item.letter,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.primary,
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -255,7 +255,7 @@ class _PhoneticAlphabetScreenState extends State<PhoneticAlphabetScreen> {
             child: Center(
               child: Text(
                 item.letter,
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -306,7 +306,7 @@ class _PhoneticAlphabetScreenState extends State<PhoneticAlphabetScreen> {
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+              const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -373,7 +373,7 @@ class _PhoneticAlphabetScreenState extends State<PhoneticAlphabetScreen> {
           const SizedBox(height: 10),
           Text(
             item.word,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.primary,
               fontSize: 16,
               fontWeight: FontWeight.bold,

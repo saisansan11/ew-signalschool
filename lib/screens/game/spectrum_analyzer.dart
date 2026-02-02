@@ -20,7 +20,7 @@ class _SpectrumAnalyzerState extends State<SpectrumAnalyzer>
   double _span = 500.0; // MHz
   double _refLevel = -20.0; // dBm
   bool _holdMax = false;
-  bool _showMarkers = true;
+  final bool _showMarkers = true;
   int _selectedSignal = -1;
 
   // Analysis mode
@@ -653,7 +653,7 @@ class _SpectrumAnalyzerState extends State<SpectrumAnalyzer>
         children: List.generate(5, (i) {
           final freq = _centerFreq - _span / 2 + (_span / 4 * i);
           return Text(
-            '${freq.toStringAsFixed(1)}',
+            freq.toStringAsFixed(1),
             style: TextStyle(
               color: Colors.green.withAlpha(150),
               fontSize: 10,
@@ -1266,7 +1266,7 @@ class SpectrumPainter extends CustomPainter {
 
     // Calculate position
     final x = (signal.frequency - startFreq) / span * size.width;
-    final powerRange = 100.0; // dB range
+    const powerRange = 100.0; // dB range
     final normalizedPower = (refLevel - signal.power) / powerRange;
     final y = normalizedPower.clamp(0.0, 1.0) * size.height;
 

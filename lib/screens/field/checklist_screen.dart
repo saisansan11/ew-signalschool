@@ -317,7 +317,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     final allCompleted = _completedCount == _items.length;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(top: BorderSide(color: AppColors.border)),
       ),
