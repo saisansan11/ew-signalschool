@@ -30,16 +30,24 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
 
         final filteredSymbols = _selectedCategory == 'ทั้งหมด'
             ? _militarySymbols
-            : _militarySymbols.where((s) => s.category == _selectedCategory).toList();
+            : _militarySymbols
+                  .where((s) => s.category == _selectedCategory)
+                  .toList();
 
         return Scaffold(
-          backgroundColor: isDark ? AppColors.background : AppColorsLight.background,
+          backgroundColor: isDark
+              ? AppColors.background
+              : AppColorsLight.background,
           appBar: AppBar(
-            backgroundColor: isDark ? AppColors.surface : AppColorsLight.surface,
+            backgroundColor: isDark
+                ? AppColors.surface
+                : AppColorsLight.surface,
             title: Text(
               'NATO MILITARY SYMBOLS',
               style: TextStyle(
-                color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+                color: isDark
+                    ? AppColors.textPrimary
+                    : AppColorsLight.textPrimary,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
                 fontSize: 16,
@@ -47,7 +55,9 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
             ),
             centerTitle: true,
             iconTheme: IconThemeData(
-              color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+              color: isDark
+                  ? AppColors.textPrimary
+                  : AppColorsLight.textPrimary,
             ),
           ),
           body: Column(
@@ -63,13 +73,19 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                    const Icon(
+                      Icons.info_outline,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         'สัญลักษณ์ทางทหารตามมาตรฐาน MIL-STD-2525D (APP-6)',
                         style: TextStyle(
-                          color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
+                          color: isDark
+                              ? AppColors.textSecondary
+                              : AppColorsLight.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -88,24 +104,36 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
                     final category = _categories[index];
                     final isSelected = category == _selectedCategory;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 8,
+                      ),
                       child: FilterChip(
                         label: Text(
                           category,
                           style: TextStyle(
                             color: isSelected
                                 ? Colors.white
-                                : (isDark ? AppColors.textSecondary : AppColorsLight.textSecondary),
+                                : (isDark
+                                      ? AppColors.textSecondary
+                                      : AppColorsLight.textSecondary),
                             fontSize: 12,
                           ),
                         ),
                         selected: isSelected,
-                        onSelected: (_) => setState(() => _selectedCategory = category),
-                        backgroundColor: isDark ? AppColors.surface : AppColorsLight.surface,
+                        onSelected: (_) =>
+                            setState(() => _selectedCategory = category),
+                        backgroundColor: isDark
+                            ? AppColors.surface
+                            : AppColorsLight.surface,
                         selectedColor: AppColors.primary,
                         checkmarkColor: Colors.white,
                         side: BorderSide(
-                          color: isSelected ? AppColors.primary : (isDark ? AppColors.border : AppColorsLight.border),
+                          color: isSelected
+                              ? AppColors.primary
+                              : (isDark
+                                    ? AppColors.border
+                                    : AppColorsLight.border),
                         ),
                       ),
                     );
@@ -166,8 +194,16 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
             children: [
               _buildAffiliationItem('ฝ่ายเรา', Colors.blue, Icons.crop_square),
               _buildAffiliationItem('ศัตรู', Colors.red, Icons.change_history),
-              _buildAffiliationItem('กลาง', Colors.green, Icons.crop_square_rounded),
-              _buildAffiliationItem('ไม่ทราบ', Colors.yellow.shade700, Icons.circle_outlined),
+              _buildAffiliationItem(
+                'กลาง',
+                Colors.green,
+                Icons.crop_square_rounded,
+              ),
+              _buildAffiliationItem(
+                'ไม่ทราบ',
+                Colors.yellow.shade700,
+                Icons.circle_outlined,
+              ),
             ],
           ),
         ],
@@ -216,9 +252,11 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
                 borderRadius: symbol.affiliation == 'friendly'
                     ? BorderRadius.circular(4)
                     : symbol.affiliation == 'hostile'
-                        ? null
-                        : BorderRadius.circular(12),
-                shape: symbol.affiliation == 'hostile' ? BoxShape.rectangle : BoxShape.rectangle,
+                    ? null
+                    : BorderRadius.circular(12),
+                shape: symbol.affiliation == 'hostile'
+                    ? BoxShape.rectangle
+                    : BoxShape.rectangle,
               ),
               child: Center(
                 child: Text(
@@ -240,7 +278,9 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimary
+                      : AppColorsLight.textPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -296,8 +336,8 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
                   borderRadius: symbol.affiliation == 'friendly'
                       ? BorderRadius.circular(6)
                       : symbol.affiliation == 'hostile'
-                          ? null
-                          : BorderRadius.circular(16),
+                      ? null
+                      : BorderRadius.circular(16),
                 ),
                 child: Center(
                   child: Text(
@@ -314,7 +354,9 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
               Text(
                 symbol.name,
                 style: TextStyle(
-                  color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimary
+                      : AppColorsLight.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -322,7 +364,9 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
               Text(
                 symbol.thaiName,
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondary
+                      : AppColorsLight.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -330,14 +374,18 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.background : AppColorsLight.background,
+                  color: isDark
+                      ? AppColors.background
+                      : AppColorsLight.background,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   symbol.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
+                    color: isDark
+                        ? AppColors.textSecondary
+                        : AppColorsLight.textSecondary,
                     fontSize: 13,
                     height: 1.5,
                   ),
@@ -379,7 +427,7 @@ class _NatoSymbolsScreenState extends State<NatoSymbolsScreen> {
           ),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.primary,
               fontSize: 11,
               fontWeight: FontWeight.bold,
