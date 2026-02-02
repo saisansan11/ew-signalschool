@@ -404,35 +404,39 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         .cast<SignalUnit>()
         .toList();
 
+    final rootColor = AppColors.signalCorps;
+
     return Column(
       children: [
         // Vertical connector from root
-        Center(
-          child: Container(
-            width: 3,
-            height: 30,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.signalCorps,
-                  AppColors.signalCorps.withValues(alpha: 0.3),
-                ],
-              ),
-            ),
+        Container(
+          width: 3,
+          height: 30,
+          color: rootColor.withValues(alpha: 0.5),
+        ),
+        // Horizontal connector line for direct children
+        _buildTreeConnector(directChildren.length, rootColor),
+        const SizedBox(height: 8),
+        // Direct children in horizontal layout
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: directChildren.asMap().entries.map((entry) {
+              final index = entry.key;
+              final unit = entry.value;
+              return _buildDirectChildWithConnector(unit, rootColor, index, directChildren.length);
+            }).toList(),
           ),
         ),
-        const SizedBox(height: 8),
-
-        // Grid of subordinate units - hierarchical display
-        ...directChildren.map((unit) => _buildHierarchicalUnit(unit)),
       ],
     );
   }
 
-  /// Build a hierarchical display of a unit with its children displayed horizontally
-  Widget _buildHierarchicalUnit(SignalUnit unit) {
+  /// Build a direct child node with vertical connector and expandable children
+  Widget _buildDirectChildWithConnector(SignalUnit unit, Color parentColor, int index, int totalChildren) {
     final hasChildren = unit.childUnitIds.isNotEmpty;
     final controller = _getExpandController(unit.id);
     final isSelected = _selectedUnit?.id == unit.id;
@@ -445,15 +449,22 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         .toList();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      width: 200,
+      margin: EdgeInsets.only(
+        left: index == 0 ? 0 : 12,
+        right: index == totalChildren - 1 ? 0 : 12,
+      ),
       child: Column(
         children: [
-          // Parent unit card - centered
-          Center(
-            child: _buildCompactUnitCard(unit, isSelected, hasChildren, children.length, () => _toggleExpand(unit.id)),
+          // Vertical connector from horizontal line
+          Container(
+            width: 2,
+            height: 20,
+            color: parentColor.withValues(alpha: 0.5),
           ),
-
-          // Children section with tree layout
+          // Unit card
+          _buildExpandableUnitCard(unit, isSelected, hasChildren, children.length),
+          // Children section
           if (hasChildren)
             AnimatedBuilder(
               animation: controller,
@@ -474,12 +485,12 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                   // Vertical connector from parent
                   Container(
                     width: 2,
-                    height: 24,
+                    height: 20,
                     color: unit.color.withValues(alpha: 0.5),
                   ),
-                  // Horizontal connector line
+                  // Horizontal connector for children
                   _buildTreeConnector(children.length, unit.color),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   // Children in horizontal layout
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -487,9 +498,9 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: children.asMap().entries.map((entry) {
-                        final index = entry.key;
+                        final childIndex = entry.key;
                         final child = entry.value;
-                        return _buildChildNodeWithConnector(child, unit.color, index, children.length);
+                        return _buildChildNodeWithConnector(child, unit.color, childIndex, children.length);
                       }).toList(),
                     ),
                   ),
@@ -497,6 +508,136 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  /// Expandable unit card with toggle button
+  Widget _buildExpandableUnitCard(SignalUnit unit, bool isSelected, bool hasChildren, int childCount) {
+    return GestureDetector(
+      onTap: () => _selectUnit(unit),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          border: Border.all(
+            color: isSelected ? unit.color : unit.color.withValues(alpha: 0.5),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: unit.color.withValues(alpha: 0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Level badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: unit.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                unit.level.symbol,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: unit.color,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Icon
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: unit.color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _getUnitIcon(unit),
+                size: 20,
+                color: unit.color,
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Name
+            Text(
+              unit.name,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            // Abbreviation
+            Text(
+              unit.abbreviation,
+              style: TextStyle(
+                fontSize: 11,
+                color: unit.color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Commander rank
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.military_tech, size: 12, color: AppColors.officer),
+                const SizedBox(width: 2),
+                Text(
+                  unit.commanderRank,
+                  style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                ),
+              ],
+            ),
+            // Expand button
+            if (hasChildren) ...[
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () => _toggleExpand(unit.id),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: unit.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: unit.color.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$childCount',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: unit.color,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      AnimatedRotation(
+                        turns: _expandedUnits.contains(unit.id) ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 14,
+                          color: unit.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -538,137 +679,6 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
           // Child card
           _buildTreeChildCard(unit, parentColor),
         ],
-      ),
-    );
-  }
-
-  /// Compact card for tree parent nodes
-  Widget _buildCompactUnitCard(SignalUnit unit, bool isSelected, bool hasChildren, int childCount, VoidCallback onToggle) {
-    return GestureDetector(
-      onTap: () => _selectUnit(unit),
-      child: Container(
-        width: 240,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusL),
-          border: Border.all(
-            color: isSelected ? unit.color : unit.color.withValues(alpha: 0.5),
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: unit.color.withValues(alpha: 0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            // Level badge at top
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: unit.color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                unit.level.symbol,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: unit.color,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            // Icon
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: unit.color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-                border: Border.all(color: unit.color.withValues(alpha: 0.3), width: 2),
-              ),
-              child: Icon(
-                _getUnitIcon(unit),
-                size: 26,
-                color: unit.color,
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Name
-            Text(
-              unit.name,
-              style: AppTextStyles.titleMedium.copyWith(fontSize: 14),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            // Abbreviation
-            Text(
-              unit.abbreviation,
-              style: TextStyle(
-                fontSize: 13,
-                color: unit.color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 6),
-            // Commander rank
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.military_tech, size: 14, color: AppColors.officer),
-                const SizedBox(width: 4),
-                Text(
-                  unit.commanderRank,
-                  style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                ),
-              ],
-            ),
-            // Expand button
-            if (hasChildren) ...[
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: onToggle,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: unit.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: unit.color.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '$childCount หน่วยรอง',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: unit.color,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      AnimatedRotation(
-                        turns: _expandedUnits.contains(unit.id) ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 16,
-                          color: unit.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }
