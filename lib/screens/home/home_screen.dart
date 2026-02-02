@@ -6,6 +6,8 @@ import '../../services/progress_service.dart';
 import '../../services/theme_provider.dart';
 import '../game/jamming_simulator.dart';
 import '../globe/ew_globe_screen.dart';
+import '../tools/link_budget_calculator.dart';
+import '../learning/learning_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -918,14 +920,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.5,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 2.2,
           children: [
-            _buildCommandCard(
+            _buildCompactCommandCard(
               icon: Icons.flash_on,
               title: 'EW SIMULATOR',
-              subtitle: 'Jamming Practice',
               color: AppColors.danger,
               isDark: isDark,
               onTap: () {
@@ -935,257 +936,100 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 );
               },
             ),
-            _buildCommandCard(
+            _buildCompactCommandCard(
               icon: Icons.calculate,
               title: 'EW CALCULATOR',
-              subtitle: 'Signal Analysis',
               color: AppColors.tabTools,
               isDark: isDark,
               onTap: () {
-                // Navigate to Tools tab
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('ไปที่แท็บ "เครื่องมือ" เพื่อใช้งาน'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LinkBudgetCalculator()),
                 );
               },
             ),
-            _buildCommandCard(
+            _buildCompactCommandCard(
               icon: Icons.school,
               title: 'TRAINING',
-              subtitle: 'Start Learning',
               color: AppColors.tabLearning,
               isDark: isDark,
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('ไปที่แท็บ "เรียนรู้" เพื่อเริ่มบทเรียน'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LearningScreen()),
                 );
               },
             ),
-            _buildCommandCard(
-              icon: Icons.shield,
-              title: 'FIELD MODE',
-              subtitle: 'Operations',
-              color: AppColors.warning,
+            _buildCompactCommandCard(
+              icon: Icons.public,
+              title: 'GLOBAL OPS',
+              color: Colors.cyan,
               isDark: isDark,
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('ไปที่แท็บ "ภาคสนาม" สำหรับปฏิบัติการ'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EWGlobeScreen()),
                 );
               },
             ),
           ],
         ),
 
-        const SizedBox(height: 16),
-
-        // Global Operations Button
-        _buildGlobalOpsCard(isDark),
       ],
     );
   }
 
-  Widget _buildCommandCard({
+  Widget _buildCompactCommandCard({
     required IconData icon,
     required String title,
-    required String subtitle,
     required Color color,
     required bool isDark,
     required VoidCallback onTap,
   }) {
-    return AnimatedBuilder(
-      animation: _pulseAnimation,
-      builder: (context, child) {
-        return GestureDetector(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark
-                ? AppColors.surface.withAlpha(200)
-                : AppColorsLight.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark
-                  ? color.withAlpha((60 * _pulseAnimation.value).toInt())
-                  : color.withAlpha(100),
-                width: isDark ? 1.5 : 1,
-              ),
-              boxShadow: isDark ? [
-                BoxShadow(
-                  color: color.withAlpha((20 * _pulseAnimation.value).toInt()),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                ),
-              ] : [
-                BoxShadow(
-                  color: Colors.black.withAlpha(10),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: color.withAlpha(isDark ? 30 : 40),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(icon, color: color, size: 22),
-                    ),
-                    const Spacer(),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
-                      size: 14,
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark
+            ? AppColors.surface.withAlpha(200)
+            : AppColorsLight.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+              ? color.withAlpha(60)
+              : color.withAlpha(100),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildGlobalOpsCard(bool isDark) {
-    return AnimatedBuilder(
-      animation: _pulseAnimation,
-      builder: (context, child) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const EWGlobeScreen()),
-            );
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isDark
-                  ? [
-                      Colors.cyan.withAlpha(30),
-                      Colors.blue.withAlpha(20),
-                    ]
-                  : [
-                      Colors.cyan.withAlpha(50),
-                      Colors.blue.withAlpha(30),
-                    ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withAlpha(isDark ? 30 : 40),
+                borderRadius: BorderRadius.circular(8),
               ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark
-                  ? Colors.cyan.withAlpha((100 * _pulseAnimation.value).toInt())
-                  : Colors.cyan.withAlpha(150),
-                width: 2,
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              boxShadow: isDark ? [
-                BoxShadow(
-                  color: Colors.cyan.withAlpha((30 * _pulseAnimation.value).toInt()),
-                  blurRadius: 15,
-                  spreadRadius: 2,
-                ),
-              ] : null,
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.cyan.withAlpha(isDark ? 50 : 80),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.public, color: Colors.cyan, size: 28),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'GLOBAL OPERATIONS',
-                            style: TextStyle(
-                              color: isDark ? Colors.cyan : Colors.cyan.shade700,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.cyan,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text(
-                              'NEW',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'สำรวจเหตุการณ์ EW ทั่วโลกบน 3D Globe',
-                        style: TextStyle(
-                          color: isDark ? Colors.white70 : Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: isDark ? Colors.cyan : Colors.cyan.shade700,
-                  size: 18,
-                ),
-              ],
+            Icon(
+              Icons.arrow_forward_ios,
+              color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
+              size: 12,
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
