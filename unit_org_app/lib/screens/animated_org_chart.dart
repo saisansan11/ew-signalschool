@@ -406,7 +406,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
 
     return Column(
       children: [
-        // Connector from root
+        // Vertical connector from root
         Center(
           child: Container(
             width: 3,
@@ -417,7 +417,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                 end: Alignment.bottomCenter,
                 colors: [
                   AppColors.signalCorps,
-                  AppColors.signalCorps.withOpacity(0.3),
+                  AppColors.signalCorps.withValues(alpha: 0.3),
                 ],
               ),
             ),
@@ -425,14 +425,14 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         ),
         const SizedBox(height: 8),
 
-        // Grid of subordinate units
-        ...directChildren.map((unit) => _buildUnitCard(unit)),
+        // Grid of subordinate units - hierarchical display
+        ...directChildren.map((unit) => _buildHierarchicalUnit(unit)),
       ],
     );
   }
 
-  Widget _buildUnitCard(SignalUnit unit) {
-    final isExpanded = _expandedUnits.contains(unit.id);
+  /// Build a hierarchical display of a unit with its children displayed horizontally
+  Widget _buildHierarchicalUnit(SignalUnit unit) {
     final hasChildren = unit.childUnitIds.isNotEmpty;
     final controller = _getExpandController(unit.id);
     final isSelected = _selectedUnit?.id == unit.id;
@@ -445,232 +445,260 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         .toList();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 24),
       child: Column(
         children: [
-          // Main unit card
-          GestureDetector(
-            onTap: () => _selectUnit(unit),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppSizes.radiusL),
-                border: Border.all(
-                  color: isSelected ? unit.color : unit.color.withOpacity(0.5),
-                  width: isSelected ? 2 : 1,
-                ),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: unit.color.withOpacity(0.2),
-                          blurRadius: 12,
-                        ),
-                      ]
-                    : null,
-              ),
+          // Parent unit card - centered
+          Center(
+            child: _buildCompactUnitCard(unit, isSelected, hasChildren, children.length, () => _toggleExpand(unit.id)),
+          ),
+
+          // Children section with tree layout
+          if (hasChildren)
+            AnimatedBuilder(
+              animation: controller,
+              builder: (context, child) {
+                return ClipRect(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    heightFactor: controller.value,
+                    child: Opacity(
+                      opacity: controller.value,
+                      child: child,
+                    ),
+                  ),
+                );
+              },
               child: Column(
                 children: [
-                  // Header row
-                  Row(
-                    children: [
-                      // Level symbol
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: unit.color.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          unit.level.symbol,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: unit.color,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // Icon
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: unit.color.withOpacity(0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          _getUnitIcon(unit),
-                          size: 24,
-                          color: unit.color,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // Name & info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              unit.name,
-                              style: AppTextStyles.titleMedium,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  unit.abbreviation,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: unit.color,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  width: 4,
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.textMuted,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  unit.commanderRank,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textMuted,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Expand button
-                      if (hasChildren)
-                        GestureDetector(
-                          onTap: () => _toggleExpand(unit.id),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: unit.color.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${children.length}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: unit.color,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                AnimatedRotation(
-                                  turns: isExpanded ? 0.5 : 0,
-                                  duration: const Duration(milliseconds: 200),
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    size: 20,
-                                    color: unit.color,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
+                  // Vertical connector from parent
+                  Container(
+                    width: 2,
+                    height: 24,
+                    color: unit.color.withValues(alpha: 0.5),
                   ),
-
-                  // Children section (expanded)
-                  if (hasChildren)
-                    AnimatedBuilder(
-                      animation: controller,
-                      builder: (context, child) {
-                        return ClipRect(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            heightFactor: controller.value,
-                            child: Opacity(
-                              opacity: controller.value,
-                              child: child,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          Container(
-                            height: 1,
-                            color: unit.color.withOpacity(0.2),
-                          ),
-                          const SizedBox(height: 12),
-                          // Sub-units header
-                          Row(
-                            children: [
-                              Icon(Icons.subdirectory_arrow_right, size: 16, color: unit.color),
-                              const SizedBox(width: 8),
-                              Text(
-                                'หน่วยรอง (${children.length} หน่วย)',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: unit.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          // Children list
-                          ...children.map((child) => _buildSubUnitItem(child, unit.color)),
-                        ],
-                      ),
+                  // Horizontal connector line
+                  _buildTreeConnector(children.length, unit.color),
+                  const SizedBox(height: 8),
+                  // Children in horizontal layout
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: children.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final child = entry.value;
+                        return _buildChildNodeWithConnector(child, unit.color, index, children.length);
+                      }).toList(),
                     ),
+                  ),
                 ],
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildSubUnitItem(SignalUnit unit, Color parentColor) {
+  /// Build the horizontal tree connector line
+  Widget _buildTreeConnector(int childCount, Color color) {
+    if (childCount <= 1) return const SizedBox.shrink();
+
+    // Calculate width based on number of children
+    final nodeWidth = 180.0;
+    final spacing = 16.0;
+    final totalWidth = (nodeWidth + spacing) * childCount - spacing;
+
+    return SizedBox(
+      width: totalWidth,
+      height: 2,
+      child: CustomPaint(
+        painter: _TreeConnectorPainter(color: color.withValues(alpha: 0.5)),
+      ),
+    );
+  }
+
+  /// Build a child node with vertical connector
+  Widget _buildChildNodeWithConnector(SignalUnit unit, Color parentColor, int index, int totalChildren) {
+    return Container(
+      width: 180,
+      margin: EdgeInsets.only(
+        left: index == 0 ? 0 : 8,
+        right: index == totalChildren - 1 ? 0 : 8,
+      ),
+      child: Column(
+        children: [
+          // Vertical connector from horizontal line
+          Container(
+            width: 2,
+            height: 16,
+            color: parentColor.withValues(alpha: 0.5),
+          ),
+          // Child card
+          _buildTreeChildCard(unit, parentColor),
+        ],
+      ),
+    );
+  }
+
+  /// Compact card for tree parent nodes
+  Widget _buildCompactUnitCard(SignalUnit unit, bool isSelected, bool hasChildren, int childCount, VoidCallback onToggle) {
     return GestureDetector(
       onTap: () => _selectUnit(unit),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        width: 240,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusL),
+          border: Border.all(
+            color: isSelected ? unit.color : unit.color.withValues(alpha: 0.5),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: unit.color.withValues(alpha: 0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Level badge at top
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: unit.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                unit.level.symbol,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: unit.color,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Icon
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: unit.color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: unit.color.withValues(alpha: 0.3), width: 2),
+              ),
+              child: Icon(
+                _getUnitIcon(unit),
+                size: 26,
+                color: unit.color,
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Name
+            Text(
+              unit.name,
+              style: AppTextStyles.titleMedium.copyWith(fontSize: 14),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            // Abbreviation
+            Text(
+              unit.abbreviation,
+              style: TextStyle(
+                fontSize: 13,
+                color: unit.color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 6),
+            // Commander rank
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.military_tech, size: 14, color: AppColors.officer),
+                const SizedBox(width: 4),
+                Text(
+                  unit.commanderRank,
+                  style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                ),
+              ],
+            ),
+            // Expand button
+            if (hasChildren) ...[
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: onToggle,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: unit.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: unit.color.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$childCount หน่วยรอง',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: unit.color,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      AnimatedRotation(
+                        turns: _expandedUnits.contains(unit.id) ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 16,
+                          color: unit.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Compact card for tree child nodes
+  Widget _buildTreeChildCard(SignalUnit unit, Color parentColor) {
+    return GestureDetector(
+      onTap: () => _selectUnit(unit),
+      child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: parentColor.withOpacity(0.05),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          border: Border.all(color: parentColor.withOpacity(0.2)),
-        ),
-        child: Row(
-          children: [
-            // Connector line
-            Container(
-              width: 20,
-              height: 2,
-              color: parentColor.withOpacity(0.3),
+          border: Border.all(color: parentColor.withValues(alpha: 0.4)),
+          boxShadow: [
+            BoxShadow(
+              color: parentColor.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            const SizedBox(width: 8),
-
-            // Level symbol
+          ],
+        ),
+        child: Column(
+          children: [
+            // Level badge
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: parentColor.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(4),
+                color: parentColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 unit.level.symbol,
@@ -681,54 +709,55 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-
+            const SizedBox(height: 8),
             // Icon
             Container(
-              width: 28,
-              height: 28,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: parentColor.withOpacity(0.1),
+                color: parentColor.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 _getUnitIcon(unit),
-                size: 14,
+                size: 18,
                 color: parentColor,
               ),
             ),
-            const SizedBox(width: 10),
-
+            const SizedBox(height: 8),
             // Name
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    unit.name,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${unit.abbreviation} • ${unit.commanderRank}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: parentColor.withOpacity(0.8),
-                    ),
-                  ),
-                ],
+            Text(
+              unit.name,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            // Abbreviation
+            Text(
+              unit.abbreviation,
+              style: TextStyle(
+                fontSize: 11,
+                color: parentColor,
+                fontWeight: FontWeight.bold,
               ),
             ),
-
-            // Arrow
-            Icon(
-              Icons.chevron_right,
-              size: 18,
-              color: parentColor.withOpacity(0.5),
+            const SizedBox(height: 4),
+            // Commander rank
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.military_tech, size: 12, color: AppColors.officer),
+                const SizedBox(width: 2),
+                Text(
+                  unit.commanderRank,
+                  style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                ),
+              ],
             ),
           ],
         ),
@@ -1186,9 +1215,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -1213,4 +1242,29 @@ class _InfoCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Custom painter for drawing horizontal tree connector lines
+class _TreeConnectorPainter extends CustomPainter {
+  final Color color;
+
+  _TreeConnectorPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    // Draw horizontal line across the full width
+    canvas.drawLine(
+      Offset(0, size.height / 2),
+      Offset(size.width, size.height / 2),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
