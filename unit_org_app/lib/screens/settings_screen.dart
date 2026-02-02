@@ -56,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                     gradient: RadialGradient(
                       colors: [
                         AppColors.signalCorps
-                            .withValues(alpha:0.15 * _glowAnimation.value),
+                            .withOpacity(0.15 * _glowAnimation.value),
                         Colors.transparent,
                       ],
                     ),
@@ -142,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen>
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.signalCorps.withValues(alpha:0.1),
+            color: AppColors.signalCorps.withOpacity(0.1),
             blurRadius: 20,
           ),
         ],
@@ -158,8 +158,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.signalCorps.withValues(alpha:0.2),
-                      AppColors.signalCorps.withValues(alpha:0.1),
+                      AppColors.signalCorps.withOpacity(0.2),
+                      AppColors.signalCorps.withOpacity(0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
@@ -245,7 +245,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                 borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                 child: LinearProgressIndicator(
                   value: stats.masteryRate,
-                  backgroundColor: AppColors.success.withValues(alpha:0.1),
+                  backgroundColor: AppColors.success.withOpacity(0.1),
                   valueColor:
                       const AlwaysStoppedAnimation(AppColors.success),
                   minHeight: 8,
@@ -267,7 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
       ),
       child: Column(
@@ -338,7 +338,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha:0.15),
+                  color: iconColor.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
                 ),
                 child: Icon(icon, color: iconColor, size: 20),
@@ -384,8 +384,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary.withValues(alpha:0.2),
-                      AppColors.primary.withValues(alpha:0.1),
+                      AppColors.primary.withOpacity(0.2),
+                      AppColors.primary.withOpacity(0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
@@ -452,13 +452,13 @@ class _SettingsScreenState extends State<SettingsScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.signalCorps.withValues(alpha:0.15),
-            AppColors.signalCorps.withValues(alpha:0.05),
+            AppColors.signalCorps.withOpacity(0.15),
+            AppColors.signalCorps.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
         border: Border.all(
-          color: AppColors.signalCorps.withValues(alpha:0.3),
+          color: AppColors.signalCorps.withOpacity(0.3),
         ),
       ),
       child: Column(
@@ -478,7 +478,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.signalCorps.withValues(alpha:0.3),
+                  color: AppColors.signalCorps.withOpacity(0.3),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),
@@ -511,7 +511,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               vertical: 8,
             ),
             decoration: BoxDecoration(
-              color: AppColors.surface.withValues(alpha:0.5),
+              color: AppColors.surface.withOpacity(0.5),
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             ),
             child: Text(
@@ -555,7 +555,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: AppColors.error.withValues(alpha:0.15),
+                color: AppColors.error.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
               ),
               child: const Icon(
@@ -673,7 +673,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   borderRadius: BorderRadius.circular(AppSizes.radiusL),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.signalCorps.withValues(alpha:0.3),
+                      color: AppColors.signalCorps.withOpacity(0.3),
                       blurRadius: 20,
                     ),
                   ],

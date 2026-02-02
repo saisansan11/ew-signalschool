@@ -34,6 +34,74 @@ enum RankLevel {
   officer,      // นายทหาร
 }
 
+/// ข้อมูลขีดความสามารถของหน่วย
+class UnitCapabilities {
+  final List<String> capabilities;
+  final List<String> limitations;
+  final String? combatCapability;
+  final List<String> supportRequired;
+
+  const UnitCapabilities({
+    this.capabilities = const [],
+    this.limitations = const [],
+    this.combatCapability,
+    this.supportRequired = const [],
+  });
+}
+
+/// ข้อมูลกำลังพลตามระดับความพร้อม
+class ReadinessPersonnel {
+  final String level;
+  final int count;
+
+  const ReadinessPersonnel({
+    required this.level,
+    required this.count,
+  });
+}
+
+/// ข้อมูลกำลังพลแบบละเอียด
+class PersonnelBreakdown {
+  final int officers;
+  final int ncos;
+  final int enlisted;
+  final int total;
+  final ReadinessPersonnel? full;
+  final ReadinessPersonnel? reduced1;
+  final ReadinessPersonnel? reduced2;
+  final ReadinessPersonnel? skeleton;
+
+  const PersonnelBreakdown({
+    required this.officers,
+    required this.ncos,
+    required this.enlisted,
+    required this.total,
+    this.full,
+    this.reduced1,
+    this.reduced2,
+    this.skeleton,
+  });
+}
+
+/// ข้อมูลอุปกรณ์แบบละเอียด
+class EquipmentItem {
+  final String nameTh;
+  final String nameEn;
+  final String type;
+  final int quantity;
+  final String? model;
+  final String? specifications;
+
+  const EquipmentItem({
+    required this.nameTh,
+    required this.nameEn,
+    required this.type,
+    required this.quantity,
+    this.model,
+    this.specifications,
+  });
+}
+
 /// Military Unit Model
 class MilitaryUnit {
   final String id;
@@ -51,6 +119,11 @@ class MilitaryUnit {
   final String symbol;
   final List<String> equipment;
   final List<String> missions;
+  // New fields from JSON
+  final UnitCapabilities? capabilities;
+  final PersonnelBreakdown? personnelBreakdown;
+  final List<EquipmentItem> equipmentItems;
+  final String? referenceDoc;
 
   const MilitaryUnit({
     required this.id,
@@ -68,6 +141,10 @@ class MilitaryUnit {
     required this.symbol,
     this.equipment = const [],
     this.missions = const [],
+    this.capabilities,
+    this.personnelBreakdown,
+    this.equipmentItems = const [],
+    this.referenceDoc,
   });
 }
 

@@ -34,14 +34,14 @@ class GlassCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         border: showBorder
             ? Border.all(
-                color: glowColor?.withValues(alpha:0.3) ?? AppColors.border,
+                color: glowColor?.withOpacity(0.3) ?? AppColors.border,
                 width: 1,
               )
             : null,
         boxShadow: [
           if (glowColor != null)
             BoxShadow(
-              color: glowColor!.withValues(alpha: 0.15),
+              color: glowColor!.withOpacity( 0.15),
               blurRadius: 24,
               spreadRadius: 0,
             ),
@@ -146,7 +146,7 @@ class _FeatureCardState extends State<FeatureCard>
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
               color: _isPressed
-                  ? widget.color.withValues(alpha: 0.5)
+                  ? widget.color.withOpacity( 0.5)
                   : AppColors.border,
               width: 1,
             ),
@@ -192,13 +192,13 @@ class _FeatureCardState extends State<FeatureCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            widget.color.withValues(alpha:0.2),
-            widget.color.withValues(alpha:0.1),
+            widget.color.withOpacity(0.2),
+            widget.color.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(
-          color: widget.color.withValues(alpha:0.3),
+          color: widget.color.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -217,10 +217,10 @@ class _FeatureCardState extends State<FeatureCard>
         vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: widget.color.withValues(alpha:0.15),
+        color: widget.color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
         border: Border.all(
-          color: widget.color.withValues(alpha:0.3),
+          color: widget.color.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -273,7 +273,7 @@ class StatsCard extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha:0.15),
+                  color: color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -286,7 +286,7 @@ class StatsCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: (isPositive ? AppColors.success : AppColors.error)
-                        .withValues(alpha:0.15),
+                        .withOpacity(0.15),
                     borderRadius: BorderRadius.circular(AppSizes.radiusXS),
                   ),
                   child: Text(
@@ -354,7 +354,7 @@ class ProgressCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             child: LinearProgressIndicator(
               value: value,
-              backgroundColor: color.withValues(alpha:0.1),
+              backgroundColor: color.withOpacity(0.1),
               valueColor: AlwaysStoppedAnimation(color),
               minHeight: 8,
             ),

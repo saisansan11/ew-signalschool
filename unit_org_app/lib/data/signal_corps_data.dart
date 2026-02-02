@@ -124,7 +124,7 @@ class SignalCorpsData {
       equipment: [
         'สายโทรศัพท์สนาม',
         'ชุมสายโทรศัพท์',
-        'เครื่องโทรศัพท์สนาม',
+        'เครื่องโทรศัพท��สนาม',
         'รถวางสาย',
       ],
       missions: [
@@ -208,6 +208,634 @@ class SignalCorpsData {
         'ปฏิบัติการวิทยุสื่อสาร',
         'ดูแลรักษาอุปกรณ์',
       ],
+    ),
+
+    // =============================================
+    // หน่วยทหารสื่อสารตาม อจย. (ข้อมูลจาก JSON)
+    // =============================================
+
+    // กองพันทหารสื่อสารกองพล (Signal Battalion, Division)
+    MilitaryUnit(
+      id: 'sig_bn_div',
+      name: 'Signal Battalion, Division',
+      nameThai: 'กองพันทหารสื่อสารกองพล',
+      abbreviation: 'พัน.ส.พล.',
+      size: UnitSize.battalion,
+      branch: MilitaryBranch.signal,
+      description: 'กองพันทหารสื่อสารกองพล เป็นหน่วยในอัตราของกองพล เป็นส่วนหนึ่งของหน่วยผสมเหล่า ให้การสนับสนุนการรบด้วยการสื่อสารแก่กองพล',
+      childIds: ['sig_bn_div_hq', 'sig_bn_div_radio_co', 'sig_bn_div_wire_co'],
+      personnelMin: 345,
+      personnelMax: 459,
+      commanderRank: 'พันโท',
+      symbol: '||',
+      missions: [
+        'จัดการสื่อสารให้แก่กองบัญชาการกองพล รวมทั้งการสื่อสารไปยังหน่วยต่างๆ ที่ปฏิบัติการภายใต้การบังคับบัญชาของกองพล',
+        'จัดบริการการภาพให้กับกองพล',
+      ],
+      capabilities: UnitCapabilities(
+        capabilities: [
+          'การวางแผนของฝ่ายอำนวยการ กำกับดูแลการฝึก การปฏิบัติการสื่อสารและกิจการสื่อสารอื่นๆ',
+          'ติดตั้ง ปฏิบัติการ และดำรงการสื่อสารประเภทสาย และวิทยุไปยังหน่วยต่างๆ ที่ปฏิบัติงานภายใต้การบังคับบัญชาของกองบัญชาการกองพล',
+          'ปฏิบัติการสื่อสารด้วยวิทยุถ่ายทอดให้แก่กองพล รวมทั้งการเชื่อมต่อการสื่อสารของกองพลให้เข้ากับระบบโทรคมนาคมในพื้นที่ตามความจำเป็น',
+          'บริการส่งกำลัง และซ่อมบำรุงขั้นหน่วยแก่ยุทโธปกรณ์ในอัตรา รวมทั้งส่งกำลังและซ่อมบำรุงประเภทซ่อมบำรุงขั้นสนามอย่างจำกัดแก่เครื่องสื่อสารของกองพัน และกองบัญชาการกองพล',
+          'บริการศูนย์การสื่อสารให้แก่กองบัญชาการกองพล และบริการนำสารด้วยยานพาหนะ',
+          'บริการถ่าย ล้าง อัดขยายภาพนิ่ง',
+          'ทำการรบอย่างทหารราบเมื่อจำเป็น',
+        ],
+        limitations: [
+          'อาศัยหน่วยอื่นๆ ของกองพลในเรื่องการรักษาพยาบาล และการขนส่งเพิ่มเติม',
+          'ต้องการตอนการบินกองพล หรือหน่วยอื่นๆ ในเรื่องเครื่องบินและนักบินเพื่อการปฏิบัติการสื่อสาร',
+          'ต้องการการสื่อสารระบบโทรคมนาคมพลเรือน และทางทหารในพื้นที่ที่กองพลเข้าไปปฏิบัติการ',
+        ],
+        combatCapability: 'ทหารแต่ละคนได้รับการฝึกให้ทำการรบแบบทหารราบได้ มีขีดความสามารถในการป้องกันตนเองต่อการโจมตีทางพื้นดินของข้าศึก แต่ส่วนที่แยกอยู่โดดเดี่ยวต้องอาศัยหน่วยที่รับการสนับสนุนให้ช่วยป้องกันสถานที่ตั้ง',
+        supportRequired: [
+          'การรักษาพยาบาล',
+          'การขนส่งเพิ่มเติม',
+          'การบ��นสนับสนุน',
+          'ระบบโทรคมนาคมในพื้นที่',
+        ],
+      ),
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 10,
+        ncos: 59,
+        enlisted: 162,
+        total: 459,
+        full: ReadinessPersonnel(level: 'เต็ม', count: 459),
+        reduced1: ReadinessPersonnel(level: 'ลด 1', count: 395),
+        reduced2: ReadinessPersonnel(level: 'ลด 2', count: 345),
+        skeleton: ReadinessPersonnel(level: 'โครง', count: 63),
+      ),
+      referenceDoc: 'อจย. 11-35',
+    ),
+
+    // กองบังคับการและกองร้อยกองบังคับการ (Headquarters and Headquarters Company)
+    MilitaryUnit(
+      id: 'sig_bn_div_hq',
+      name: 'Headquarters and Headquarters Company',
+      nameThai: 'กองบังคับการและกองร้อยกองบังคับการ',
+      abbreviation: 'บก.พัน.ส.พล.',
+      size: UnitSize.company,
+      branch: MilitaryBranch.signal,
+      description: 'กองบังคับการและกองร้อยกองบังคับการ กองพันทหารสื่อสารกองพล ทำหน้าที่อำนวยการและบังคับบัญชา',
+      parentId: 'sig_bn_div',
+      personnelMin: 100,
+      personnelMax: 131,
+      commanderRank: 'พันตรี',
+      symbol: '|',
+      missions: [
+        'อำนวยการและบังคับบัญชากองพันทหารสื่อสารกองพล',
+        'ประสานงานและสนับสนุนการปฏิบัติงานของหน่วยในสังกัด',
+        'วางแผนและกำกับดูแลการปฏิบัติการสื่อสาร',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 3,
+        ncos: 20,
+        enlisted: 38,
+        total: 131,
+      ),
+      referenceDoc: 'อจย. 11-36',
+    ),
+
+    // กองร้อยวิทยุและศูนย์ข่าว (Radio and Message Center Company)
+    MilitaryUnit(
+      id: 'sig_bn_div_radio_co',
+      name: 'Radio and Message Center Company',
+      nameThai: 'กองร้อยวิทยุและศูนย์ข่าว',
+      abbreviation: 'ร้อย.ว.ศข.',
+      size: UnitSize.company,
+      branch: MilitaryBranch.signal,
+      description: 'กองร้อยวิทยุและศูนย์ข่าว มีหน้าที่ปฏิบัติการสื่อสารด้วยวิทยุและดำเนินการศูนย์ข่าวสำหรับกองพล',
+      parentId: 'sig_bn_div',
+      personnelMin: 120,
+      personnelMax: 150,
+      commanderRank: 'พันตรี',
+      symbol: '|',
+      missions: [
+        'ปฏิบัติการสื่อสารด้วยวิทยุให้แก่กองบัญชาการกองพลและหน่วยในสังกัด',
+        'ดำเนินการศูนย์ข่าว รับส่งและกระจายข่าวสาร',
+        'รักษาความปลอดภัยการสื่อสารและการเข้ารหัส',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 2,
+        ncos: 30,
+        enlisted: 118,
+        total: 150,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'เครื่องวิทยุ AN/PRC',
+          nameEn: 'Radio Set AN/PRC',
+          type: 'radio',
+          quantity: 20,
+          specifications: 'วิทยุแบบพกพา ย่าน VHF/UHF',
+        ),
+        EquipmentItem(
+          nameTh: 'เครื่องวิทยุ AN/VRC',
+          nameEn: 'Radio Set AN/VRC',
+          type: 'radio',
+          quantity: 15,
+          specifications: 'วิทยุติดรถยนต์',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-37',
+    ),
+
+    // กองร้อยสายและวิทยุถ่ายทอด (Wire and Relay Company)
+    MilitaryUnit(
+      id: 'sig_bn_div_wire_co',
+      name: 'Wire and Relay Company',
+      nameThai: 'กองร้อยสายและวิทยุถ่ายทอด',
+      abbreviation: 'ร้อย.ส.วถ.',
+      size: UnitSize.company,
+      branch: MilitaryBranch.signal,
+      description: 'กองร้อยสายและวิทยุถ่ายทอด มีหน้าที่ติดตั้งและดำรงระบบสายสื่อสารและวิทยุถ่ายทอด',
+      parentId: 'sig_bn_div',
+      personnelMin: 140,
+      personnelMax: 178,
+      commanderRank: 'พันตรี',
+      symbol: '|',
+      missions: [
+        'ติดตั้งและดำรงระบบสายสื่อสารสนามให้แก่กองพล',
+        'ปฏิบัติการวิทยุถ่ายทอดเพื่อขยายระยะการสื่อสาร',
+        'เชื่อมต่อระบบสื่อสารกองพลเข้ากับระบบโทรคมนาคมในพื้นที่',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 2,
+        ncos: 35,
+        enlisted: 141,
+        total: 178,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'สายสนามทหาร',
+          nameEn: 'Military Field Wire',
+          type: 'wire',
+          quantity: 50,
+          model: 'WD-1/TT',
+          specifications: 'สายคู่สนาม ความยาว 400 เมตร/ม้วน',
+        ),
+        EquipmentItem(
+          nameTh: 'เครื่องวิทยุถ่ายทอด',
+          nameEn: 'Radio Relay Set',
+          type: 'relay',
+          quantity: 10,
+          specifications: 'ระบบถ่ายทอดแบบดิจิตอล',
+        ),
+        EquipmentItem(
+          nameTh: 'ตู้สาขาโทรศัพท์สนาม',
+          nameEn: 'Field Telephone Switchboard',
+          type: 'telecom',
+          quantity: 8,
+          model: 'SB-22/PT',
+          specifications: 'ความจุ 12 สาย',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-38',
+    ),
+
+    // กองพันทหารสื่อสารกองทัพภาค (Signal Battalion, Corps)
+    MilitaryUnit(
+      id: 'sig_bn_corps',
+      name: 'Signal Battalion, Corps',
+      nameThai: 'กองพันทหารสื่อสารกองทัพภาค',
+      abbreviation: 'พัน.ส.ทภ.',
+      size: UnitSize.battalion,
+      branch: MilitaryBranch.signal,
+      description: 'กองพันทหารสื่อสารกองทัพภาค มีหน้าที่จัดและปฏิบัติการสื่อสารสนับสนุนกองบัญชาการกองทัพภาค',
+      childIds: ['sig_bn_corps_hq', 'sig_bn_corps_radio_co', 'sig_bn_corps_wire_co'],
+      personnelMin: 280,
+      personnelMax: 350,
+      commanderRank: 'พันโท',
+      symbol: '||',
+      missions: [
+        'จัดการสื่อสารให้แก่กองบัญชาการกองทัพภาค',
+        'สนับสนุนการสื่อสารแก่หน่วยในสังกัดกองทัพภาค',
+        'เชื่อมโยงการสื่อสารระหว่างกองทัพภาคกับกองบัญชาการกองทัพบก',
+      ],
+      capabilities: UnitCapabilities(
+        capabilities: [
+          'ปฏิบัติการสื่อสารทุกประเภทสนับสนุนกองทัพภาค',
+          'เชื่อมโยงระบบสื่อสารในระดับยุทธการ',
+          'บริการศูนย์สื่อสารและการเข้ารหัสระดับสูง',
+          'ซ่อมบำรุงและสนับสนุนอุปกรณ์สื่อสารในพื้นที่',
+        ],
+        limitations: [
+          'ต้องอาศัยระบบโทรคมนาคมพื้นฐานในพื้นที่',
+          'ต้องการการสนับสนุนด้านโลจิสติกส์จากกองทัพภาค',
+        ],
+      ),
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 15,
+        ncos: 85,
+        enlisted: 250,
+        total: 350,
+      ),
+      referenceDoc: 'อจย. 11-55',
+    ),
+
+    // กองพันทหารสื่อสาร หน่วยบัญชาการสงครามพิเศษ (Signal Battalion, Special Warfare Command)
+    MilitaryUnit(
+      id: 'sig_bn_sf',
+      name: 'Signal Battalion, Special Warfare Command',
+      nameThai: 'กองพันทหารสื่อสาร หน่วยบัญชาการสงครามพิเศษ',
+      abbreviation: 'พัน.ส.นบพ.',
+      size: UnitSize.battalion,
+      branch: MilitaryBranch.signal,
+      description: 'กองพันทหารสื่อสาร หน่วยบัญชาการสงครามพิเศษ สนับสนุนการปฏิบัติการพิเศษด้วยระบบสื่อสารที่ทันสมัย',
+      personnelMin: 200,
+      personnelMax: 260,
+      commanderRank: 'พันโท',
+      symbol: '||',
+      missions: [
+        'จัดการสื่อสารสนับสนุนการปฏิบัติการพิเศษ',
+        'ปฏิบัติการสื่อสารในสภาวะการณ์พิเศษและการปฏิบัติการแบบไม่ตรง',
+        'สนับสนุนการสื่อสารสำหรับหน่วยสงครามพิเศษ',
+      ],
+      capabilities: UnitCapabilities(
+        capabilities: [
+          'ปฏิบัติการสื่อสารในพื้นที่ปฏิบัติการพิเศษ',
+          'ระบบสื่อสารที่มีความยืดหยุ่นสูงและปลอดภัย',
+          'การสื่อสารแบบลับและเข้ารหัสขั้นสูง',
+          'สนับสนุนการปฏิบัติการร่วมกับหน่วยพิเศษ',
+        ],
+        limitations: [
+          'จำกัดด้วยลักษณะภารกิจพิเศษ',
+          'ต้องการอุปกรณ์พิเศษและบุคลากรที่ผ่านการคัดเลือก',
+        ],
+      ),
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 12,
+        ncos: 68,
+        enlisted: 180,
+        total: 260,
+      ),
+      referenceDoc: 'อจย. 11-555',
+    ),
+
+    // =============================================
+    // หมวดในสังกัด กองร้อยวิทยุและศูนย์ข่าว (ตาม อจย. 11-37)
+    // =============================================
+
+    // หมวดวิทยุที่ 1 (Radio Platoon 1)
+    MilitaryUnit(
+      id: 'plt_radio_1',
+      name: 'Radio Platoon 1',
+      nameThai: 'หมวดวิทยุที่ 1',
+      abbreviation: 'มว.ว.1',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดวิทยุที่ 1 รับผิดชอบการสื่อสารวิทยุย่าน HF/VHF',
+      parentId: 'sig_bn_div_radio_co',
+      personnelMin: 25,
+      personnelMax: 35,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ปฏิบัติการสื่อสารวิทยุย่าน HF ระยะไกล',
+        'จัดตั้งสถานีวิทยุสนามแบบเคลื่อนที่',
+        'ดูแลรักษาอุปกรณ์วิทยุประจำหมวด',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 8,
+        enlisted: 26,
+        total: 35,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'เครื่องวิทยุ HF',
+          nameEn: 'HF Radio Set',
+          type: 'radio',
+          quantity: 5,
+          model: 'AN/PRC-150',
+          specifications: 'ย่านความถี่ 1.6-30 MHz กำลังส่ง 20W',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-37',
+    ),
+
+    // หมวดวิทยุที่ 2 (Radio Platoon 2)
+    MilitaryUnit(
+      id: 'plt_radio_2',
+      name: 'Radio Platoon 2',
+      nameThai: 'หมวดวิทยุที่ 2',
+      abbreviation: 'มว.ว.2',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดวิทยุที่ 2 รับผิดชอบการสื่อสารวิทยุย่าน VHF/UHF',
+      parentId: 'sig_bn_div_radio_co',
+      personnelMin: 25,
+      personnelMax: 35,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ปฏิบัติการสื่อสารวิทยุย่าน VHF/UHF',
+        'สนับสนุนการสื่อสารทางยุทธวิธี',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 8,
+        enlisted: 26,
+        total: 35,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'เครื่องวิทยุ VHF',
+          nameEn: 'VHF Radio Set',
+          type: 'radio',
+          quantity: 8,
+          model: 'AN/PRC-152',
+          specifications: 'ย่านความถี่ 30-512 MHz กำลังส่ง 5W',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-37',
+    ),
+
+    // หมวดศูนย์ข่าว (Message Center Platoon)
+    MilitaryUnit(
+      id: 'plt_msg_center',
+      name: 'Message Center Platoon',
+      nameThai: 'หมวดศูนย์ข่าว',
+      abbreviation: 'มว.ศข.',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดศูนย์ข่าว รับผิดชอบการรับส่งและกระจายข่าวสาร',
+      parentId: 'sig_bn_div_radio_co',
+      personnelMin: 20,
+      personnelMax: 30,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ดำเนินการศูนย์ข่าว รับส่งและกระจายข่าวสาร',
+        'รักษาความปลอดภัยการสื่อสาร (COMSEC)',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 6,
+        enlisted: 23,
+        total: 30,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'เครื่องเข้ารหัส',
+          nameEn: 'Encryption Device',
+          type: 'electronic',
+          quantity: 4,
+          specifications: 'เครื่องเข้ารหัสข่าวสารระดับลับ',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-37',
+    ),
+
+    // =============================================
+    // หมวดในสังกัด กองร้อยสายและวิทยุถ่ายทอด (ตาม อจย. 11-38)
+    // =============================================
+
+    // หมวดสายที่ 1 (Wire Platoon 1)
+    MilitaryUnit(
+      id: 'plt_wire_1',
+      name: 'Wire Platoon 1',
+      nameThai: 'หมวดสายที่ 1',
+      abbreviation: 'มว.ส.1',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดสายที่ 1 รับผิดชอบการวางสายและดำเนินการชุมสายโทรศัพท์สนาม',
+      parentId: 'sig_bn_div_wire_co',
+      personnelMin: 30,
+      personnelMax: 45,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ติดตั้งระบบสายสื่อสารสนาม',
+        'ดำเนินการชุมสายโทรศัพท์สนาม',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 10,
+        enlisted: 34,
+        total: 45,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'สายสนามทหาร',
+          nameEn: 'Military Field Wire',
+          type: 'wire',
+          quantity: 20,
+          model: 'WD-1/TT',
+          specifications: 'สายคู่สนาม ความยาว 400 เมตร/ม้วน',
+        ),
+        EquipmentItem(
+          nameTh: 'เครื่องโทรศัพท์สนาม',
+          nameEn: 'Field Telephone',
+          type: 'telecom',
+          quantity: 10,
+          model: 'TA-312/PT',
+          specifications: 'โทรศัพท์สนามแบบหมุนมือ',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-38',
+    ),
+
+    // หมวดสายที่ 2 (Wire Platoon 2)
+    MilitaryUnit(
+      id: 'plt_wire_2',
+      name: 'Wire Platoon 2',
+      nameThai: 'หมวดสายที่ 2',
+      abbreviation: 'มว.ส.2',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดสายที่ 2 รับผิดชอบการวางสายและสนับสนุนชุมสายโทรศัพท์สนาม',
+      parentId: 'sig_bn_div_wire_co',
+      personnelMin: 30,
+      personnelMax: 45,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ติดตั้งระบบสายสื่อสารสนาม',
+        'สนับสนุนชุมสายโทรศัพท์สนาม',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 10,
+        enlisted: 34,
+        total: 45,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'ตู้สาขาโทรศัพท์สนาม',
+          nameEn: 'Field Telephone Switchboard',
+          type: 'telecom',
+          quantity: 4,
+          model: 'SB-22/PT',
+          specifications: 'ความจุ 12 สาย',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-38',
+    ),
+
+    // หมวดวิทยุถ่ายทอด (Radio Relay Platoon)
+    MilitaryUnit(
+      id: 'plt_relay',
+      name: 'Radio Relay Platoon',
+      nameThai: 'หมวดวิทยุถ่ายทอด',
+      abbreviation: 'มว.วถ.',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดวิทยุถ่ายทอด รับผิดชอบการปฏิบัติการวิทยุถ่ายทอด',
+      parentId: 'sig_bn_div_wire_co',
+      personnelMin: 25,
+      personnelMax: 38,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ติดตั้งและดำเนินการสถานีวิทยุถ่ายทอด',
+        'ขยายระยะการสื่อสารวิทยุ',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 9,
+        enlisted: 28,
+        total: 38,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'เครื่องวิทยุถ่ายทอด',
+          nameEn: 'Radio Relay Set',
+          type: 'relay',
+          quantity: 6,
+          model: 'AN/TRC-170',
+          specifications: 'ระบบถ่ายทอดแบบดิจิตอล',
+        ),
+        EquipmentItem(
+          nameTh: 'เครื่องกำเนิดไฟฟ้าสนาม',
+          nameEn: 'Field Generator',
+          type: 'electronic',
+          quantity: 4,
+          specifications: 'ขนาด 5 KW สำหรับจ่ายกระแสไฟสถานี',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-38',
+    ),
+
+    // =============================================
+    // หมวดในสังกัด บก.และ ร้อย.บก.พัน.ส.พล. (ตาม อจย. 11-36)
+    // =============================================
+
+    // หมวดซ่อมบำรุง (Maintenance Platoon)
+    MilitaryUnit(
+      id: 'plt_maint',
+      name: 'Maintenance Platoon',
+      nameThai: 'หมวดซ่อมบำรุง',
+      abbreviation: 'มว.ซบร.',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดซ่อมบำรุง รับผิดชอบการซ่อมบำรุงอุปกรณ์สื่อสาร',
+      parentId: 'sig_bn_div_hq',
+      personnelMin: 20,
+      personnelMax: 30,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ซ่อมบำรุงอุปกรณ์สื่อสารขั้นหน่วยและขั้นสนาม',
+        'จัดหาอะไหล่และชิ้นส่วนซ่อม',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 8,
+        enlisted: 21,
+        total: 30,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'ชุดเครื่องมือซ่อมอิเล็กทรอนิกส์',
+          nameEn: 'Electronics Repair Tool Kit',
+          type: 'maintenance',
+          quantity: 5,
+          specifications: 'ชุดเครื่องมือซ่อมวิทยุ',
+        ),
+        EquipmentItem(
+          nameTh: 'เครื่องทดสอบวิทยุ',
+          nameEn: 'Radio Test Set',
+          type: 'maintenance',
+          quantity: 3,
+          model: 'AN/PRM-34',
+          specifications: 'เครื่องทดสอบวิทยุและตรวจวัดสัญญาณ',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-36',
+    ),
+
+    // หมวดบริการ (Service Platoon)
+    MilitaryUnit(
+      id: 'plt_service',
+      name: 'Service Platoon',
+      nameThai: 'หมวดบริการ',
+      abbreviation: 'มว.บร.',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดบริการ รับผิดชอบการขนส่งและเสบียง',
+      parentId: 'sig_bn_div_hq',
+      personnelMin: 15,
+      personnelMax: 25,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ให้บริการขนส่งแก่กองพัน',
+        'จัดเลี้ยงเสบียงแก่กองพัน',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 5,
+        enlisted: 19,
+        total: 25,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'รถบรรทุก',
+          nameEn: 'Cargo Truck',
+          type: 'vehicle',
+          quantity: 4,
+          model: '2.5 ตัน',
+          specifications: 'รถบรรทุกอเนกประสงค์',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-36',
+    ),
+
+    // หมวดการภาพ (Photo Platoon)
+    MilitaryUnit(
+      id: 'plt_photo',
+      name: 'Photo Platoon',
+      nameThai: 'หมวดการภาพ',
+      abbreviation: 'มว.กภ.',
+      size: UnitSize.platoon,
+      branch: MilitaryBranch.signal,
+      description: 'หมวดการภาพ รับผิดชอบการถ่าย ล้าง อัดขยายภาพนิ่ง',
+      parentId: 'sig_bn_div_hq',
+      personnelMin: 10,
+      personnelMax: 15,
+      commanderRank: 'ร้อยโท',
+      symbol: '●●',
+      missions: [
+        'ถ่ายภาพนิ่งสนับสนุนการปฏิบัติการ',
+        'ล้างและอัดขยายภาพ',
+      ],
+      personnelBreakdown: PersonnelBreakdown(
+        officers: 1,
+        ncos: 4,
+        enlisted: 10,
+        total: 15,
+      ),
+      equipmentItems: [
+        EquipmentItem(
+          nameTh: 'กล้องถ่ายภาพดิจิตอล',
+          nameEn: 'Digital Camera',
+          type: 'photo',
+          quantity: 5,
+          specifications: 'กล้อง DSLR ความละเอียด 24 MP',
+        ),
+      ],
+      referenceDoc: 'อจย. 11-36',
     ),
   ];
 
@@ -426,7 +1054,7 @@ class SignalCorpsData {
     UnitFlashcard(
       id: 'fc_area_2',
       question: 'ทภ.2 รับผิดชอบพื้นที่ใด?',
-      answer: 'ภาคตะวันออกเฉียงเหนือ (อีสาน)\nกองบัญชาการที่ นครราชสีมา',
+      answer: 'ภาคตะวันออกเฉียงเหนือ (อีสาน)\nกองบัญชาการที่ ค่ายสุรนารี นครราชสีมา',
       hint: 'พื้นที่อีสานทั้งหมด',
       category: 'กองทัพภาค',
       difficulty: 2,
@@ -434,7 +1062,7 @@ class SignalCorpsData {
     UnitFlashcard(
       id: 'fc_area_3',
       question: 'ทภ.3 รับผิดชอบพื้นที่ใด?',
-      answer: 'ภาคเหนือ\nกองบัญชาการที่ พิษณุโลก',
+      answer: 'ภาคเหนือ\nกองบัญชาการที่ ค่ายสมเด็จพระนเรศวรมหาราช พิษณุโลก',
       hint: 'พื้นที่ภาคเหนือทั้งหมด',
       category: 'กองทัพภาค',
       difficulty: 2,
@@ -442,10 +1070,52 @@ class SignalCorpsData {
     UnitFlashcard(
       id: 'fc_area_4',
       question: 'ทภ.4 รับผิดชอบพื้นที่ใด?',
-      answer: 'ภาคใต้\nกองบัญชาการที่ นครศรีธรรมราช',
+      answer: 'ภาคใต้\nกองบัญชาการที่ ค่ายวชิราวุธ นครศรีธรรมราช',
       hint: 'พื้นที่ภาคใต้ทั้งหมด',
       category: 'กองทัพภาค',
       difficulty: 2,
+    ),
+
+    // หน่วยสื่อสารประจำกองทัพภาค (ข้อมูลถูกต้องจาก PDF)
+    UnitFlashcard(
+      id: 'fc_signal_area_1',
+      question: 'ทภ.1 มีกองพันทหารสื่อสารใดบ้าง?',
+      answer: 'ส.พัน.1, ส.พัน.2, ส.พัน.9, ส.พัน.21',
+      hint: '4 กองพัน สนับสนุนภาคกลาง/ตะวันออก',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_signal_area_2',
+      question: 'ทภ.2 มีกองพันทหารสื่อสารใดบ้าง?',
+      answer: 'ส.พัน.3, ส.พัน.6, ส.พัน.22',
+      hint: '3 กองพัน สนับสนุนภาคอีสาน',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_signal_area_3',
+      question: 'ทภ.3 มีกองพันทหารสื่อสารใดบ้าง?',
+      answer: 'ส.พัน.4, ส.พัน.11, ส.พัน.23',
+      hint: '3 กองพัน สนับสนุนภาคเหนือ',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_signal_area_4',
+      question: 'ทภ.4 มีกองพันทหารสื่อสารใดบ้าง?',
+      answer: 'ส.พัน.5, ส.พัน.15, ส.พัน.24',
+      hint: '3 กองพัน สนับสนุนภาคใต้',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_signal_bn_count',
+      question: 'กองทัพบกมีกองพันทหารสื่อสาร (ส.พัน.) ทั้งหมดกี่กองพัน?',
+      answer: '13 กองพัน\nทภ.1: 4 กองพัน\nทภ.2: 3 กองพัน\nทภ.3: 3 กองพัน\nทภ.4: 3 กองพัน',
+      hint: 'รวมทุกกองทัพภาค',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 3,
     ),
 
     // หน่วยส่วนกลาง
@@ -480,6 +1150,211 @@ class SignalCorpsData {
       hint: 'หน่วยปฏิบัติการสงครามอิเล็กทรอนิกส์',
       category: 'หน่วยส่วนกลาง',
       difficulty: 3,
+    ),
+
+    // =============================================
+    // Flashcards หน่วยตาม อจย.
+    // =============================================
+
+    // กองพันทหารสื่อสารกองพล
+    UnitFlashcard(
+      id: 'fc_sig_bn_div',
+      question: 'กองพันทหารสื่อสารกองพล (พัน.ส.พล.) มีภารกิจหลักอะไร?',
+      answer: 'จัดการสื่อสารให้แก่กองบัญชาการกองพล\nรวมทั้งการสื่อสารไปยังหน่วยต่างๆ\nจัดบริการการภาพให้กับกองพล',
+      hint: 'หน่วยสนับสนุนการรบด้วยการสื่อสาร',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_sig_bn_div_personnel',
+      question: 'กองพันทหารสื่อสารกองพลมีกำลังพลเต็มอัตราเท่าไร?',
+      answer: '459 นาย\nนายทหาร 10 นาย\nนายสิบ 59 นาย\nพลทหาร 162 นาย',
+      hint: 'ตาม อจย. 11-35',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_sig_bn_div_structure',
+      question: 'กองพันทหารสื่อสารกองพลประกอบด้วยหน่วยรองอะไรบ้าง?',
+      answer: '1. บก.และ ร้อย.บก.\n2. ร้อย.วิทยุและศูนย์ข่าว\n3. ร้อย.สายและวิทยุถ่ายทอด',
+      hint: '3 หน่วยหลัก',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_sig_bn_div_ref',
+      question: 'กองพันทหารสื่อสารกองพลใช้ อจย. หมายเลขอะไร?',
+      answer: 'อจย. 11-35',
+      hint: 'อัตราจัดและยุทโธปกรณ์',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+
+    // กองร้อยวิทยุและศูนย์ข่าว
+    UnitFlashcard(
+      id: 'fc_radio_msg_co',
+      question: 'กองร้อยวิทยุและศูนย์ข่าว (ร้อย.ว.ศข.) มีภารกิจหลักอะไร?',
+      answer: 'ปฏิบัติการสื่อสารด้วยวิทยุ\nดำเนินการศูนย์ข่าว รับส่งกระจายข่าวสาร\nรักษาความปลอดภัยการสื่อสารและการเข้ารหัส',
+      hint: 'หน่วยรองของ พัน.ส.พล.',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_radio_msg_co_equip',
+      question: 'กองร้อยวิทยุและศูนย์ข่าวมีอุปกรณ์หลักอะไรบ้าง?',
+      answer: 'เครื่องวิทยุ AN/PRC 20 เครื่อง\nเครื่องวิทยุ AN/VRC 15 เครื่อง',
+      hint: 'VHF/UHF และวิทยุติดรถ',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+
+    // กองร้อยสายและวิทยุถ่ายทอด
+    UnitFlashcard(
+      id: 'fc_wire_relay_co',
+      question: 'กองร้อยสายและวิทยุถ่ายทอด (ร้อย.ส.วถ.) มีภารกิจหลักอะไร?',
+      answer: 'ติดตั้งและดำรงระบบสายสื่อสารสนาม\nปฏิบัติการวิทยุถ่ายทอดขยายระยะสื่อสาร\nเชื่อมต่อระบบสื่อสารกับโทรคมนาคมในพื้นที่',
+      hint: 'หน่วยรองของ พัน.ส.พล.',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_wire_relay_co_equip',
+      question: 'กองร้อยสายและวิทยุถ่ายทอดมีอุปกรณ์หลักอะไรบ้าง?',
+      answer: 'สายสนามทหาร WD-1/TT 50 ม้วน\nเครื่องวิทยุถ่ายทอด 10 ชุด\nตู้สาขาโทรศัพท์สนาม SB-22/PT 8 ชุด',
+      hint: 'ระบบสายและถ่ายทอด',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+
+    // กองพันทหารสื่อสารกองทัพภาค
+    UnitFlashcard(
+      id: 'fc_sig_bn_corps',
+      question: 'กองพันทหารสื่อสารกองทัพภาค (พัน.ส.ทภ.) มีภารกิจหลักอะไร?',
+      answer: 'จัดการสื่อสารให้แก่กองบัญชาการกองทัพภาค\nสนับสนุนการสื่อสารแก่หน่วยในสังกัด\nเชื่อมโยงการสื่อสารระหว่าง ทภ. กับ บก.ทบ.',
+      hint: 'หน่วยสื่อสารระดับกองทัพภาค',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_sig_bn_corps_personnel',
+      question: 'กองพันทหารสื่อสารกองทัพภาคมีกำลังพลเต็มอัตราเท่าไร?',
+      answer: '350 นาย\nนายทหาร 15 นาย\nนายสิบ 85 นาย\nพลทหาร 250 นาย',
+      hint: 'ตาม อจย. 11-55',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+
+    // กองพันทหารสื่อสาร นบพ.
+    UnitFlashcard(
+      id: 'fc_sig_bn_sf',
+      question: 'กองพันทหารสื่อสาร หน่วยบัญชาการสงครามพิเศษ (พัน.ส.นบพ.) มีภารกิจหลักอะไร?',
+      answer: 'จัดการสื่อสารสนับสนุนการปฏิบัติการพิเศษ\nปฏิบัติการสื่อสารในสภาวะการณ์พิเศษ\nสนับสนุนการสื่อสารสำหรับหน่วยสงครามพิเศษ',
+      hint: 'หน่วยสื่อสารสนับสนุนปฏิบัติการพิเศษ',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+    UnitFlashcard(
+      id: 'fc_sig_bn_sf_capability',
+      question: 'กองพันทหารสื่อสาร นบพ. มีขีดความสามารถพิเศษอะไรบ้าง?',
+      answer: 'ปฏิบัติการในพื้นที่ปฏิบัติการพิเศษ\nระบบสื่อสารยืดหยุ่นสูงและปลอดภัย\nการสื่อสารแบบลับและเข้ารหัสขั้นสูง',
+      hint: 'ระบบสื่อสารเฉพาะทาง',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+
+    // ความพร้อมรบ
+    UnitFlashcard(
+      id: 'fc_readiness_levels',
+      question: 'ระดับความพร้อมรบของหน่วยทหารสื่อสารมีกี่ระดับ?',
+      answer: '4 ระดับ:\n1. เต็ม (Full)\n2. ลด 1 (Reduced 1)\n3. ลด 2 (Reduced 2)\n4. โครง (Skeleton)',
+      hint: 'ตามระดับกำลังพล',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+
+    // =============================================
+    // Flashcards ระดับหมวด (Platoon Level)
+    // =============================================
+
+    UnitFlashcard(
+      id: 'fc_plt_radio_1',
+      question: 'หมวดวิทยุที่ 1 (มว.ว.1) รับผิดชอบงานอะไร?',
+      answer: 'ปฏิบัติการสื่อสารวิทยุย่าน HF ระยะไกล\nจัดตั้งสถานีวิทยุสนามแบบเคลื่อนที่',
+      hint: 'ใช้วิทยุ HF ย่าน 1.6-30 MHz',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_radio_2',
+      question: 'หมวดวิทยุที่ 2 (มว.ว.2) ใช้วิทยุย่านความถี่อะไร?',
+      answer: 'VHF (30-512 MHz) และ UHF (225-400 MHz)',
+      hint: 'สนับสนุนการสื่อสารทางยุทธวิธี',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_msg_center',
+      question: 'หมวดศูนย์ข่าว (มว.ศข.) มีภารกิจหลักอะไร?',
+      answer: 'ดำเนินการศูนย์ข่าว รับส่งและกระจายข่าวสาร\nรักษาความปลอดภัยการสื่อสาร (COMSEC)\nเข้ารหัสและถอดรหัสข่าวสาร',
+      hint: 'รับผิดชอบความปลอดภัยข่าวสาร',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_wire',
+      question: 'หมวดสาย (มว.ส.) ใช้อุปกรณ์หลักอะไร?',
+      answer: 'สายสนามทหาร WD-1/TT\nเครื่องโทรศัพท์สนาม TA-312/PT\nตู้สาขาโทรศัพท์สนาม SB-22/PT',
+      hint: 'ระบบสื่อสารทางสาย',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_relay',
+      question: 'หมวดวิทยุถ่ายทอด (มว.วถ.) มีหน้าที่อะไร?',
+      answer: 'ติดตั้งและดำเนินการสถานีวิทยุถ่ายทอด\nขยายระยะการสื่อสารวิทยุ\nเชื่อมต่อระบบสื่อสารกองพลกับโทรคมนาคมในพื้นที่',
+      hint: 'ใช้เครื่อง AN/TRC-170',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_maint',
+      question: 'หมวดซ่อมบำรุง (มว.ซบร.) ซ่อมบำรุงระดับใด?',
+      answer: 'ซ่อมบำรุงขั้นหน่วย (Unit Level)\nซ่อมบำรุงขั้นสนาม (Field Level)\nจัดหาอะไหล่และชิ้นส่วนซ่อม',
+      hint: 'ขึ้นอยู่กับ บก.พัน.ส.พล.',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_service',
+      question: 'หมวดบริการ (มว.บร.) มีหน้าที่อะไร?',
+      answer: 'ให้บริการขนส่งแก่กองพัน\nจัดเลี้ยงเสบียงแก่กองพัน\nบริการสิ่งอุปกรณ์และเครื่องใช้',
+      hint: 'สนับสนุนด้านโลจิสติกส์',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_photo',
+      question: 'หมวดการภาพ (มว.กภ.) มีภารกิจอะไร?',
+      answer: 'ถ่ายภาพนิ่งสนับสนุนการปฏิบัติการ\nล้างและอัดขยายภาพ\nจัดทำสื่อภาพประกอบการฝึกศึกษา',
+      hint: 'ขึ้นอยู่กับ บก.พัน.ส.พล.',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_commander',
+      question: 'ผู้บังคับหมวดทหารสื่อสารมียศอะไร?',
+      answer: 'ร้อยโท (ร.ท.)',
+      hint: 'นายทหารชั้นสัญญาบัตรระดับต้น',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 1,
+    ),
+    UnitFlashcard(
+      id: 'fc_plt_personnel',
+      question: 'หมวดทหารสื่อสารมีกำลังพลประมาณเท่าไร?',
+      answer: '25-45 นาย (แล้วแต่ประเภทหมวด)\nนายทหาร 1 นาย\nนายสิบ 5-10 นาย\nพลทหาร 19-34 นาย',
+      hint: 'ขึ้นอยู่กับภารกิจของหมวด',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
     ),
 
   ];
@@ -738,6 +1613,306 @@ class SignalCorpsData {
       correctIndex: 1,
       explanation: 'กรมการทหารสื่อสาร ตั้งอยู่ที่ สะพานแดง เขตบางซื่อ กรุงเทพมหานคร',
       category: 'หน่วยส่วนกลาง',
+      difficulty: 2,
+    ),
+
+    // หน่วยสื่อสารประจำกองทัพภาค (ข้อมูลจาก PDF)
+    QuizQuestion(
+      id: 'q_signal_area_1',
+      question: 'กองทัพภาคที่ 1 มีกองพันทหารสื่อสารกี่กองพัน?',
+      options: ['2 กองพัน', '3 กองพัน', '4 กองพัน', '5 กองพัน'],
+      correctIndex: 2,
+      explanation: 'ทภ.1 มี 4 กองพัน: ส.พัน.1, ส.พัน.2, ส.พัน.9, ส.พัน.21',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_signal_area_2',
+      question: 'ส.พัน.3 สังกัดกองทัพภาคใด?',
+      options: ['ทภ.1', 'ทภ.2', 'ทภ.3', 'ทภ.4'],
+      correctIndex: 1,
+      explanation: 'ส.พัน.3 สังกัด ทภ.2 ตั้งอยู่ที่ค่ายสุรนารี นครราชสีมา',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_signal_area_3',
+      question: 'กองพันทหารสื่อสารใดสังกัด ทภ.3?',
+      options: [
+        'ส.พัน.1, ส.พัน.2, ส.พัน.9',
+        'ส.พัน.3, ส.พัน.6, ส.พัน.22',
+        'ส.พัน.4, ส.พัน.11, ส.พัน.23',
+        'ส.พัน.5, ส.พัน.15, ส.พัน.24'
+      ],
+      correctIndex: 2,
+      explanation: 'ทภ.3 (ภาคเหนือ) มี ส.พัน.4 (พิษณุโลก), ส.พัน.11 (เชียงใหม่), ส.พัน.23 (เชียงราย)',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_signal_area_4',
+      question: 'ส.พัน.24 ตั้งอยู่ที่จังหวัดใด?',
+      options: ['นครศรีธรรมราช', 'สงขลา', 'ปัตตานี', 'สุราษฎร์ธานี'],
+      correctIndex: 2,
+      explanation: 'ส.พัน.24 ตั้งอยู่ที่ค่ายอิงคยุทธบริหาร จ.ปัตตานี สังกัด ทภ.4',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 3,
+    ),
+    QuizQuestion(
+      id: 'q_signal_area_5',
+      question: 'ส.พัน.9 สังกัดกองทัพภาคใด?',
+      options: ['ทภ.1', 'ทภ.2', 'ทภ.3', 'ทภ.4'],
+      correctIndex: 0,
+      explanation: 'ส.พัน.9 สังกัด ทภ.1 ตั้งอยู่ที่ค่ายสุรสีห์ จ.กาญจนบุรี',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_signal_total',
+      question: 'กองทัพบกมี ส.พัน. ประจำกองทัพภาครวมทั้งหมดกี่กองพัน?',
+      options: ['10 กองพัน', '12 กองพัน', '13 กองพัน', '15 กองพัน'],
+      correctIndex: 2,
+      explanation: 'รวม 13 กองพัน: ทภ.1 มี 4 กองพัน, ทภ.2-4 มีภาคละ 3 กองพัน',
+      category: 'หน่วยสื่อสารประจำ ทภ.',
+      difficulty: 3,
+    ),
+
+    // =============================================
+    // Quiz Questions หน่วยตาม อจย.
+    // =============================================
+
+    QuizQuestion(
+      id: 'q_sig_bn_div_personnel',
+      question: 'กองพันทหารสื่อสารกองพลมีกำลังพลเต็มอัตราเท่าไร?',
+      options: ['350 นาย', '395 นาย', '459 นาย', '500 นาย'],
+      correctIndex: 2,
+      explanation: 'พัน.ส.พล. มีกำลังพลเต็มอัตรา 459 นาย (นายทหาร 10, นายสิบ 59, พลทหาร 162) ตาม อจย. 11-35',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_div_structure',
+      question: 'กองพันทหารสื่อสารกองพลประกอบด้วยกี่หน่วยรอง?',
+      options: ['2 หน่วย', '3 หน่วย', '4 หน่วย', '5 หน่วย'],
+      correctIndex: 1,
+      explanation: 'พัน.ส.พล. มี 3 หน่วยรอง: บก.และร้อย.บก., ร้อย.วิทยุและศูนย์ข่าว, ร้อย.สายและวิทยุถ่ายทอด',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_div_ref',
+      question: 'กองพันทหารสื่อสารกองพลใช้ อจย. หมายเลขอะไร?',
+      options: ['อจย. 11-30', 'อจย. 11-35', 'อจย. 11-40', 'อจย. 11-55'],
+      correctIndex: 1,
+      explanation: 'กองพันทหารสื่อสารกองพล ใช้ อจย. 11-35',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+    QuizQuestion(
+      id: 'q_radio_msg_co',
+      question: 'กองร้อยวิทยุและศูนย์ข่าวมีภารกิจใดต่อไปนี้?',
+      options: [
+        'ติดตั้งระบบสายสื่อสาร',
+        'ซ่อมบำรุงอุปกรณ์',
+        'รักษาความปลอดภัยการสื่อสารและการเข้ารหัส',
+        'ขนส่งสิ่งอุปกรณ์'
+      ],
+      correctIndex: 2,
+      explanation: 'ร้อย.ว.ศข. มีภารกิจรักษาความปลอดภัยการสื่อสารและการเข้ารหัส ดำเนินการศูนย์ข่าว และปฏิบัติการสื่อสารด้วยวิทยุ',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_wire_relay_co',
+      question: 'กองร้อยสายและวิทยุถ่ายทอดมีอุปกรณ์ใดเป็นหลัก?',
+      options: [
+        'เครื่องวิทยุ AN/PRC',
+        'รถถัง',
+        'สายสนามทหาร WD-1/TT',
+        'เรดาร์'
+      ],
+      correctIndex: 2,
+      explanation: 'ร้อย.ส.วถ. มีสายสนามทหาร WD-1/TT 50 ม้วน เครื่องวิทยุถ่ายทอด 10 ชุด และตู้สาขาโทรศัพท์สนาม 8 ชุด',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_corps_personnel',
+      question: 'กองพันทหารสื่อสารกองทัพภาคมีกำลังพลเต็มอัตราเท่าไร?',
+      options: ['260 นาย', '300 นาย', '350 นาย', '459 นาย'],
+      correctIndex: 2,
+      explanation: 'พัน.ส.ทภ. มีกำลังพลเต็มอัตรา 350 นาย (นายทหาร 15, นายสิบ 85, พลทหาร 250) ตาม อจย. 11-55',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_sf',
+      question: 'กองพันทหารสื่อสาร หน่วยบัญชาการสงครามพิเศษ มีขีดความสามารถพิเศษใด?',
+      options: [
+        'การรบแบบกองโจร',
+        'การสื่อสารแบบลับและเข้ารหัสขั้นสูง',
+        'การยิงปืนใหญ่',
+        'การบินลาดตระเวน'
+      ],
+      correctIndex: 1,
+      explanation: 'พัน.ส.นบพ. มีขีดความสามารถด้านการสื่อสารแบบลับและเข้ารหัสขั้นสูง รองรับการปฏิบัติการพิเศษ',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_sf_personnel',
+      question: 'กองพันทหารสื่อสาร นบพ. มีกำลังพลเต็มอัตราเท่าไร?',
+      options: ['200 นาย', '260 นาย', '350 นาย', '459 นาย'],
+      correctIndex: 1,
+      explanation: 'พัน.ส.นบพ. มีกำลังพล 260 นาย (นายทหาร 12, นายสิบ 68, พลทหาร 180) ตาม อจย. 11-555',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_readiness_levels',
+      question: 'ระดับความพร้อมรบของหน่วยทหารสื่อสารมีกี่ระดับ?',
+      options: ['2 ระดับ', '3 ระดับ', '4 ระดับ', '5 ระดับ'],
+      correctIndex: 2,
+      explanation: 'มี 4 ระดับ: เต็ม (Full), ลด 1 (Reduced 1), ลด 2 (Reduced 2), โครง (Skeleton)',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_div_combat',
+      question: 'กองพันทหารสื่อสารกองพลมีขีดความสามารถในการรบอย่างไร?',
+      options: [
+        'ไม่มีขีดความสามารถในการรบ',
+        'ทำการรบอย่างทหารราบเมื่อจำเป็น',
+        'ทำการรบเป็นหน่วยหลัก',
+        'ทำการรบด้วยยานเกราะ'
+      ],
+      correctIndex: 1,
+      explanation: 'ทหารแต่ละคนได้รับการฝึกให้ทำการรบแบบทหารราบได้ มีขีดความสามารถในการป้องกันตนเองต่อการโจมตีทางพื้นดินของข้าศึก',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sig_bn_div_hq_ref',
+      question: 'กองบังคับการและกองร้อยกองบังคับการ พัน.ส.พล. ใช้ อจย. หมายเลขอะไร?',
+      options: ['อจย. 11-35', 'อจย. 11-36', 'อจย. 11-37', 'อจย. 11-38'],
+      correctIndex: 1,
+      explanation: 'บก.และร้อย.บก.พัน.ส.พล. ใช้ อจย. 11-36',
+      category: 'หน่วยตาม อจย.',
+      difficulty: 3,
+    ),
+
+    // =============================================
+    // Quiz Questions ระดับหมวด (Platoon Level)
+    // =============================================
+
+    QuizQuestion(
+      id: 'q_plt_radio_freq',
+      question: 'หมวดวิทยุที่ 1 ใช้วิทยุย่านความถี่ใด?',
+      options: ['VHF (30-512 MHz)', 'UHF (225-400 MHz)', 'HF (1.6-30 MHz)', 'SHF (3-30 GHz)'],
+      correctIndex: 2,
+      explanation: 'หมวดวิทยุที่ 1 รับผิดชอบการสื่อสารวิทยุย่าน HF ระยะไกล ใช้เครื่อง AN/PRC-150',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_msg_center_mission',
+      question: 'หมวดศูนย์ข่าว (มว.ศข.) มีภารกิจใด?',
+      options: [
+        'วางสายสื่อสาร',
+        'รักษาความปลอดภัยการสื่อสาร (COMSEC)',
+        'ซ่อมบำรุงอุปกรณ์',
+        'ถ่ายภาพนิ่ง'
+      ],
+      correctIndex: 1,
+      explanation: 'หมวดศูนย์ข่าวรับผิดชอบการรับส่งกระจายข่าวสาร และรักษาความปลอดภัยการสื่อสาร (COMSEC)',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_wire_equip',
+      question: 'สายสนามทหารรุ่น WD-1/TT มีความยาวเท่าไรต่อม้วน?',
+      options: ['100 เมตร', '200 เมตร', '400 เมตร', '1000 เมตร'],
+      correctIndex: 2,
+      explanation: 'สายสนามทหาร WD-1/TT เป็นสายคู่สนาม ความยาว 400 เมตร/ม้วน',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_relay_model',
+      question: 'หมวดวิทยุถ่ายทอดใช้เครื่องวิทยุรุ่นใด?',
+      options: ['AN/PRC-150', 'AN/PRC-152', 'AN/TRC-170', 'AN/VRC-110'],
+      correctIndex: 2,
+      explanation: 'หมวดวิทยุถ่ายทอดใช้เครื่อง AN/TRC-170 ระบบถ่ายทอดแบบดิจิตอล',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_commander_rank',
+      question: 'ผู้บังคับหมวดทหารสื่อสารมียศอะไร?',
+      options: ['สิบเอก', 'ร้อยตรี', 'ร้อยโท', 'พันตรี'],
+      correctIndex: 2,
+      explanation: 'ผู้บังคับหมวดมียศ ร้อยโท (ร.ท.)',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 1,
+    ),
+    QuizQuestion(
+      id: 'q_plt_parent_radio',
+      question: 'หมวดวิทยุ สังกัดกองร้อยใด?',
+      options: [
+        'กองร้อยกองบังคับการ',
+        'กองร้อยวิทยุและศูนย์ข่าว',
+        'กองร้อยสายและวิทยุถ่ายทอด',
+        'กองร้อยซ่อมบำรุง'
+      ],
+      correctIndex: 1,
+      explanation: 'หมวดวิทยุที่ 1, 2 และหมวดศูนย์ข่าว สังกัดกองร้อยวิทยุและศูนย์ข่าว (ร้อย.ว.ศข.)',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_parent_wire',
+      question: 'หมวดสายและหมวดวิทยุถ่ายทอด สังกัดกองร้อยใด?',
+      options: [
+        'กองร้อยกองบังคับการ',
+        'กองร้อยวิทยุและศูนย์ข่าว',
+        'กองร้อยสายและวิทยุถ่ายทอด',
+        'กองร้อยซ่อมบำรุง'
+      ],
+      correctIndex: 2,
+      explanation: 'หมวดสายที่ 1, 2 และหมวดวิทยุถ่ายทอด สังกัดกองร้อยสายและวิทยุถ่ายทอด (ร้อย.ส.วถ.)',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_maint_level',
+      question: 'หมวดซ่อมบำรุง (มว.ซบร.) ซ่อมบำรุงระดับใด?',
+      options: [
+        'ขั้นหน่วยและขั้นสนาม',
+        'ขั้นคลังเท่านั้น',
+        'ขั้นโรงงานเท่านั้น',
+        'ทุกระดับ'
+      ],
+      correctIndex: 0,
+      explanation: 'หมวดซ่อมบำรุงรับผิดชอบซ่อมบำรุงขั้นหน่วย (Unit Level) และขั้นสนาม (Field Level)',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_telephone',
+      question: 'เครื่องโทรศัพท์สนามรุ่น TA-312/PT เป็นชนิดใด?',
+      options: ['กดปุ่มดิจิตอล', 'หมุนมือ', 'ไร้สาย', 'IP Phone'],
+      correctIndex: 1,
+      explanation: 'เครื่องโทรศัพท์สนาม TA-312/PT เป็นชนิดหมุนมือ ใช้กับระบบสายสนาม',
+      category: 'หมวดทหารสื่อสาร',
+      difficulty: 2,
+    ),
+    QuizQuestion(
+      id: 'q_plt_switchboard',
+      question: 'ตู้สาขาโทรศัพท์สนาม SB-22/PT มีความจุเท่าไร?',
+      options: ['6 สาย', '12 สาย', '24 สาย', '48 สาย'],
+      correctIndex: 1,
+      explanation: 'ตู้สาขาโทรศัพท์สนาม SB-22/PT มีความจุ 12 สาย',
+      category: 'หมวดทหารสื่อสาร',
       difficulty: 2,
     ),
 

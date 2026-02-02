@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math';
 import '../app/constants.dart';
 import '../models/unit_models.dart';
+import '../models/learning_models.dart';
 import '../data/signal_corps_data.dart';
 import '../services/progress_service.dart';
 
@@ -34,12 +35,32 @@ class _FlashcardScreenState extends State<FlashcardScreen>
   // Stats
   int _knownCount = 0;
   int _learningCount = 0;
+  int _dueCardsCount = 0;
+  bool _showingDueCards = false;
 
   @override
   void initState() {
     super.initState();
     _loadCards();
     _initAnimations();
+    _checkAchievements();
+  }
+
+  void _checkAchievements() {
+    // Check for new achievements after init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final newAchievements = ProgressService.instance.popRecentAchievements();
+      for (final achievement in newAchievements) {
+        _showAchievementPopup(achievement);
+      }
+    });
+  }
+
+  void _showAchievementPopup(dynamic achievement) {
+    showDialog(
+      context: context,
+      builder: (context) => _AchievementPopup(achievement: achievement),
+    );
   }
 
   void _initAnimations() {
@@ -68,13 +89,31 @@ class _FlashcardScreenState extends State<FlashcardScreen>
   }
 
   void _loadCards() {
+    List<UnitFlashcard> allCards;
     if (widget.category != null) {
-      _cards =
-          List.from(SignalCorpsData.getFlashcardsByCategory(widget.category!));
+      allCards = List.from(SignalCorpsData.getFlashcardsByCategory(widget.category!));
     } else {
-      _cards = List.from(SignalCorpsData.flashcards);
+      allCards = List.from(SignalCorpsData.flashcards);
     }
-    _cards.shuffle();
+
+    // Get due cards based on Spaced Repetition
+    final progress = ProgressService.instance;
+    final allCardIds = allCards.map((c) => c.id).toList();
+    final dueCardIds = progress.getDueCards(allCardIds);
+
+    // Separate due cards and other cards
+    final dueCards = allCards.where((c) => dueCardIds.contains(c.id)).toList();
+    final otherCards = allCards.where((c) => !dueCardIds.contains(c.id)).toList();
+
+    _dueCardsCount = dueCards.length;
+    _showingDueCards = dueCards.isNotEmpty;
+
+    // Shuffle each group
+    dueCards.shuffle();
+    otherCards.shuffle();
+
+    // Due cards first, then others
+    _cards = [...dueCards, ...otherCards];
   }
 
   @override
@@ -308,7 +347,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                     end: Alignment.centerRight,
                     colors: [
                       Colors.transparent,
-                      AppColors.success.withValues(alpha:0.15),
+                      AppColors.success.withOpacity(0.15),
                     ],
                   ),
                 ),
@@ -327,7 +366,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                     end: Alignment.centerLeft,
                     colors: [
                       Colors.transparent,
-                      AppColors.warning.withValues(alpha:0.15),
+                      AppColors.warning.withOpacity(0.15),
                     ],
                   ),
                 ),
@@ -339,6 +378,8 @@ class _FlashcardScreenState extends State<FlashcardScreen>
   }
 
   Widget _buildHeader(double progress) {
+    final isDueCard = _currentIndex < _dueCardsCount;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
       child: Column(
@@ -365,9 +406,38 @@ class _FlashcardScreenState extends State<FlashcardScreen>
               Expanded(
                 child: Column(
                   children: [
-                    Text(
-                      widget.category ?? 'Flashcards',
-                      style: AppTextStyles.titleLarge,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.category ?? 'Flashcards',
+                          style: AppTextStyles.titleLarge,
+                        ),
+                        if (_showingDueCards && isDueCard) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.warning.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.schedule, size: 12, color: AppColors.warning),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'ถึงเวลาทบทวน',
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: AppColors.warning,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -425,7 +495,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                             BorderRadius.circular(AppSizes.radiusFull),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.accent.withValues(alpha:0.5),
+                            color: AppColors.accent.withOpacity(0.5),
                             blurRadius: 8,
                           ),
                         ],
@@ -535,7 +605,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
         border: Border.all(color: AppColors.borderLight),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.4),
+            color: Colors.black.withOpacity(0.4),
             blurRadius: 32,
             offset: const Offset(0, 16),
           ),
@@ -548,10 +618,10 @@ class _FlashcardScreenState extends State<FlashcardScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha:0.15),
+              color: AppColors.primary.withOpacity(0.15),
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha:0.3),
+                color: AppColors.primary.withOpacity(0.3),
               ),
             ),
             child: Text(
@@ -580,7 +650,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                   boxShadow: i < card.difficulty
                       ? [
                           BoxShadow(
-                            color: AppColors.warning.withValues(alpha:0.5),
+                            color: AppColors.warning.withOpacity(0.5),
                             blurRadius: 6,
                           ),
                         ]
@@ -605,10 +675,10 @@ class _FlashcardScreenState extends State<FlashcardScreen>
             Container(
               padding: const EdgeInsets.all(AppSizes.paddingM),
               decoration: BoxDecoration(
-                color: AppColors.info.withValues(alpha:0.1),
+                color: AppColors.info.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
                 border: Border.all(
-                  color: AppColors.info.withValues(alpha:0.2),
+                  color: AppColors.info.withOpacity(0.2),
                 ),
               ),
               child: Row(
@@ -666,17 +736,17 @@ class _FlashcardScreenState extends State<FlashcardScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.accent.withValues(alpha:0.15),
-            AppColors.primary.withValues(alpha:0.1),
+            AppColors.accent.withOpacity(0.15),
+            AppColors.primary.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusXL),
         border: Border.all(
-          color: AppColors.accent.withValues(alpha:0.4),
+          color: AppColors.accent.withOpacity(0.4),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accent.withValues(alpha:0.2),
+            color: AppColors.accent.withOpacity(0.2),
             blurRadius: 32,
             offset: const Offset(0, 16),
           ),
@@ -689,11 +759,11 @@ class _FlashcardScreenState extends State<FlashcardScreen>
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha:0.2),
+              color: AppColors.accent.withOpacity(0.2),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.accent.withValues(alpha:0.3),
+                  color: AppColors.accent.withOpacity(0.3),
                   blurRadius: 16,
                 ),
               ],
@@ -754,7 +824,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
               height: 80,
               decoration: BoxDecoration(
                 color: (isRight ? AppColors.success : AppColors.warning)
-                    .withValues(alpha:0.2),
+                    .withOpacity(0.2),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isRight ? AppColors.success : AppColors.warning,
@@ -763,7 +833,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                 boxShadow: [
                   BoxShadow(
                     color: (isRight ? AppColors.success : AppColors.warning)
-                        .withValues(alpha:0.4),
+                        .withOpacity(0.4),
                     blurRadius: 24,
                   ),
                 ],
@@ -841,10 +911,10 @@ class _StatChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
         border: Border.all(
-          color: color.withValues(alpha:0.3),
+          color: color.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -922,10 +992,10 @@ class _ActionButtonState extends State<_ActionButton>
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: widget.color.withValues(alpha:0.15),
+                color: widget.color.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(AppSizes.radiusL),
                 border: Border.all(
-                  color: widget.color.withValues(alpha:0.3),
+                  color: widget.color.withOpacity(0.3),
                 ),
               ),
               child: Row(
@@ -989,7 +1059,7 @@ class _CompletionDialog extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.accent.withValues(alpha:0.4),
+                    color: AppColors.accent.withOpacity(0.4),
                     blurRadius: 24,
                   ),
                 ],
@@ -1105,9 +1175,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(color: color.withValues(alpha:0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -1119,6 +1189,97 @@ class _StatCard extends StatelessWidget {
           ),
           Text(label, style: AppTextStyles.labelMedium),
         ],
+      ),
+    );
+  }
+}
+
+/// Achievement unlock popup
+class _AchievementPopup extends StatelessWidget {
+  final Achievement achievement;
+
+  const _AchievementPopup({required this.achievement});
+
+  Color get _tierColor {
+    switch (achievement.tier) {
+      case AchievementTier.bronze:
+        return const Color(0xFFCD7F32);
+      case AchievementTier.silver:
+        return const Color(0xFFC0C0C0);
+      case AchievementTier.gold:
+        return const Color(0xFFFFD700);
+      case AchievementTier.platinum:
+        return const Color(0xFFE5E4E2);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(AppSizes.paddingL),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusXL),
+          border: Border.all(color: _tierColor, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: _tierColor.withValues(alpha: 0.3),
+              blurRadius: 24,
+              spreadRadius: 4,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              '🎉 รางวัลใหม่!',
+              style: AppTextStyles.headlineLarge,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: _tierColor.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+                border: Border.all(color: _tierColor, width: 3),
+              ),
+              child: Center(
+                child: Text(
+                  achievement.icon,
+                  style: const TextStyle(fontSize: 40),
+                ),
+              ),
+            )
+                .animate()
+                .scale(begin: const Offset(0, 0), curve: Curves.elasticOut)
+                .then()
+                .shake(hz: 2, rotation: 0.05),
+            const SizedBox(height: 16),
+            Text(
+              achievement.title,
+              style: AppTextStyles.titleLarge.copyWith(color: _tierColor),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              achievement.description,
+              style: AppTextStyles.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _tierColor,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text('เยี่ยมมาก!'),
+            ),
+          ],
+        ),
       ),
     );
   }

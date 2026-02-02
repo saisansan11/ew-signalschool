@@ -35,7 +35,7 @@ class RTASignalCorps {
         'ฝึกศึกษาบุคลากรด้านการสื่อสาร',
         'ดำเนินการด้านสงครามอิเล็กทรอนิกส์',
       ],
-      childUnitIds: ['signal_center', 'signal_school', 'signal_factory', 'ew_center', 'signal_regiment_1'],
+      childUnitIds: ['signal_center', 'signal_school', 'signal_factory', 'ew_center', 'signal_regiment_1', 'signal_maint_bn'],
       color: Color(0xFFFF9500),
     ),
 
@@ -529,6 +529,36 @@ class RTASignalCorps {
       childUnitIds: [],
       personnelMin: 300,
       personnelMax: 500,
+      color: Color(0xFFFF9500),
+    ),
+
+    // กองพันสื่อสารซ่อมบำรุงเขตหลัง (พัน.ส.ซบร.)
+    // ที่ตั้ง: สะพานแดง แขวงบางซื่อ เขตบางซื่อ กรุงเทพมหานคร
+    SignalUnit(
+      id: 'signal_maint_bn',
+      name: 'กองพันสื่อสารซ่อมบำรุงเขตหลัง',
+      nameEn: 'Signal Maintenance Battalion (Rear Area)',
+      abbreviation: 'พัน.ส.ซบร.',
+      level: UnitLevel.battalion,
+      parentId: 'signal_dept',
+      location: UnitLocation(
+        name: 'สะพานแดง',
+        province: 'กรุงเทพมหานคร',
+        district: 'บางซื่อ',
+        latitude: 13.8193,
+        longitude: 100.5152,
+      ),
+      commanderRank: 'พันโท',
+      description: 'กองพันสื่อสารซ่อมบำรุงเขตหลัง รับผิดชอบการซ่อมบำรุงยุทโธปกรณ์สายสื่อสารในเขตหลัง',
+      missions: [
+        'ซ่อมบำรุงยุทโธปกรณ์สายสื่อสารในเขตหลัง',
+        'สนับสนุนการซ่อมบำรุงให้กับหน่วยสื่อสาร',
+        'ดำเนินการซ่อมบำรุงขั้นหน่วยและขั้นสนาม',
+        'จัดทำอะไหล่และชิ้นส่วนซ่อม',
+      ],
+      childUnitIds: [],
+      personnelMin: 200,
+      personnelMax: 400,
       color: Color(0xFFFF9500),
     ),
   ];

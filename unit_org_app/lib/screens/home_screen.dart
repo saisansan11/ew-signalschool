@@ -3,12 +3,16 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../app/constants.dart';
 import '../data/signal_corps_data.dart';
 import '../data/rta_signal_corps.dart';
+import '../data/learning_data.dart';
 import '../services/progress_service.dart';
 import 'flashcard_screen.dart';
 import 'quiz_screen.dart';
 import 'animated_org_chart.dart';
 import 'map_screen.dart';
 import 'settings_screen.dart';
+import 'achievement_screen.dart';
+import 'learning_path_screen.dart';
+import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,7 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const SizedBox(height: 8),
                     _buildHeader(),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 20),
+                    _buildDailyGoalsCard(),
+                    const SizedBox(height: 16),
+                    _buildReviewReminder(),
+                    const SizedBox(height: 20),
                     _buildHeroCard(),
                     const SizedBox(height: 20),
                     _buildBentoGrid(),
@@ -104,6 +112,204 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildReviewReminder() {
+    final progress = ProgressService.instance;
+    final allCardIds = SignalCorpsData.flashcards.map((c) => c.id).toList();
+    final dueCards = progress.getDueCards(allCardIds);
+
+    if (dueCards.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const FlashcardScreen()),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.warning.withValues(alpha: 0.15),
+              AppColors.accentOrange.withValues(alpha: 0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(AppSizes.radiusL),
+          border: Border.all(
+            color: AppColors.warning.withValues(alpha: 0.4),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
+              ),
+              child: const Icon(
+                Icons.schedule,
+                color: AppColors.warning,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '⏰ ถึงเวลาทบทวน!',
+                    style: TextStyle(
+                      color: AppColors.warning,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'มี ${dueCards.length} การ์ดรอการทบทวน',
+                    style: AppTextStyles.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.warning,
+                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+              ),
+              child: const Text(
+                'ทบทวนเลย',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideY(begin: 0.1);
+  }
+
+  Widget _buildDailyGoalsCard() {
+    final progress = ProgressService.instance;
+    final goals = progress.getDailyGoalsSummary();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.radiusL),
+        border: Border.all(
+          color: goals.allGoalsMet
+              ? AppColors.success.withValues(alpha: 0.5)
+              : AppColors.border,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: goals.allGoalsMet
+                      ? AppColors.success.withValues(alpha: 0.15)
+                      : AppColors.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                ),
+                child: Icon(
+                  goals.allGoalsMet ? Icons.check_circle : Icons.flag_rounded,
+                  color: goals.allGoalsMet ? AppColors.success : AppColors.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      goals.allGoalsMet ? '🎉 เป้าหมายวันนี้สำเร็จ!' : 'เป้าหมายวันนี้',
+                      style: AppTextStyles.titleMedium.copyWith(
+                        color: goals.allGoalsMet ? AppColors.success : AppColors.textPrimary,
+                      ),
+                    ),
+                    if (progress.hasStreakFreeze)
+                      Row(
+                        children: [
+                          Icon(Icons.ac_unit, size: 12, color: AppColors.info),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Streak Freeze: ${progress.streakFreezeCount}',
+                            style: AppTextStyles.labelSmall.copyWith(color: AppColors.info),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+              // Overall progress ring
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      value: goals.overallProgress,
+                      strokeWidth: 5,
+                      backgroundColor: AppColors.surfaceLight,
+                      valueColor: AlwaysStoppedAnimation(
+                        goals.allGoalsMet ? AppColors.success : AppColors.primary,
+                      ),
+                    ),
+                    Text(
+                      '${(goals.overallProgress * 100).round()}%',
+                      style: AppTextStyles.labelSmall.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Flashcard goal
+          _DailyGoalRow(
+            icon: Icons.style_rounded,
+            label: 'Flashcard',
+            current: goals.flashcardsCompleted,
+            goal: goals.flashcardGoal,
+            progress: goals.flashcardProgress,
+            color: AppColors.accent,
+            isCompleted: goals.flashcardGoalMet,
+          ),
+          const SizedBox(height: 10),
+          // Quiz goal
+          _DailyGoalRow(
+            icon: Icons.quiz_rounded,
+            label: 'Quiz',
+            current: goals.quizzesCompleted,
+            goal: goals.quizGoal,
+            progress: goals.quizProgress,
+            color: AppColors.accentOrange,
+            isCompleted: goals.quizGoalMet,
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 100.ms, duration: 400.ms).slideY(begin: 0.1);
+  }
+
   Widget _buildHeroCard() {
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -128,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.25),
+                      color: Colors.white.withOpacity( 0.25),
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                     ),
                     child: const Text(
@@ -157,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         '${RTASignalCorps.allCombinedUnits.length} หน่วย',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Colors.white.withOpacity( 0.9),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -165,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_forward_rounded,
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: Colors.white.withOpacity( 0.9),
                         size: 18,
                       ),
                     ],
@@ -177,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withOpacity( 0.2),
                 borderRadius: BorderRadius.circular(AppSizes.radiusL),
               ),
               child: const Icon(
@@ -196,6 +402,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBentoGrid() {
+    final progress = ProgressService.instance;
+    final unlockedCount = progress.unlockedAchievements.length;
+    final totalAchievements = LearningData.achievements.length;
+
     return Column(
       children: [
         // Row 1: Two cards side by side
@@ -230,16 +440,51 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         const SizedBox(height: AppSizes.bentoGap),
-        // Row 2: One wide card
+        // Row 2: Quiz and Learning Path
+        Row(
+          children: [
+            Expanded(
+              child: _BentoCard(
+                height: 140,
+                backgroundColor: AppColors.bentoCream,
+                icon: Icons.quiz_rounded,
+                iconColor: AppColors.accentOrange,
+                title: 'Quiz',
+                subtitle: '${SignalCorpsData.quizQuestions.length} คำถาม',
+                onTap: () => _showQuizOptions(context),
+              ),
+            ),
+            const SizedBox(width: AppSizes.bentoGap),
+            Expanded(
+              child: _BentoCard(
+                height: 140,
+                backgroundColor: AppColors.bentoLavender,
+                icon: Icons.route_rounded,
+                iconColor: AppColors.accentPurple,
+                title: 'เส้นทางเรียนรู้',
+                subtitle: '${LearningData.learningPaths.length} เส้นทาง',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LearningPathScreen()),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSizes.bentoGap),
+        // Row 3: Achievements
         _BentoCard(
-          height: 120,
-          backgroundColor: AppColors.bentoCream,
-          icon: Icons.quiz_rounded,
-          iconColor: AppColors.accentOrange,
-          title: 'ทดสอบความรู้',
-          subtitle: '${SignalCorpsData.quizQuestions.length} คำถาม • เริ่มทดสอบ',
+          height: 100,
+          backgroundColor: const Color(0xFFFFF8E1),
+          icon: Icons.emoji_events_rounded,
+          iconColor: AppColors.warning,
+          title: 'รางวัลและความสำเร็จ',
+          subtitle: '$unlockedCount / $totalAchievements รางวัล',
           isWide: true,
-          onTap: () => _showQuizOptions(context),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AchievementScreen()),
+          ),
         ),
       ],
     )
@@ -255,24 +500,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: AppColors.accentPink.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(AppSizes.radiusS),
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.accentPink.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusS),
+                ),
+                child: const Icon(
+                  Icons.insights_rounded,
+                  color: AppColors.accentPink,
+                  size: 18,
+                ),
               ),
-              child: const Icon(
-                Icons.insights_rounded,
-                color: AppColors.accentPink,
-                size: 18,
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text('ความก้าวหน้า', style: AppTextStyles.headlineSmall),
               ),
-            ),
-            const SizedBox(width: 12),
-            const Text('ความก้าวหน้า', style: AppTextStyles.headlineSmall),
-          ],
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColors.textMuted,
+                size: 16,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -325,7 +583,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppColors.accentIndigo.withValues(alpha: 0.15),
+                color: AppColors.accentIndigo.withOpacity( 0.15),
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
               ),
               child: const Icon(
@@ -510,7 +768,7 @@ class _BentoCard extends StatelessWidget {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: iconColor.withValues(alpha: 0.15),
+                      color: iconColor.withOpacity( 0.15),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     ),
                     child: Icon(icon, color: iconColor, size: 28),
@@ -552,7 +810,7 @@ class _BentoCard extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: iconColor.withValues(alpha: 0.15),
+                      color: iconColor.withOpacity( 0.15),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     ),
                     child: Icon(icon, color: iconColor, size: 24),
@@ -660,7 +918,7 @@ class _CategoryTile extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.primary.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
             ),
             child: Icon(
@@ -714,7 +972,7 @@ class _CategoryTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: color.withOpacity( 0.12),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
       child: Text(
@@ -735,7 +993,7 @@ class _CategoryTile extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
+          color: color.withOpacity( 0.12),
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
         ),
         child: Icon(icon, color: color, size: 20),
@@ -772,6 +1030,77 @@ class _SheetOption {
     required this.subtitle,
     required this.onTap,
   });
+}
+
+// Daily Goal Row Widget
+class _DailyGoalRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int current;
+  final int goal;
+  final double progress;
+  final Color color;
+  final bool isCompleted;
+
+  const _DailyGoalRow({
+    required this.icon,
+    required this.label,
+    required this.current,
+    required this.goal,
+    required this.progress,
+    required this.color,
+    required this.isCompleted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: isCompleted ? AppColors.success : color,
+        ),
+        const SizedBox(width: 8),
+        SizedBox(
+          width: 70,
+          child: Text(
+            label,
+            style: AppTextStyles.bodySmall,
+          ),
+        ),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: AppColors.surfaceLight,
+              valueColor: AlwaysStoppedAnimation(
+                isCompleted ? AppColors.success : color,
+              ),
+              minHeight: 8,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        SizedBox(
+          width: 50,
+          child: Text(
+            '$current/$goal',
+            style: AppTextStyles.labelMedium.copyWith(
+              color: isCompleted ? AppColors.success : AppColors.textSecondary,
+              fontWeight: isCompleted ? FontWeight.bold : FontWeight.normal,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
+        if (isCompleted) ...[
+          const SizedBox(width: 4),
+          const Icon(Icons.check_circle, size: 16, color: AppColors.success),
+        ],
+      ],
+    );
+  }
 }
 
 class _OptionsSheet extends StatelessWidget {
@@ -817,7 +1146,7 @@ class _OptionsSheet extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
+                    color: color.withOpacity( 0.12),
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   ),
                   child: Icon(icon, color: color, size: 24),

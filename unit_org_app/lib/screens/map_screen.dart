@@ -270,13 +270,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: Colors.black.withOpacity( 0.5),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
             if (isSelected)
               BoxShadow(
-                color: unit.color.withValues(alpha: 0.7),
+                color: unit.color.withOpacity( 0.7),
                 blurRadius: 12,
                 spreadRadius: 2,
               ),
@@ -294,12 +294,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget _buildZoomControls() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.95),
+        color: AppColors.surface.withOpacity( 0.95),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withOpacity( 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -340,12 +340,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.95),
+        color: AppColors.surface.withOpacity( 0.95),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withOpacity( 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -389,7 +389,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               border: Border.all(color: Colors.white, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: Colors.black.withOpacity( 0.2),
                   blurRadius: 2,
                 ),
               ],
@@ -431,7 +431,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     border: Border.all(color: unit.color, width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: unit.color.withValues(alpha: 0.3),
+                        color: unit.color.withOpacity( 0.3),
                         blurRadius: 30,
                         spreadRadius: 0,
                       ),
@@ -449,7 +449,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: unit.color.withValues(alpha: 0.2),
+                                color: unit.color.withOpacity( 0.2),
                                 shape: BoxShape.circle,
                                 border: Border.all(color: unit.color, width: 2),
                               ),
@@ -470,7 +470,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: unit.color.withValues(alpha: 0.2),
+                                      color: unit.color.withOpacity( 0.2),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -639,7 +639,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity( 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, size: 16, color: color),

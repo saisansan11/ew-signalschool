@@ -28,7 +28,7 @@ class OrgChartNode extends StatelessWidget {
         padding: const EdgeInsets.all(AppSizes.paddingM),
         decoration: BoxDecoration(
           color: isSelected
-              ? unit.branch.color.withValues(alpha:0.2)
+              ? unit.branch.color.withOpacity(0.2)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
           border: Border.all(
@@ -38,7 +38,7 @@ class OrgChartNode extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: unit.branch.color.withValues(alpha:0.3),
+                    color: unit.branch.color.withOpacity(0.3),
                     blurRadius: 12,
                     spreadRadius: 0,
                   ),
@@ -55,7 +55,7 @@ class OrgChartNode extends StatelessWidget {
                 vertical: AppSizes.paddingXS,
               ),
               decoration: BoxDecoration(
-                color: unit.branch.color.withValues(alpha:0.2),
+                color: unit.branch.color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
               ),
               child: Text(
@@ -163,7 +163,7 @@ class OrgChartNodeCompact extends StatelessWidget {
         padding: const EdgeInsets.all(AppSizes.paddingS),
         decoration: BoxDecoration(
           color: isSelected
-              ? unit.branch.color.withValues(alpha:0.2)
+              ? unit.branch.color.withOpacity(0.2)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusS),
           border: Border.all(
@@ -179,7 +179,7 @@ class OrgChartNodeCompact extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: unit.branch.color.withValues(alpha:0.2),
+                color: unit.branch.color.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: Center(
