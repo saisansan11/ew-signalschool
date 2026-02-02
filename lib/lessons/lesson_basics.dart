@@ -976,6 +976,21 @@ class _Lesson3_ESMState extends State<Lesson3_ESM>
               "• Frequency Difference of Arrival (FDOA) - ใช้ Doppler Effect",
           color: Colors.cyan,
         ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'ข่าวกรองจากการดักฟังการสื่อสารของข้าศึก (วิทยุ, โทรศัพท์) เรียกว่าอะไร?',
+          options: [
+            'ELINT (Electronic Intelligence)',
+            'COMINT (Communications Intelligence)',
+            'FISINT (Foreign Instrumentation Signals)',
+            'MASINT (Measurement and Signature Intelligence)',
+          ],
+          correctIndex: 1,
+          explanation: 'COMINT (Communications Intelligence) คือข่าวกรองที่ได้จากการดักฟังการสื่อสาร ซึ่งรวมถึงวิทยุทางยุทธวิธี, โทรศัพท์มือถือ, และเครือข่ายข้อมูล ส่วน ELINT เป็นข่าวกรองจากสัญญาณเรดาร์',
+          color: Colors.amber,
+        ),
       ],
     );
   }
@@ -1133,6 +1148,21 @@ class _Lesson4_ECMState extends State<Lesson4_ECM>
               "• Flare - พลุความร้อนหลอก IR Missile\n"
               "• Decoy - เป้าลวงอิเล็กทรอนิกส์\n"
               "• Smoke - ม่านควันบังเรดาร์",
+        ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'เทคนิค Jamming แบบใดที่รบกวนความถี่เดียวอย่างเข้มข้น แต่ต้องรู้ความถี่เป้าหมายแน่นอน?',
+          options: [
+            'Barrage Jamming',
+            'Sweep Jamming',
+            'Spot Jamming',
+            'Noise Jamming',
+          ],
+          correctIndex: 2,
+          explanation: 'Spot Jamming รบกวนความถี่เดียวอย่างเข้มข้น ใช้พลังงานต่ำและให้ค่า J/S สูง แต่ต้องรู้ความถี่เป้าหมายแน่นอน และไม่สามารถหลบ Frequency Hopping (FHSS) ได้',
+          color: Colors.red,
         ),
       ],
     );
@@ -1336,6 +1366,21 @@ class _Lesson5_ECCMState extends State<Lesson5_ECCM>
               "• TRANSEC - ปกป้องการส่งสัญญาณ\n"
               "• OPSEC - รักษาความลับปฏิบัติการ",
         ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'เทคนิค FHSS (Frequency Hopping Spread Spectrum) ช่วยป้องกันการถูกรบกวนอย่างไร?',
+          options: [
+            'เพิ่มกำลังส่งให้สูงกว่า Jammer',
+            'กระโดดความถี่อย่างรวดเร็วตามรหัสลับ ทำให้ Jammer ตามไม่ทัน',
+            'ใช้เสาอากาศทิศทางหันออกจาก Jammer',
+            'เข้ารหัสข้อมูลเพื่อไม่ให้ Jammer ถอดรหัสได้',
+          ],
+          correctIndex: 1,
+          explanation: 'FHSS กระโดดความถี่ 50-1000+ ครั้งต่อวินาทีตามรหัสลับ (Pseudo-Random Code) ทำให้ Jammer ต้องใช้ Barrage Jamming ครอบคลุมทุกความถี่ ซึ่งต้องใช้พลังงานมหาศาล ตัวอย่างเช่น SINCGARS กระโดด 111 ครั้ง/วินาที',
+          color: Colors.green,
+        ),
       ],
     );
   }
@@ -1425,6 +1470,21 @@ class Lesson6_Radio extends StatelessWidget {
               "• ใช้ Phonetic Alphabet (Alpha, Bravo...)\n"
               "• ยืนยันคำสั่งด้วย Read Back\n"
               "• รักษาวินัยวิทยุ (Radio Silence เมื่อสั่ง)",
+        ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'วิทยุ SINCGARS มีคุณลักษณะ FHSS กระโดดความถี่กี่ครั้งต่อวินาที?',
+          options: [
+            '50 ครั้ง/วินาที',
+            '111 ครั้ง/วินาที',
+            '500 ครั้ง/วินาที',
+            '1000 ครั้ง/วินาที',
+          ],
+          correctIndex: 1,
+          explanation: 'SINCGARS (Single Channel Ground and Airborne Radio System) มีระบบ FHSS ที่กระโดดความถี่ 111 ครั้งต่อวินาที ในย่าน 30-87.975 MHz (VHF FM) มีช่องสัญญาณ 2,320 ช่อง',
+          color: Colors.teal,
         ),
       ],
     );
@@ -1626,6 +1686,21 @@ class _Lesson7_AntiDroneState extends State<Lesson7_AntiDrone>
               "• โดรน Failsafe อาจ RTH, Hover, หรือ Land",
           color: Colors.orange,
         ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'ความถี่หลักที่โดรนพลเรือนใช้สำหรับ Command & Control (RC) คือความถี่ใด?',
+          options: [
+            '433 MHz',
+            '915 MHz',
+            '2.4 GHz',
+            '5.0 GHz',
+          ],
+          correctIndex: 2,
+          explanation: 'โดรนพลเรือนส่วนใหญ่ใช้ 2.4 GHz สำหรับ Command & Control (RC) และ 5.8 GHz สำหรับ Video Downlink (FPV) นอกจากนี้ยังใช้ 1575.42 MHz สำหรับ GPS L1',
+          color: Colors.cyan,
+        ),
       ],
     );
   }
@@ -1794,6 +1869,21 @@ class _Lesson8_GPSState extends State<Lesson8_GPS>
               "• 2022-ปัจจุบัน: Ukraine ใช้ GPS Jamming ป้องกัน",
           color: Colors.amber,
         ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'ความแตกต่างหลักระหว่าง GPS Jamming และ GPS Spoofing คืออะไร?',
+          options: [
+            'Jamming ใช้พลังงานมากกว่า Spoofing',
+            'Jamming ทำให้ GPS ไม่มีสัญญาณ ส่วน Spoofing หลอกให้เชื่อตำแหน่งผิด',
+            'Spoofing ทำงานได้เฉพาะกลางคืน ส่วน Jamming ทำได้ตลอด',
+            'ทั้งสองเทคนิคมีผลลัพธ์เหมือนกัน',
+          ],
+          correctIndex: 1,
+          explanation: 'GPS Jamming ส่งเสียงรบกวนทำให้เครื่องรับ GPS ใช้งานไม่ได้ (ไม่มีสัญญาณ) ส่วน GPS Spoofing ส่งสัญญาณ GPS ปลอมเพื่อหลอกให้เชื่อว่าอยู่ตำแหน่งที่ผิด ซึ่งอันตรายกว่าเพราะผู้ใช้อาจไม่รู้ตัวว่าถูกโจมตี',
+          color: Colors.green,
+        ),
       ],
     );
   }
@@ -1893,6 +1983,21 @@ class Lesson9_CaseStudies extends StatelessWidget {
               "3. ข้าศึกปรับตัวตลอด → ต้องพัฒนาต่อเนื่อง\n"
               "4. Training และ Doctrine สำคัญเท่าอุปกรณ์\n"
               "5. Spectrum Awareness คือกุญแจสู่ชัยชนะ",
+          color: Colors.deepPurple,
+        ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'ในปฏิบัติการ Mole Cricket 19 (1982) อิสราเอลใช้ยุทธวิธีอะไรในการทำลาย SAM ซีเรีย?',
+          options: [
+            'ส่งเครื่องบินโจมตีโดยตรงโดยไม่ใช้ EW',
+            'ใช้ UAV เป็นเป้าลวงให้ซีเรียเปิดเรดาร์ แล้วใช้ Anti-Radiation Missile',
+            'ใช้ GPS Spoofing หลอกขีปนาวุธซีเรีย',
+            'ใช้ Cyber Attack ปิดระบบซีเรีย',
+          ],
+          correctIndex: 1,
+          explanation: 'ในปฏิบัติการ Mole Cricket 19 อิสราเอลใช้ UAV เป็นเป้าลวงให้ซีเรียเปิดเรดาร์ SAM จากนั้นใช้ F-4 Phantom ยิงขีปนาวุธ AGM-78 และ AGM-45 ทำลาย SAM Site 19 แห่งภายใน 2 ชั่วโมง แสดงให้เห็นการผสมผสาน ESM, ECM และ Kinetic อย่างมีประสิทธิภาพ',
           color: Colors.deepPurple,
         ),
       ],
@@ -2731,6 +2836,21 @@ class _Lesson10_RadarState extends State<Lesson10_Radar>
               "• Sidelobe Blanking - ตัด Sidelobe\n"
               "• Adaptive Beamforming - Null ทิศทาง Jammer\n"
               "• Home-on-Jam (HOJ) - ติดตาม Jammer",
+        ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'จากสมการเรดาร์ กำลังสัญญาณที่รับได้ (Pr) จะลดลงอย่างไรเมื่อระยะทางเพิ่มขึ้น?',
+          options: [
+            'ลดลงตามสัดส่วน 1/R (Linear)',
+            'ลดลงตามสัดส่วน 1/R² (Square)',
+            'ลดลงตามสัดส่วน 1/R³ (Cubic)',
+            'ลดลงตามสัดส่วน 1/R⁴ (Fourth Power)',
+          ],
+          correctIndex: 3,
+          explanation: 'จากสมการเรดาร์ Pr = (Pt × Gt × Gr × σ × λ²) / ((4π)³ × R⁴) กำลังสัญญาณที่รับได้จะลดลงตามกำลัง 4 ของระยะทาง (R⁴) เนื่องจากสัญญาณต้องเดินทางไปและกลับ (ไป-กลับ) จึงมีการลดทอน R² สองครั้ง',
+          color: Colors.cyan,
         ),
 
         const SizedBox(height: 20),

@@ -10,13 +10,23 @@ class QuizLevel1Screen extends StatefulWidget {
 }
 
 class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
-  int _currentQuestion = 0;
+  int _currentQuestionIndex = 0;
   int _score = 0;
   bool _answered = false;
   int? _selectedAnswer;
   bool _quizCompleted = false;
 
-  final List<QuizQuestion> _questions = [
+  // Adaptive Difficulty Variables
+  QuizDifficulty _currentDifficulty = QuizDifficulty.easy;
+  int _consecutiveCorrect = 0;
+  int _consecutiveWrong = 0;
+  List<int> _questionOrder = [];
+  int _questionsAnswered = 0;
+  static const int _totalQuestionsToAnswer = 10;
+
+  // All questions pool with difficulty levels
+  final List<QuizQuestion> _allQuestions = [
+    // === EASY QUESTIONS ===
     QuizQuestion(
       question: 'EW ย่อมาจากอะไร?',
       options: [
@@ -27,6 +37,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       ],
       correctIndex: 1,
       explanation: 'EW = Electronic Warfare หรือ สงครามอิเล็กทรอนิกส์',
+      difficulty: QuizDifficulty.easy,
     ),
     QuizQuestion(
       question: '3 องค์ประกอบหลักของ EW คืออะไร?',
@@ -38,6 +49,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       ],
       correctIndex: 1,
       explanation: 'ESM (ดักรับ), ECM (รบกวน), ECCM (ป้องกัน)',
+      difficulty: QuizDifficulty.easy,
     ),
     QuizQuestion(
       question: 'ESM มีหน้าที่หลักคืออะไร?',
@@ -50,12 +62,28 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 2,
       explanation:
           'ESM = Electronic Support Measures ค้นหา ดักรับ และระบุแหล่งสัญญาณ',
+      difficulty: QuizDifficulty.easy,
     ),
+    QuizQuestion(
+      question: 'COMSEC หมายถึงอะไร?',
+      options: [
+        'Computer Security',
+        'Communication Security',
+        'Combat Security',
+        'Command Security',
+      ],
+      correctIndex: 1,
+      explanation: 'COMSEC = Communication Security ความปลอดภัยในการสื่อสาร',
+      difficulty: QuizDifficulty.easy,
+    ),
+
+    // === MEDIUM QUESTIONS ===
     QuizQuestion(
       question: 'ย่านความถี่ VHF มีช่วงประมาณเท่าไร?',
       options: ['3-30 MHz', '30-300 MHz', '300 MHz-3 GHz', '3-30 GHz'],
       correctIndex: 1,
       explanation: 'VHF = Very High Frequency อยู่ในช่วง 30-300 MHz',
+      difficulty: QuizDifficulty.medium,
     ),
     QuizQuestion(
       question: 'Spot Jamming คืออะไร?',
@@ -67,6 +95,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       ],
       correctIndex: 1,
       explanation: 'Spot Jamming = รบกวนความถี่เดียวอย่างเข้มข้น',
+      difficulty: QuizDifficulty.medium,
     ),
     QuizQuestion(
       question: 'FHSS ใช้เพื่อวัตถุประสงค์ใด?',
@@ -79,17 +108,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation:
           'FHSS = Frequency Hopping Spread Spectrum กระโดดความถี่เพื่อหลบการรบกวน',
-    ),
-    QuizQuestion(
-      question: 'COMSEC หมายถึงอะไร?',
-      options: [
-        'Computer Security',
-        'Communication Security',
-        'Combat Security',
-        'Command Security',
-      ],
-      correctIndex: 1,
-      explanation: 'COMSEC = Communication Security ความปลอดภัยในการสื่อสาร',
+      difficulty: QuizDifficulty.medium,
     ),
     QuizQuestion(
       question: 'DF ในงาน ESM หมายถึงอะไร?',
@@ -101,12 +120,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       ],
       correctIndex: 1,
       explanation: 'DF = Direction Finding การหาทิศทางแหล่งกำเนิดสัญญาณ',
-    ),
-    QuizQuestion(
-      question: 'ความถี่ GPS L1 (พลเรือน) คือเท่าไร?',
-      options: ['1227.60 MHz', '1575.42 MHz', '2400 MHz', '5800 MHz'],
-      correctIndex: 1,
-      explanation: 'GPS L1 = 1575.42 MHz สำหรับการใช้งานพลเรือน',
+      difficulty: QuizDifficulty.medium,
     ),
     QuizQuestion(
       question: 'Anti-Drone EW มักรบกวนความถี่ใด?',
@@ -118,31 +132,148 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       ],
       correctIndex: 2,
       explanation: 'โดรนส่วนใหญ่ใช้ 2.4 GHz (command) และ 5.8 GHz (video)',
+      difficulty: QuizDifficulty.medium,
+    ),
+
+    // === HARD QUESTIONS ===
+    QuizQuestion(
+      question: 'ความถี่ GPS L1 (พลเรือน) คือเท่าไร?',
+      options: ['1227.60 MHz', '1575.42 MHz', '2400 MHz', '5800 MHz'],
+      correctIndex: 1,
+      explanation: 'GPS L1 = 1575.42 MHz สำหรับการใช้งานพลเรือน',
+      difficulty: QuizDifficulty.hard,
+    ),
+    QuizQuestion(
+      question: 'Barrage Jamming แตกต่างจาก Spot Jamming อย่างไร?',
+      options: [
+        'ใช้พลังงานน้อยกว่า',
+        'รบกวนช่วงความถี่กว้างแทนที่จะเป็นความถี่เดียว',
+        'ใช้กับเรดาร์เท่านั้น',
+        'ต้องรู้ความถี่เป้าหมายแน่นอน',
+      ],
+      correctIndex: 1,
+      explanation: 'Barrage Jamming รบกวนช่วงความถี่กว้าง ใช้พลังงานสูงกว่า Spot แต่ครอบคลุม FHSS ได้',
+      difficulty: QuizDifficulty.hard,
+    ),
+    QuizQuestion(
+      question: 'J/S Ratio ในการ Jamming หมายถึงอะไร?',
+      options: [
+        'อัตราส่วน Jammer Power ต่อ Signal Power',
+        'ระยะห่างระหว่าง Jammer กับ Station',
+        'ความถี่ที่ใช้ในการ Jam',
+        'จำนวน Jammer ที่ใช้',
+      ],
+      correctIndex: 0,
+      explanation: 'J/S Ratio = อัตราส่วนกำลัง Jammer ต่อกำลังสัญญาณเป้าหมาย ค่ายิ่งสูงยิ่ง Jam ได้ผล',
+      difficulty: QuizDifficulty.hard,
+    ),
+    QuizQuestion(
+      question: 'SINCGARS กระโดดความถี่กี่ครั้งต่อวินาที?',
+      options: ['50 ครั้ง', '111 ครั้ง', '500 ครั้ง', '1000 ครั้ง'],
+      correctIndex: 1,
+      explanation: 'SINCGARS กระโดดความถี่ 111 ครั้ง/วินาที ในย่าน 30-87.975 MHz',
+      difficulty: QuizDifficulty.hard,
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAdaptiveQuiz();
+  }
+
+  void _initializeAdaptiveQuiz() {
+    // Start with easy questions
+    _currentDifficulty = QuizDifficulty.easy;
+    _questionOrder = _getQuestionsForDifficulty(_currentDifficulty);
+    _questionOrder.shuffle();
+  }
+
+  List<int> _getQuestionsForDifficulty(QuizDifficulty difficulty) {
+    List<int> indices = [];
+    for (int i = 0; i < _allQuestions.length; i++) {
+      if (_allQuestions[i].difficulty == difficulty) {
+        indices.add(i);
+      }
+    }
+    return indices;
+  }
+
+  void _adjustDifficulty(bool wasCorrect) {
+    if (wasCorrect) {
+      _consecutiveCorrect++;
+      _consecutiveWrong = 0;
+
+      // Increase difficulty after 2 consecutive correct
+      if (_consecutiveCorrect >= 2) {
+        if (_currentDifficulty == QuizDifficulty.easy) {
+          _currentDifficulty = QuizDifficulty.medium;
+          _consecutiveCorrect = 0;
+        } else if (_currentDifficulty == QuizDifficulty.medium) {
+          _currentDifficulty = QuizDifficulty.hard;
+          _consecutiveCorrect = 0;
+        }
+      }
+    } else {
+      _consecutiveWrong++;
+      _consecutiveCorrect = 0;
+
+      // Decrease difficulty after 2 consecutive wrong
+      if (_consecutiveWrong >= 2) {
+        if (_currentDifficulty == QuizDifficulty.hard) {
+          _currentDifficulty = QuizDifficulty.medium;
+          _consecutiveWrong = 0;
+        } else if (_currentDifficulty == QuizDifficulty.medium) {
+          _currentDifficulty = QuizDifficulty.easy;
+          _consecutiveWrong = 0;
+        }
+      }
+    }
+  }
+
+  QuizQuestion get _currentQuestion {
+    if (_questionOrder.isEmpty) {
+      _questionOrder = _getQuestionsForDifficulty(_currentDifficulty);
+      _questionOrder.shuffle();
+    }
+    return _allQuestions[_questionOrder[_currentQuestionIndex % _questionOrder.length]];
+  }
 
   void _selectAnswer(int index) {
     if (_answered) return;
 
+    final question = _currentQuestion;
+    final isCorrect = index == question.correctIndex;
+
     setState(() {
       _selectedAnswer = index;
       _answered = true;
-      if (index == _questions[_currentQuestion].correctIndex) {
+      if (isCorrect) {
         _score++;
       }
+      _adjustDifficulty(isCorrect);
+      _questionsAnswered++;
     });
   }
 
   void _nextQuestion() {
-    if (_currentQuestion < _questions.length - 1) {
+    if (_questionsAnswered < _totalQuestionsToAnswer) {
       setState(() {
-        _currentQuestion++;
+        _currentQuestionIndex++;
         _answered = false;
         _selectedAnswer = null;
+
+        // Get new questions for current difficulty if needed
+        final newQuestions = _getQuestionsForDifficulty(_currentDifficulty);
+        if (_currentQuestionIndex >= _questionOrder.length) {
+          _questionOrder = newQuestions;
+          _questionOrder.shuffle();
+          _currentQuestionIndex = 0;
+        }
       });
     } else {
       // Save quiz score
-      ProgressService.saveQuizScore('quiz_level1', _score, _questions.length);
+      ProgressService.saveQuizScore('quiz_level1', _score, _totalQuestionsToAnswer);
       setState(() {
         _quizCompleted = true;
       });
@@ -151,12 +282,39 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
 
   void _restartQuiz() {
     setState(() {
-      _currentQuestion = 0;
+      _currentQuestionIndex = 0;
       _score = 0;
       _answered = false;
       _selectedAnswer = null;
       _quizCompleted = false;
+      _currentDifficulty = QuizDifficulty.easy;
+      _consecutiveCorrect = 0;
+      _consecutiveWrong = 0;
+      _questionsAnswered = 0;
+      _initializeAdaptiveQuiz();
     });
+  }
+
+  String _getDifficultyText() {
+    switch (_currentDifficulty) {
+      case QuizDifficulty.easy:
+        return 'ง่าย';
+      case QuizDifficulty.medium:
+        return 'ปานกลาง';
+      case QuizDifficulty.hard:
+        return 'ยาก';
+    }
+  }
+
+  Color _getDifficultyColor() {
+    switch (_currentDifficulty) {
+      case QuizDifficulty.easy:
+        return Colors.green;
+      case QuizDifficulty.medium:
+        return Colors.orange;
+      case QuizDifficulty.hard:
+        return Colors.red;
+    }
   }
 
   @override
@@ -165,8 +323,8 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       return _buildResultScreen();
     }
 
-    final question = _questions[_currentQuestion];
-    final progress = (_currentQuestion + 1) / _questions.length;
+    final question = _currentQuestion;
+    final progress = (_questionsAnswered + 1) / _totalQuestionsToAnswer;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -177,9 +335,9 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       ),
       body: Column(
         children: [
-          // Progress bar
+          // Progress bar with difficulty indicator
           Semantics(
-            label: 'ความคืบหน้า ข้อ ${_currentQuestion + 1} จาก ${_questions.length}, คะแนนปัจจุบัน $_score คะแนน',
+            label: 'ความคืบหน้า ข้อ ${_questionsAnswered + 1} จาก $_totalQuestionsToAnswer, คะแนนปัจจุบัน $_score คะแนน, ระดับความยาก ${_getDifficultyText()}',
             child: Container(
               padding: const EdgeInsets.all(16),
               color: AppColors.surface,
@@ -189,10 +347,27 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'ข้อ ${_currentQuestion + 1}/${_questions.length}',
+                        'ข้อ ${_questionsAnswered + 1}/$_totalQuestionsToAnswer',
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 14,
+                        ),
+                      ),
+                      // Difficulty badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _getDifficultyColor().withAlpha(30),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: _getDifficultyColor()),
+                        ),
+                        child: Text(
+                          _getDifficultyText(),
+                          style: TextStyle(
+                            color: _getDifficultyColor(),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       Text(
@@ -231,7 +406,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 children: [
                   // Question
                   Semantics(
-                    label: 'คำถามข้อ ${_currentQuestion + 1} จาก ${_questions.length}',
+                    label: 'คำถามข้อ ${_questionsAnswered + 1} จาก $_totalQuestionsToAnswer',
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -388,7 +563,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                     ),
                   ),
                   child: Text(
-                    _currentQuestion < _questions.length - 1
+                    _questionsAnswered < _totalQuestionsToAnswer - 1
                         ? 'ข้อถัดไป'
                         : 'ดูผลคะแนน',
                     style: const TextStyle(
@@ -557,7 +732,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
   }
 
   Widget _buildResultScreen() {
-    final percentage = (_score / _questions.length * 100).round();
+    final percentage = (_score / _totalQuestionsToAnswer * 100).round();
     final passed = percentage >= 70;
 
     String grade;
@@ -599,7 +774,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
           padding: const EdgeInsets.all(24),
           child: Semantics(
             liveRegion: true,
-            label: 'ผลการทดสอบ: เกรด $grade, คะแนน $_score จาก ${_questions.length}, คิดเป็น $percentage เปอร์เซ็นต์, ${passed ? 'ผ่าน' : 'ไม่ผ่าน'}, $message',
+            label: 'ผลการทดสอบ: เกรด $grade, คะแนน $_score จาก $_totalQuestionsToAnswer, คิดเป็น $percentage เปอร์เซ็นต์, ${passed ? 'ผ่าน' : 'ไม่ผ่าน'}, $message',
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -631,11 +806,11 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
 
                 // Score
                 Semantics(
-                  label: 'คะแนน $_score จาก ${_questions.length}, คิดเป็น $percentage เปอร์เซ็นต์',
+                  label: 'คะแนน $_score จาก $_totalQuestionsToAnswer, คิดเป็น $percentage เปอร์เซ็นต์',
                   child: Column(
                     children: [
                       Text(
-                        '$_score / ${_questions.length}',
+                        '$_score / $_totalQuestionsToAnswer',
                         style: const TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 36,
@@ -738,16 +913,20 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
   }
 }
 
+enum QuizDifficulty { easy, medium, hard }
+
 class QuizQuestion {
   final String question;
   final List<String> options;
   final int correctIndex;
   final String explanation;
+  final QuizDifficulty difficulty;
 
   QuizQuestion({
     required this.question,
     required this.options,
     required this.correctIndex,
     required this.explanation,
+    this.difficulty = QuizDifficulty.medium,
   });
 }
