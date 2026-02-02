@@ -121,7 +121,8 @@ class _GpsJamScreenState extends State<GpsJamScreen>
         actions: [
           IconButton(
             icon: Icon(_isEmergencyMode ? Icons.warning : Icons.menu_book),
-            onPressed: () => setState(() => _isEmergencyMode = !_isEmergencyMode),
+            onPressed: () =>
+                setState(() => _isEmergencyMode = !_isEmergencyMode),
             tooltip: _isEmergencyMode ? 'Study Mode' : 'Emergency Mode',
           ),
         ],
@@ -157,21 +158,24 @@ class _GpsJamScreenState extends State<GpsJamScreen>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                AppColors.danger.withValues(alpha: 0.3 + _pulseController.value * 0.2),
+                AppColors.danger.withValues(
+                  alpha: 0.3 + _pulseController.value * 0.2,
+                ),
                 AppColors.danger.withValues(alpha: 0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.danger,
-              width: 2,
-            ),
+            border: Border.all(color: AppColors.danger, width: 2),
           ),
           child: Row(
             children: [
               Transform.scale(
                 scale: 1.0 + _pulseController.value * 0.2,
-                child: const Icon(Icons.warning_amber, color: AppColors.danger, size: 40),
+                child: const Icon(
+                  Icons.warning_amber,
+                  color: AppColors.danger,
+                  size: 40,
+                ),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -277,7 +281,11 @@ class _GpsJamScreenState extends State<GpsJamScreen>
         const SizedBox(height: 4),
         Text(
           status,
-          style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: color,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
@@ -321,7 +329,9 @@ class _GpsJamScreenState extends State<GpsJamScreen>
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isActive ? step.color.withValues(alpha: 0.15) : AppColors.surface,
+          color: isActive
+              ? step.color.withValues(alpha: 0.15)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isActive ? step.color : AppColors.border,
@@ -369,7 +379,9 @@ class _GpsJamScreenState extends State<GpsJamScreen>
                       Text(
                         step.description,
                         style: TextStyle(
-                          color: isActive ? step.color.withValues(alpha: 0.8) : AppColors.textMuted,
+                          color: isActive
+                              ? step.color.withValues(alpha: 0.8)
+                              : AppColors.textMuted,
                           fontSize: 12,
                         ),
                       ),
@@ -386,22 +398,27 @@ class _GpsJamScreenState extends State<GpsJamScreen>
               const SizedBox(height: 12),
               const Divider(color: Colors.white24),
               const SizedBox(height: 8),
-              ...step.details.map((detail) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.arrow_right, color: step.color, size: 18),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        detail,
-                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+              ...step.details.map(
+                (detail) => Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.arrow_right, color: step.color, size: 18),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          detail,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ],
         ),
@@ -480,10 +497,12 @@ class _GpsJamScreenState extends State<GpsJamScreen>
             crossAxisCount: 2,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1.3,
-            children: alternatives.map((alt) => _buildAlternativeCard(alt)).toList(),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 2.5,
+            children: alternatives
+                .map((alt) => _buildAlternativeCard(alt))
+                .toList(),
           ),
         ],
       ),
@@ -492,40 +511,38 @@ class _GpsJamScreenState extends State<GpsJamScreen>
 
   Widget _buildAlternativeCard(NavigationMethod method) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: method.color.withValues(alpha: 0.3)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Icon(method.icon, color: method.color, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
+          Icon(method.icon, color: method.color, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
                   method.name,
                   style: TextStyle(
                     color: method.color,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'ความแม่นยำ: ${method.accuracy}',
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
-          ),
-          Text(
-            method.requirement,
-            style: TextStyle(color: method.color.withValues(alpha: 0.7), fontSize: 10),
+                Text(
+                  method.accuracy,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 9,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -558,18 +575,29 @@ class _GpsJamScreenState extends State<GpsJamScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _buildIndicatorItem('ตำแหน่งกระโดดผิดปกติ (>100m)', Icons.location_off),
+          _buildIndicatorItem(
+            'ตำแหน่งกระโดดผิดปกติ (>100m)',
+            Icons.location_off,
+          ),
           _buildIndicatorItem('Accuracy ลดลงกะทันหัน', Icons.gps_not_fixed),
           _buildIndicatorItem('เวลาบนอุปกรณ์ผิดพลาด', Icons.access_time),
-          _buildIndicatorItem('สูญเสียสัญญาณทั้งหมดทันที', Icons.signal_cellular_off),
-          _buildIndicatorItem('Heading/Direction ผิดพลาด', Icons.compass_calibration),
+          _buildIndicatorItem(
+            'สูญเสียสัญญาณทั้งหมดทันที',
+            Icons.signal_cellular_off,
+          ),
+          _buildIndicatorItem(
+            'Heading/Direction ผิดพลาด',
+            Icons.compass_calibration,
+          ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.3),
+              ),
             ),
             child: const Row(
               children: [
@@ -606,7 +634,10 @@ class _GpsJamScreenState extends State<GpsJamScreen>
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 14,
+              ),
             ),
           ),
         ],
@@ -651,7 +682,9 @@ class _GpsJamScreenState extends State<GpsJamScreen>
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.warning.withValues(alpha: 0.3),
+              ),
             ),
             child: const Row(
               children: [
@@ -729,7 +762,9 @@ class GpsSignalPainter extends CustomPainter {
       // Satellite icon
       final satPaint = Paint()
         ..color = isJammed
-            ? const Color(0xFFFF5252).withValues(alpha: 0.3 + random.nextDouble() * 0.3)
+            ? const Color(
+                0xFFFF5252,
+              ).withValues(alpha: 0.3 + random.nextDouble() * 0.3)
             : const Color(0xFF4CAF50);
 
       canvas.drawCircle(sat, 8, satPaint);
@@ -747,14 +782,18 @@ class GpsSignalPainter extends CustomPainter {
         final path = Path();
         final receiver = Offset(centerX, size.height - 20);
 
-        final dashWidth = 5.0;
-        final dashSpace = 5.0;
+        const dashWidth = 5.0;
+        const dashSpace = 5.0;
         var distance = 0.0;
         final totalDistance = (receiver - sat).distance;
 
         while (distance < totalDistance) {
           final start = Offset.lerp(sat, receiver, distance / totalDistance)!;
-          final end = Offset.lerp(sat, receiver, (distance + dashWidth) / totalDistance)!;
+          final end = Offset.lerp(
+            sat,
+            receiver,
+            (distance + dashWidth) / totalDistance,
+          )!;
           path.moveTo(start.dx, start.dy);
           path.lineTo(end.dx, end.dy);
           distance += dashWidth + dashSpace;
@@ -797,10 +836,7 @@ class GpsSignalPainter extends CustomPainter {
 
       // Jammer icon
       final textPainter = TextPainter(
-        text: const TextSpan(
-          text: '⚡',
-          style: TextStyle(fontSize: 12),
-        ),
+        text: const TextSpan(text: '⚡', style: TextStyle(fontSize: 12)),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();

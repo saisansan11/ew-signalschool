@@ -587,9 +587,9 @@ class _CommJamScreenState extends State<CommJamScreen>
             crossAxisCount: 2,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1.2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 2.8,
             children: techniques.map((t) => _buildEpmCard(t)).toList(),
           ),
         ],
@@ -599,43 +599,36 @@ class _CommJamScreenState extends State<CommJamScreen>
 
   Widget _buildEpmCard(EpmTechnique technique) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: technique.color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: technique.color.withValues(alpha: 0.3)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
         children: [
-          Icon(technique.icon, color: technique.color, size: 28),
-          const SizedBox(height: 8),
-          Text(
-            technique.name,
-            style: TextStyle(
-              color: technique.color,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            technique.description,
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 10),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: technique.color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              'ประสิทธิภาพ: ${technique.effectiveness}',
-              style: TextStyle(color: technique.color, fontSize: 9),
+          Icon(technique.icon, color: technique.color, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  technique.name,
+                  style: TextStyle(
+                    color: technique.color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  technique.description,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 9),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
