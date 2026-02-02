@@ -119,6 +119,16 @@ final List<EWLesson> ewLessons = [
     color: Colors.deepPurple,
     contentBuilder: (c) => const Lesson9_CaseStudies(),
   ),
+  // บทที่ 10: ระบบเรดาร์
+  EWLesson(
+    id: 'lesson_10',
+    category: 'บทที่ 10',
+    title: 'ระบบเรดาร์ (Radar Systems)',
+    subtitle: 'Pulse, Doppler, SAR และสมการเรดาร์',
+    icon: Icons.radar,
+    color: Colors.cyan,
+    contentBuilder: (c) => const Lesson10_Radar(),
+  ),
 ];
 
 // ==========================================

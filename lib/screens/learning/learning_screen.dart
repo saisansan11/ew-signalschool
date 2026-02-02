@@ -148,6 +148,14 @@ class _LearningScreenState extends State<LearningScreen>
           ewLessonIndex: 2, // ESM (มี DF)
         ),
         LessonData(
+          title: 'ระบบเรดาร์',
+          subtitle: 'Pulse, Doppler, SAR และสมการเรดาร์',
+          duration: '35 นาที',
+          isCompleted: false,
+          isLocked: false,
+          ewLessonIndex: 9, // Radar Systems
+        ),
+        LessonData(
           title: 'กรณีศึกษา EW',
           subtitle: 'เรียนรู้จากปฏิบัติการจริง',
           duration: '25 นาที',

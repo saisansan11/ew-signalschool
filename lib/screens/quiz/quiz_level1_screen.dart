@@ -178,44 +178,47 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       body: Column(
         children: [
           // Progress bar
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: AppColors.surface,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'ข้อ ${_currentQuestion + 1}/${_questions.length}',
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
+          Semantics(
+            label: 'ความคืบหน้า ข้อ ${_currentQuestion + 1} จาก ${_questions.length}, คะแนนปัจจุบัน $_score คะแนน',
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              color: AppColors.surface,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'ข้อ ${_currentQuestion + 1}/${_questions.length}',
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'คะแนน: $_score',
-                      style: const TextStyle(
-                        color: AppColors.success,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                      Text(
+                        'คะแนน: $_score',
+                        style: const TextStyle(
+                          color: AppColors.success,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: AppColors.surfaceLight,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.primary,
-                    ),
-                    minHeight: 6,
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: AppColors.surfaceLight,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                      minHeight: 6,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -227,33 +230,39 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Question
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.primary.withAlpha(50),
+                  Semantics(
+                    label: 'คำถามข้อ ${_currentQuestion + 1} จาก ${_questions.length}',
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: AppColors.primary.withAlpha(50),
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(
-                          Icons.help_outline,
-                          color: AppColors.primary,
-                          size: 40,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          question.question,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.help_outline,
+                            color: AppColors.primary,
+                            size: 40,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          Semantics(
+                            header: true,
+                            child: Text(
+                              question.question,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
@@ -271,104 +280,90 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                     Color textColor = AppColors.textPrimary;
                     IconData? icon;
 
+                    // Determine semantic state for screen reader
+                    String semanticState = '';
                     if (_answered) {
                       if (isCorrect) {
                         bgColor = AppColors.success.withAlpha(30);
                         borderColor = AppColors.success;
                         textColor = AppColors.success;
                         icon = Icons.check_circle;
+                        semanticState = ', คำตอบที่ถูกต้อง';
                       } else if (isSelected && !isCorrect) {
                         bgColor = AppColors.danger.withAlpha(30);
                         borderColor = AppColors.danger;
                         textColor = AppColors.danger;
                         icon = Icons.cancel;
+                        semanticState = ', คำตอบที่เลือก, ไม่ถูกต้อง';
                       }
                     } else if (isSelected) {
                       bgColor = AppColors.primary.withAlpha(30);
                       borderColor = AppColors.primary;
+                      semanticState = ', กำลังเลือก';
                     }
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: GestureDetector(
-                        onTap: () => _selectAnswer(index),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: bgColor,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: borderColor, width: 2),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  color: borderColor.withAlpha(30),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: icon != null
-                                      ? Icon(icon, color: textColor, size: 20)
-                                      : Text(
-                                          String.fromCharCode(65 + index),
-                                          style: TextStyle(
-                                            color: textColor,
-                                            fontWeight: FontWeight.bold,
+                      child: Semantics(
+                        button: !_answered,
+                        enabled: !_answered,
+                        selected: isSelected,
+                        label: 'ตัวเลือก ${String.fromCharCode(65 + index)}: $option$semanticState',
+                        child: GestureDetector(
+                          onTap: () => _selectAnswer(index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: borderColor, width: 2),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: borderColor.withAlpha(30),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: icon != null
+                                        ? Icon(icon, color: textColor, size: 20)
+                                        : Text(
+                                            String.fromCharCode(65 + index),
+                                            style: TextStyle(
+                                              color: textColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  option,
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 15,
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    option,
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     );
                   }),
 
-                  // Explanation (shown after answering)
+                  // Feedback (shown after answering)
                   if (_answered)
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withAlpha(20),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.primary.withAlpha(50),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.lightbulb_outline,
-                            color: AppColors.primary,
-                            size: 24,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              question.explanation,
-                              style: const TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildFeedbackCard(
+                      isCorrect: _selectedAnswer == question.correctIndex,
+                      explanation: question.explanation,
+                      correctAnswer: question.options[question.correctIndex],
                     ),
                 ],
               ),
@@ -404,6 +399,158 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackCard({
+    required bool isCorrect,
+    required String explanation,
+    required String correctAnswer,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isCorrect
+            ? AppColors.success.withAlpha(20)
+            : AppColors.danger.withAlpha(15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isCorrect
+              ? AppColors.success.withAlpha(60)
+              : AppColors.danger.withAlpha(40),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header - Correct or Incorrect
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isCorrect
+                      ? AppColors.success.withAlpha(30)
+                      : AppColors.danger.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCorrect ? Icons.check_circle : Icons.cancel,
+                  color: isCorrect ? AppColors.success : AppColors.danger,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isCorrect ? 'ถูกต้อง! 🎉' : 'ไม่ถูกต้อง',
+                      style: TextStyle(
+                        color: isCorrect ? AppColors.success : AppColors.danger,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (!isCorrect)
+                      Text(
+                        'คำตอบที่ถูก: $correctAnswer',
+                        style: const TextStyle(
+                          color: AppColors.success,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Divider
+          Container(
+            height: 1,
+            color: isCorrect
+                ? AppColors.success.withAlpha(30)
+                : AppColors.danger.withAlpha(20),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Explanation
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                color: AppColors.warning,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'อธิบาย:',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      explanation,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          // Tip for wrong answers
+          if (!isCorrect) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withAlpha(15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.school,
+                    color: AppColors.primary,
+                    size: 18,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'ทบทวนเนื้อหานี้ใน Flashcard เพื่อความเข้าใจที่ดีขึ้น',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -450,83 +597,99 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Grade circle
-              Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: gradeColor.withAlpha(30),
-                  border: Border.all(color: gradeColor, width: 4),
-                ),
-                child: Center(
-                  child: Text(
-                    grade,
-                    style: TextStyle(
-                      color: gradeColor,
-                      fontSize: 72,
-                      fontWeight: FontWeight.bold,
+          child: Semantics(
+            liveRegion: true,
+            label: 'ผลการทดสอบ: เกรด $grade, คะแนน $_score จาก ${_questions.length}, คิดเป็น $percentage เปอร์เซ็นต์, ${passed ? 'ผ่าน' : 'ไม่ผ่าน'}, $message',
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Grade circle
+                Semantics(
+                  label: 'เกรด $grade',
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: gradeColor.withAlpha(30),
+                      border: Border.all(color: gradeColor, width: 4),
+                    ),
+                    child: Center(
+                      child: Text(
+                        grade,
+                        style: TextStyle(
+                          color: gradeColor,
+                          fontSize: 72,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              // Score
-              Text(
-                '$_score / ${_questions.length}',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                '$percentage%',
-                style: TextStyle(
-                  color: gradeColor,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Pass/Fail badge
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: passed ? AppColors.success : AppColors.danger,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  passed ? 'ผ่าน' : 'ไม่ผ่าน',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                // Score
+                Semantics(
+                  label: 'คะแนน $_score จาก ${_questions.length}, คิดเป็น $percentage เปอร์เซ็นต์',
+                  child: Column(
+                    children: [
+                      Text(
+                        '$_score / ${_questions.length}',
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '$percentage%',
+                        style: TextStyle(
+                          color: gradeColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Message
-              Text(
-                message,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 16,
+                // Pass/Fail badge
+                Semantics(
+                  label: passed ? 'สถานะ: ผ่าน' : 'สถานะ: ไม่ผ่าน',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: passed ? AppColors.success : AppColors.danger,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      passed ? 'ผ่าน' : 'ไม่ผ่าน',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
+
+                const SizedBox(height: 16),
+
+                // Message
+                Text(
+                  message,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
 
               const SizedBox(height: 32),
 
@@ -567,6 +730,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 ],
               ),
             ],
+          ),
           ),
         ),
       ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import '../../app/constants.dart';
 import '../../services/progress_service.dart';
 
@@ -36,7 +35,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'เพิ่มกำลังส่งของตนเอง',
       ],
       correctIndex: 1,
-      explanation: 'Adaptive Nulling ใช้ Digital Signal Processing ปรับ Antenna Pattern '
+      explanation:
+          'Adaptive Nulling ใช้ Digital Signal Processing ปรับ Antenna Pattern '
           'เพื่อสร้าง Null (จุดรับสัญญาณต่ำสุด) ไปยังทิศทางของ Jammer โดยอัตโนมัติ',
       category: 'ECCM',
       difficulty: 3,
@@ -50,7 +50,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'เพิ่มหน่วยความจำให้ระบบ EW',
       ],
       correctIndex: 0,
-      explanation: 'DRFM จับสัญญาณเรดาร์ข้าศึก บันทึกเป็น Digital แล้วส่งกลับ '
+      explanation:
+          'DRFM จับสัญญาณเรดาร์ข้าศึก บันทึกเป็น Digital แล้วส่งกลับ '
           'พร้อมปรับแต่ง (Delay, Doppler, Amplitude) เพื่อสร้าง False Target ที่สมจริง',
       category: 'ECM',
       difficulty: 3,
@@ -64,29 +65,28 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'เปลี่ยน Pulse เป็น CW',
       ],
       correctIndex: 1,
-      explanation: 'Pulse Compression ใช้ Long Pulse + Bandwidth (LFM/Phase Coding) '
+      explanation:
+          'Pulse Compression ใช้ Long Pulse + Bandwidth (LFM/Phase Coding) '
           'แล้ว Compress ที่ Receiver ทำให้ได้ Processing Gain = Time-Bandwidth Product '
           'เพิ่ม SNR และต้านทาน Jamming ได้ดีขึ้น',
       category: 'ECCM',
       difficulty: 3,
     ),
     QuizQuestion(
-      question: 'TDOA (Time Difference of Arrival) ต้องใช้สถานี DF อย่างน้อยกี่สถานีเพื่อหาตำแหน่ง 2D?',
-      options: [
-        '2 สถานี',
-        '3 สถานี',
-        '4 สถานี',
-        '5 สถานี',
-      ],
+      question:
+          'TDOA (Time Difference of Arrival) ต้องใช้สถานี DF อย่างน้อยกี่สถานีเพื่อหาตำแหน่ง 2D?',
+      options: ['2 สถานี', '3 สถานี', '4 สถานี', '5 สถานี'],
       correctIndex: 1,
-      explanation: 'TDOA 2D ต้องใช้ 3 สถานี: คู่แรกให้ Hyperbola แรก, '
+      explanation:
+          'TDOA 2D ต้องใช้ 3 สถานี: คู่แรกให้ Hyperbola แรก, '
           'คู่ที่สองให้ Hyperbola ที่สอง, จุดตัดคือตำแหน่งเป้าหมาย '
           'สำหรับ 3D ต้องใช้ 4 สถานี',
       category: 'ESM',
       difficulty: 3,
     ),
     QuizQuestion(
-      question: 'FDOA (Frequency Difference of Arrival) ใช้หลักการใดในการหาตำแหน่ง?',
+      question:
+          'FDOA (Frequency Difference of Arrival) ใช้หลักการใดในการหาตำแหน่ง?',
       options: [
         'Phase Difference',
         'Amplitude Comparison',
@@ -94,7 +94,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'Time Delay',
       ],
       correctIndex: 2,
-      explanation: 'FDOA ใช้ความแตกต่างของ Doppler Shift ที่วัดได้จาก '
+      explanation:
+          'FDOA ใช้ความแตกต่างของ Doppler Shift ที่วัดได้จาก '
           'Sensor ที่เคลื่อนที่ (เช่น ดาวเทียม, เครื่องบิน) '
           'เพื่อสร้าง Isodoppler Lines และหาตำแหน่ง',
       category: 'ESM',
@@ -109,7 +110,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'Maximum Power Output',
       ],
       correctIndex: 1,
-      explanation: 'LPI Radar ใช้: กำลังส่งต่ำ, Spread Spectrum (กระจายพลังงาน), '
+      explanation:
+          'LPI Radar ใช้: กำลังส่งต่ำ, Spread Spectrum (กระจายพลังงาน), '
           'Frequency Agility, Pulse Compression, และ Sidelobe Control '
           'เพื่อให้ ESM ตรวจจับได้ยาก',
       category: 'ECCM',
@@ -124,14 +126,16 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'EW รุ่นเก่าที่ใช้ Analog',
       ],
       correctIndex: 1,
-      explanation: 'Cognitive EW ใช้ AI/ML วิเคราะห์สภาพแวดล้อม EM, เรียนรู้พฤติกรรมข้าศึก, '
+      explanation:
+          'Cognitive EW ใช้ AI/ML วิเคราะห์สภาพแวดล้อม EM, เรียนรู้พฤติกรรมข้าศึก, '
           'และปรับ Parameters (ความถี่, กำลัง, Waveform) แบบ Real-Time '
           'เพื่อตอบโต้อย่างเหมาะสมที่สุด',
       category: 'Modern EW',
       difficulty: 3,
     ),
     QuizQuestion(
-      question: 'ในการคำนวณ Burn-Through Range, ปัจจัยใดทำให้ระยะ Burn-Through สั้นลง?',
+      question:
+          'ในการคำนวณ Burn-Through Range, ปัจจัยใดทำให้ระยะ Burn-Through สั้นลง?',
       options: [
         'Jammer Power สูงขึ้น',
         'Radar Power สูงขึ้น',
@@ -139,7 +143,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'Radar Antenna Gain ต่ำลง',
       ],
       correctIndex: 1,
-      explanation: 'Burn-Through Range คือระยะที่ Radar เห็นเป้าหมายแม้ถูก Jam '
+      explanation:
+          'Burn-Through Range คือระยะที่ Radar เห็นเป้าหมายแม้ถูก Jam '
           'ถ้า Radar Power สูงขึ้น จะ Burn-Through ได้ที่ระยะไกลกว่า '
           '(Jammer ต้องมาใกล้กว่าจึงจะ Jam ได้)',
       category: 'ECM',
@@ -154,7 +159,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ซ่อมบำรุงง่ายกว่า',
       ],
       correctIndex: 1,
-      explanation: 'ดาวเทียม EW มองเห็นพื้นที่กว้าง (Footprint ใหญ่), '
+      explanation:
+          'ดาวเทียม EW มองเห็นพื้นที่กว้าง (Footprint ใหญ่), '
           'ไม่ถูกบังโดยภูเขาหรือความโค้งของโลก, '
           'และเข้าถึงได้ทุกที่ แต่มีข้อจำกัดเรื่อง Power และ Payload',
       category: 'Modern EW',
@@ -169,7 +175,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'IFF System',
       ],
       correctIndex: 1,
-      explanation: 'Cross-Eye ใช้ 2 Antenna ส่งสัญญาณที่มี Phase ต่างกัน '
+      explanation:
+          'Cross-Eye ใช้ 2 Antenna ส่งสัญญาณที่มี Phase ต่างกัน '
           'เพื่อหลอก Monopulse Radar ให้คำนวณ Angle ผิด '
           'ทำให้ Track เป้าหมายไม่ได้',
       category: 'ECM',
@@ -184,7 +191,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ซ่อมบำรุงง่ายกว่า',
       ],
       correctIndex: 1,
-      explanation: 'AESA (Active Electronically Scanned Array) สามารถ: '
+      explanation:
+          'AESA (Active Electronically Scanned Array) สามารถ: '
           'เปลี่ยนความถี่ทุก Pulse, สร้างหลาย Beam พร้อมกัน, '
           'Null Steering หลบ Jammer, และเสีย Element บางตัวยังทำงานได้',
       category: 'ECCM',
@@ -199,7 +207,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ทิศทางมาของสัญญาณ',
       ],
       correctIndex: 1,
-      explanation: 'Radar Fingerprinting ใช้ PRF (Pulse Repetition Frequency), '
+      explanation:
+          'Radar Fingerprinting ใช้ PRF (Pulse Repetition Frequency), '
           'PW (Pulse Width), Scan Pattern, และ Modulation ร่วมกัน '
           'เพื่อระบุชนิดและแม้แต่ Serial Number ของ Radar',
       category: 'ESM',
@@ -214,21 +223,18 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ไม่ต่างกัน',
       ],
       correctIndex: 1,
-      explanation: 'Reactive Jamming: ตรวจจับสัญญาณก่อน แล้วตอบโต้ทันที (ประหยัด Power, ซ่อนตัวดี) '
+      explanation:
+          'Reactive Jamming: ตรวจจับสัญญาณก่อน แล้วตอบโต้ทันที (ประหยัด Power, ซ่อนตัวดี) '
           'Proactive Jamming: ส่ง Jamming ต่อเนื่องโดยไม่รอ (ครอบคลุม, ใช้ Power มาก)',
       category: 'ECM',
       difficulty: 2,
     ),
     QuizQuestion(
       question: 'ระบบ SINCGARS มี Anti-Jam Margin ประมาณเท่าไร?',
-      options: [
-        '5 dB',
-        '10-15 dB',
-        '17-25 dB',
-        '50+ dB',
-      ],
+      options: ['5 dB', '10-15 dB', '17-25 dB', '50+ dB'],
       correctIndex: 2,
-      explanation: 'SINCGARS ใช้ FHSS ที่ 111 hops/sec ให้ Anti-Jam Margin '
+      explanation:
+          'SINCGARS ใช้ FHSS ที่ 111 hops/sec ให้ Anti-Jam Margin '
           'ประมาณ 17-25 dB ขึ้นกับ Hopping Rate และ Bandwidth '
           'หมายความว่า Jammer ต้องแรงกว่าสัญญาณ 17-25 dB จึงจะ Jam ได้',
       category: 'ECCM',
@@ -243,7 +249,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'การใช้ Firewall ในระบบ EW',
       ],
       correctIndex: 0,
-      explanation: 'Cyber-EW Convergence คือการใช้ Cyber (Network Attack, Malware) '
+      explanation:
+          'Cyber-EW Convergence คือการใช้ Cyber (Network Attack, Malware) '
           'ร่วมกับ EW (Jamming, Spoofing) โจมตีพร้อมกัน '
           'เช่น Cyber เจาะระบบ C2, EW รบกวนการสื่อสารสำรอง',
       category: 'Modern EW',
@@ -258,7 +265,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ดูดซับ Chaff',
       ],
       correctIndex: 1,
-      explanation: 'MTI ใช้ Doppler Processing กรองสัญญาณสะท้อนจากวัตถุที่นิ่งหรือ '
+      explanation:
+          'MTI ใช้ Doppler Processing กรองสัญญาณสะท้อนจากวัตถุที่นิ่งหรือ '
           'เคลื่อนที่ช้า (Chaff Cloud ลอยช้าๆ) ออกไป '
           'เหลือแต่เป้าหมายที่เคลื่อนที่เร็ว (เครื่องบิน)',
       category: 'ECCM',
@@ -273,14 +281,16 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ใช้ Command Guidance',
       ],
       correctIndex: 1,
-      explanation: 'HARM ใช้ Broadband Passive RF Seeker ตรวจจับและติดตาม '
+      explanation:
+          'HARM ใช้ Broadband Passive RF Seeker ตรวจจับและติดตาม '
           'การแผ่คลื่นจาก Radar ข้าศึก (Emission) แม้ Radar จะปิดตัว, '
           'HARM รุ่นใหม่มี GPS/INS สำหรับ Home-On-Jam (HOJ)',
       category: 'SEAD',
       difficulty: 3,
     ),
     QuizQuestion(
-      question: 'ในระบบ IFF (Identification Friend or Foe), Mode S ต่างจาก Mode 3/A อย่างไร?',
+      question:
+          'ในระบบ IFF (Identification Friend or Foe), Mode S ต่างจาก Mode 3/A อย่างไร?',
       options: [
         'Mode S ใช้ความถี่ต่างกัน',
         'Mode S มี Selective Addressing และ Data Link',
@@ -288,7 +298,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ไม่ต่างกัน',
       ],
       correctIndex: 1,
-      explanation: 'Mode S (Selective) ใช้ 24-bit Address เฉพาะเครื่อง, '
+      explanation:
+          'Mode S (Selective) ใช้ 24-bit Address เฉพาะเครื่อง, '
           'รองรับ Data Link (ADS-B), ลด Garbling (การชนกันของสัญญาณ) '
           'ขณะที่ Mode 3/A ใช้ Squawk Code 4 หลักเหมือนกันได้หลายเครื่อง',
       category: 'IFF',
@@ -303,7 +314,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ติดตั้งง่ายกว่า',
       ],
       correctIndex: 1,
-      explanation: 'Bistatic Radar แยก Transmitter และ Receiver '
+      explanation:
+          'Bistatic Radar แยก Transmitter และ Receiver '
           'Jammer จะต้องรู้ตำแหน่งทั้งคู่และ Jam ทั้งสอง '
           'นอกจากนี้ Receiver เป็น Passive ทำให้หายากและ DF Jammer ได้',
       category: 'ECCM',
@@ -318,7 +330,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'จำนวนผู้ใช้',
       ],
       correctIndex: 1,
-      explanation: 'TECHINT วิเคราะห์: Modulation, Bandwidth, Power, Protocol, Encryption Method '
+      explanation:
+          'TECHINT วิเคราะห์: Modulation, Bandwidth, Power, Protocol, Encryption Method '
           'เพื่อระบุชนิดอุปกรณ์, ความสามารถ, และหาจุดอ่อนทางเทคนิค '
           'ต่างจาก COMINT Content ที่วิเคราะห์เนื้อหา',
       category: 'SIGINT',
@@ -333,7 +346,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ไม่เกี่ยวข้องกับ EW',
       ],
       correctIndex: 1,
-      explanation: 'NCW ใช้ Network เชื่อม Sensor หลายตัว แม้ Jam Radar หนึ่งตัว '
+      explanation:
+          'NCW ใช้ Network เชื่อม Sensor หลายตัว แม้ Jam Radar หนึ่งตัว '
           'ระบบอื่นก็แชร์ข้อมูลได้ ดังนั้น EW ต้องโจมตี: '
           'Data Link, Network Node, และ C2 System ด้วย',
       category: 'Modern EW',
@@ -348,7 +362,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'Dissemination',
       ],
       correctIndex: 2,
-      explanation: 'Intelligence Cycle: 1) Planning & Direction (กำหนดความต้องการ) '
+      explanation:
+          'Intelligence Cycle: 1) Planning & Direction (กำหนดความต้องการ) '
           '→ 2) Collection → 3) Processing → 4) Analysis '
           '→ 5) Dissemination → 6) Feedback กลับมา Planning',
       category: 'SIGINT',
@@ -363,7 +378,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'ไม่สามารถคำนวณได้',
       ],
       correctIndex: 1,
-      explanation: 'Processing Gain (Gp) = Bandwidth / Data Rate '
+      explanation:
+          'Processing Gain (Gp) = Bandwidth / Data Rate '
           'เช่น DSSS มี BW = 10 MHz, Data = 10 kbps '
           'Gp = 10M/10k = 1000 = 30 dB Anti-Jam Margin',
       category: 'ECCM',
@@ -378,7 +394,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'โจมตีเรดาร์โดยตรง',
       ],
       correctIndex: 1,
-      explanation: 'MALD เป็น Small UAV ที่ปล่อยจากเครื่องบิน '
+      explanation:
+          'MALD เป็น Small UAV ที่ปล่อยจากเครื่องบิน '
           'มี Radar Augmenter ทำให้ RCS เหมือนเครื่องบินรบ '
           'MALD-J เพิ่ม Jammer ด้วย ใช้ล่อให้ SAM ยิงหรือ Radar เปิดเผยตัว',
       category: 'SEAD',
@@ -393,7 +410,8 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
         'การฝึกพนักงาน EW',
       ],
       correctIndex: 1,
-      explanation: 'EW Reprogramming อัปเดต: Threat Parameters (ความถี่, PRF ใหม่), '
+      explanation:
+          'EW Reprogramming อัปเดต: Threat Parameters (ความถี่, PRF ใหม่), '
           'ECM Techniques ที่เหมาะสม, และ ESM Library '
           'เมื่อข้าศึกเปลี่ยนระบบหรือใช้ ECCM ใหม่',
       category: 'EW Ops',
@@ -470,7 +488,11 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
 
   void _saveScore() {
     final percent = (_score / _shuffledQuestions.length * 100).round();
-    ProgressService.saveQuizScore('quiz_level3', _score, _shuffledQuestions.length);
+    ProgressService.saveQuizScore(
+      'quiz_level3',
+      _score,
+      _shuffledQuestions.length,
+    );
   }
 
   void _restartQuiz() {
@@ -557,7 +579,11 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                     width: MediaQuery.of(context).size.width * progress - 32,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [AppColors.danger, AppColors.warning, AppColors.success],
+                        colors: [
+                          AppColors.danger,
+                          AppColors.warning,
+                          AppColors.success,
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
@@ -579,16 +605,19 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                     'ความยาก: ',
                     style: TextStyle(color: AppColors.textMuted, fontSize: 12),
                   ),
-                  ...List.generate(3, (i) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: Icon(
-                      Icons.whatshot,
-                      size: 16,
-                      color: i < question.difficulty
-                          ? AppColors.danger
-                          : AppColors.surfaceLight,
+                  ...List.generate(
+                    3,
+                    (i) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Icon(
+                        Icons.whatshot,
+                        size: 16,
+                        color: i < question.difficulty
+                            ? AppColors.danger
+                            : AppColors.surfaceLight,
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],
@@ -618,12 +647,16 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: _getCategoryColor(question.category).withAlpha(100),
+                        color: _getCategoryColor(
+                          question.category,
+                        ).withAlpha(100),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: _getCategoryColor(question.category).withAlpha(30),
+                          color: _getCategoryColor(
+                            question.category,
+                          ).withAlpha(30),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -686,14 +719,19 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: _answered ? null : () => _selectAnswer(index),
+                            onTap: _answered
+                                ? null
+                                : () => _selectAnswer(index),
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: bgColor,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: borderColor, width: 2),
+                                border: Border.all(
+                                  color: borderColor,
+                                  width: 2,
+                                ),
                               ),
                               child: Row(
                                 children: [
@@ -723,7 +761,9 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                                             ? AppColors.success
                                             : AppColors.textPrimary,
                                         fontSize: 15,
-                                        fontWeight: isSelected || (_answered && isCorrect)
+                                        fontWeight:
+                                            isSelected ||
+                                                (_answered && isCorrect)
                                             ? FontWeight.w600
                                             : FontWeight.normal,
                                       ),
@@ -732,7 +772,9 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                                   if (trailingIcon != null)
                                     Icon(
                                       trailingIcon,
-                                      color: isCorrect ? AppColors.success : AppColors.danger,
+                                      color: isCorrect
+                                          ? AppColors.success
+                                          : AppColors.danger,
                                     ),
                                 ],
                               ),
@@ -743,56 +785,13 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                     );
                   }),
 
-                  // Explanation
+                  // Feedback
                   if (_answered)
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
-                      margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withAlpha(15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.primary.withAlpha(50)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withAlpha(30),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.school,
-                                  color: AppColors.primary,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text(
-                                'คำอธิบาย',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            question.explanation,
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 14,
-                              height: 1.5,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildFeedbackCard(
+                      isCorrect: _selectedAnswer == question.correctIndex,
+                      explanation: question.explanation,
+                      correctAnswer: question.options[question.correctIndex],
+                      category: question.category,
                     ),
 
                   const SizedBox(height: 20),
@@ -844,6 +843,178 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFeedbackCard({
+    required bool isCorrect,
+    required String explanation,
+    required String correctAnswer,
+    required String category,
+  }) {
+    final categoryColor = _getCategoryColor(category);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isCorrect
+            ? AppColors.success.withAlpha(20)
+            : AppColors.danger.withAlpha(15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isCorrect
+              ? AppColors.success.withAlpha(60)
+              : AppColors.danger.withAlpha(40),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header - Correct or Incorrect
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isCorrect
+                      ? AppColors.success.withAlpha(30)
+                      : AppColors.danger.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCorrect ? Icons.check_circle : Icons.cancel,
+                  color: isCorrect ? AppColors.success : AppColors.danger,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isCorrect ? 'ถูกต้อง! 🎉' : 'ไม่ถูกต้อง',
+                      style: TextStyle(
+                        color: isCorrect ? AppColors.success : AppColors.danger,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (!isCorrect)
+                      Text(
+                        'คำตอบที่ถูก: $correctAnswer',
+                        style: const TextStyle(
+                          color: AppColors.success,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              // Category badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: categoryColor.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  category,
+                  style: TextStyle(
+                    color: categoryColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Divider
+          Container(
+            height: 1,
+            color: isCorrect
+                ? AppColors.success.withAlpha(30)
+                : AppColors.danger.withAlpha(20),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Explanation
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                color: AppColors.warning,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'อธิบาย:',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      explanation,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          // Tip for wrong answers
+          if (!isCorrect) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: categoryColor.withAlpha(15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber,
+                    color: categoryColor,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Level 3 ต้องการความเข้าใจลึกซึ้งใน $category',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -903,10 +1074,7 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
-                      colors: [
-                        gradeColor,
-                        gradeColor.withAlpha(150),
-                      ],
+                      colors: [gradeColor, gradeColor.withAlpha(150)],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -970,7 +1138,10 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
             ),
             child: Column(
               children: [
-                _buildResultRow('คะแนน', '$_score / ${_shuffledQuestions.length}'),
+                _buildResultRow(
+                  'คะแนน',
+                  '$_score / ${_shuffledQuestions.length}',
+                ),
                 const Divider(color: AppColors.border, height: 24),
                 _buildResultRow('เปอร์เซ็นต์', '$percent%'),
                 const Divider(color: AppColors.border, height: 24),
@@ -1178,10 +1349,7 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 15,
-          ),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 15),
         ),
         Text(
           value,

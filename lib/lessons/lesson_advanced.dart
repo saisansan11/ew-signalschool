@@ -20,7 +20,8 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
     ECCMTechnique(
       name: 'Adaptive Nulling',
       description: 'สร้าง Null ในทิศทาง Jammer อัตโนมัติ',
-      details: 'ใช้ Digital Beamforming ปรับ Antenna Pattern แบบ Real-time '
+      details:
+          'ใช้ Digital Beamforming ปรับ Antenna Pattern แบบ Real-time '
           'เพื่อลด Gain ไปยังทิศทางของ Jammer โดยไม่กระทบ Main Beam',
       color: Colors.cyan,
       icon: Icons.adjust,
@@ -28,7 +29,8 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
     ECCMTechnique(
       name: 'Sidelobe Blanking',
       description: 'ตัดสัญญาณที่เข้าทาง Sidelobe',
-      details: 'ใช้ Auxiliary Antenna ตรวจจับสัญญาณที่เข้ามาทาง Sidelobe '
+      details:
+          'ใช้ Auxiliary Antenna ตรวจจับสัญญาณที่เข้ามาทาง Sidelobe '
           'แล้ว Blank (ตัด) สัญญาณนั้นออกจาก Main Channel',
       color: Colors.orange,
       icon: Icons.block,
@@ -36,7 +38,8 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
     ECCMTechnique(
       name: 'Frequency Agility',
       description: 'เปลี่ยนความถี่แบบสุ่มทุก Pulse',
-      details: 'Radar เปลี่ยนความถี่ทุก Pulse หรือทุก Burst '
+      details:
+          'Radar เปลี่ยนความถี่ทุก Pulse หรือทุก Burst '
           'ทำให้ Jammer ไม่ทันตอบสนอง (DRFM ต้องใช้เวลา)',
       color: Colors.purple,
       icon: Icons.shuffle,
@@ -44,7 +47,8 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
     ECCMTechnique(
       name: 'Pulse Compression',
       description: 'เพิ่ม SNR ด้วย Time-Bandwidth Product',
-      details: 'ส่ง Long Pulse ที่มี Bandwidth สูง (LFM/Phase Code) '
+      details:
+          'ส่ง Long Pulse ที่มี Bandwidth สูง (LFM/Phase Code) '
           'แล้ว Compress ที่ Receiver ให้ได้ Range Resolution สูงและ SNR เพิ่ม',
       color: Colors.green,
       icon: Icons.compress,
@@ -150,11 +154,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
   Widget _buildIntroText(String text) {
     return Text(
       text,
-      style: const TextStyle(
-        color: Colors.white70,
-        fontSize: 15,
-        height: 1.5,
-      ),
+      style: const TextStyle(color: Colors.white70, fontSize: 15, height: 1.5),
     );
   }
 
@@ -187,7 +187,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
                         BoxShadow(
                           color: tech.color.withOpacity(0.3),
                           blurRadius: 10,
-                        )
+                        ),
                       ]
                     : null,
               ),
@@ -204,7 +204,9 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
                     style: TextStyle(
                       color: isSelected ? tech.color : Colors.white54,
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -367,10 +369,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
           // Example calculation
           const Text(
             'ตัวอย่าง: LFM Pulse Compression',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -379,11 +378,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
             '• Processing Gain = 10 × 10⁶ × 10 × 10⁻⁶ = 100\n'
             '• Gp in dB = 10 log₁₀(100) = 20 dB\n\n'
             'หมายความว่า SNR เพิ่มขึ้น 20 dB จากการ Pulse Compression',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-              height: 1.6,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.6),
           ),
         ],
       ),
@@ -428,9 +423,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
             child: AnimatedBuilder(
               animation: _mainController,
               builder: (context, _) {
-                return CustomPaint(
-                  painter: AESAPainter(_mainController.value),
-                );
+                return CustomPaint(painter: AESAPainter(_mainController.value));
               },
             ),
           ),
@@ -469,7 +462,12 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
     );
   }
 
-  Widget _buildAESAAdvantage(IconData icon, String title, String desc, Color color) {
+  Widget _buildAESAAdvantage(
+    IconData icon,
+    String title,
+    String desc,
+    Color color,
+  ) {
     return Row(
       children: [
         Container(
@@ -495,10 +493,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
               ),
               Text(
                 desc,
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 11,
-                ),
+                style: const TextStyle(color: Colors.white60, fontSize: 11),
               ),
             ],
           ),
@@ -544,11 +539,7 @@ class _LessonAdvanced_ECCMState extends State<LessonAdvanced_ECCM>
             '3. Redundancy: มี Backup หลายทาง\n'
             '4. Intelligence: รู้จัก Threat Library\n'
             '5. Training: ฝึกจนเป็นอัตโนมัติ',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-              height: 1.6,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.6),
           ),
         ],
       ),
@@ -648,7 +639,9 @@ class AdaptiveNullingPainter extends CustomPainter {
         Offset(jammerX, jammerY),
         20 + waveProgress * 40,
         Paint()
-          ..color = Colors.red.withOpacity(0.3 * (1 - waveProgress) * (1 - nullAngle))
+          ..color = Colors.red.withOpacity(
+            0.3 * (1 - waveProgress) * (1 - nullAngle),
+          )
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2,
       );
@@ -657,17 +650,26 @@ class AdaptiveNullingPainter extends CustomPainter {
     // Labels
     _drawText(canvas, 'MAIN BEAM', Offset(center.dx - 35, 40), Colors.green);
     _drawText(canvas, 'JAMMER', Offset(jammerX - 25, jammerY + 25), Colors.red);
-    _drawText(canvas, 'NULL', Offset(size.width * 0.65, size.height * 0.4), Colors.orange);
+    _drawText(
+      canvas,
+      'NULL',
+      Offset(size.width * 0.65, size.height * 0.4),
+      Colors.orange,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -697,7 +699,8 @@ class SidelobeBlankinPainter extends CustomPainter {
         amplitude = cos(normalized * pi / 0.3) * 0.7;
       } else {
         // Sidelobes
-        amplitude = sin(normalized * pi * 4).abs() * 0.15 * (1 - normalized.abs());
+        amplitude =
+            sin(normalized * pi * 4).abs() * 0.15 * (1 - normalized.abs());
       }
 
       patternPath.lineTo(x, size.height * 0.7 - amplitude * size.height * 0.5);
@@ -745,7 +748,12 @@ class SidelobeBlankinPainter extends CustomPainter {
         ),
         Paint()..color = Colors.orange.withOpacity(0.5),
       );
-      _drawText(canvas, 'BLANKED', Offset(jammerX - 25, size.height * 0.55), Colors.orange);
+      _drawText(
+        canvas,
+        'BLANKED',
+        Offset(jammerX - 25, size.height * 0.55),
+        Colors.orange,
+      );
     }
 
     // Auxiliary antenna indicator
@@ -754,7 +762,12 @@ class SidelobeBlankinPainter extends CustomPainter {
       8,
       Paint()..color = Colors.cyan,
     );
-    _drawText(canvas, 'AUX ANT', Offset(center.dx - 20, center.dy + 35), Colors.cyan);
+    _drawText(
+      canvas,
+      'AUX ANT',
+      Offset(center.dx - 20, center.dy + 35),
+      Colors.cyan,
+    );
 
     _drawText(canvas, 'JAMMER', Offset(jammerX - 25, jammerY - 25), Colors.red);
     _drawText(canvas, 'MAIN BEAM', Offset(center.dx - 35, 20), Colors.green);
@@ -762,12 +775,16 @@ class SidelobeBlankinPainter extends CustomPainter {
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -793,7 +810,7 @@ class FrequencyAgilityPainter extends CustomPainter {
 
     // Time axis
     canvas.drawLine(
-      Offset(40, 20),
+      const Offset(40, 20),
       Offset(40, size.height - 30),
       Paint()
         ..color = Colors.white24
@@ -802,7 +819,8 @@ class FrequencyAgilityPainter extends CustomPainter {
 
     // Frequency channels
     final channels = [0.2, 0.5, 0.8, 0.3, 0.7, 0.4, 0.6, 0.9];
-    final currentPulse = (progress * channels.length * 2).toInt() % channels.length;
+    final currentPulse =
+        (progress * channels.length * 2).toInt() % channels.length;
 
     for (int i = 0; i < channels.length; i++) {
       final x = 60 + (i * (size.width - 100) / (channels.length - 1));
@@ -818,13 +836,14 @@ class FrequencyAgilityPainter extends CustomPainter {
           ..color = isCurrent
               ? Colors.green
               : isPast
-                  ? Colors.green.withOpacity(0.3)
-                  : Colors.green.withOpacity(0.1),
+              ? Colors.green.withOpacity(0.3)
+              : Colors.green.withOpacity(0.1),
       );
 
       // Connect pulses
       if (i > 0) {
-        final prevX = 60 + ((i - 1) * (size.width - 100) / (channels.length - 1));
+        final prevX =
+            60 + ((i - 1) * (size.width - 100) / (channels.length - 1));
         final prevY = 40 + (1 - channels[i - 1]) * (size.height - 90);
         canvas.drawLine(
           Offset(prevX, prevY),
@@ -837,8 +856,11 @@ class FrequencyAgilityPainter extends CustomPainter {
     }
 
     // Jammer trying to follow
-    final jammerPulse = currentPulse > 0 ? currentPulse - 1 : channels.length - 1;
-    final jammerX = 60 + (jammerPulse * (size.width - 100) / (channels.length - 1));
+    final jammerPulse = currentPulse > 0
+        ? currentPulse - 1
+        : channels.length - 1;
+    final jammerX =
+        60 + (jammerPulse * (size.width - 100) / (channels.length - 1));
     final jammerY = 40 + (1 - channels[jammerPulse]) * (size.height - 90);
 
     canvas.drawRect(
@@ -849,20 +871,39 @@ class FrequencyAgilityPainter extends CustomPainter {
         ..strokeWidth = 2,
     );
 
-    _drawText(canvas, 'FREQ', Offset(size.width - 40, size.height - 25), Colors.white54);
-    _drawText(canvas, 'TIME', Offset(5, 10), Colors.white54);
-    _drawText(canvas, 'Radar Pulse', Offset(size.width / 2 - 30, 10), Colors.green);
-    _drawText(canvas, 'Jammer (Late)', Offset(jammerX - 30, jammerY + 25), Colors.red);
+    _drawText(
+      canvas,
+      'FREQ',
+      Offset(size.width - 40, size.height - 25),
+      Colors.white54,
+    );
+    _drawText(canvas, 'TIME', const Offset(5, 10), Colors.white54);
+    _drawText(
+      canvas,
+      'Radar Pulse',
+      Offset(size.width / 2 - 30, 10),
+      Colors.green,
+    );
+    _drawText(
+      canvas,
+      'Jammer (Late)',
+      Offset(jammerX - 30, jammerY + 25),
+      Colors.red,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -881,7 +922,12 @@ class PulseCompressionPainter extends CustomPainter {
     final txY = size.height * 0.25;
     final txWidth = size.width * 0.6;
 
-    _drawText(canvas, 'Transmitted (Long Pulse + LFM)', const Offset(20, 10), Colors.cyan);
+    _drawText(
+      canvas,
+      'Transmitted (Long Pulse + LFM)',
+      const Offset(20, 10),
+      Colors.cyan,
+    );
 
     // LFM chirp visualization
     final chirpPath = Path();
@@ -919,11 +965,21 @@ class PulseCompressionPainter extends CustomPainter {
         ..strokeWidth = 2,
     );
 
-    _drawText(canvas, 'Matched Filter', Offset(size.width / 2 + 10, arrowY - 30), Colors.white54);
+    _drawText(
+      canvas,
+      'Matched Filter',
+      Offset(size.width / 2 + 10, arrowY - 30),
+      Colors.white54,
+    );
 
     // Compressed Pulse (bottom)
     final rxY = size.height * 0.75;
-    _drawText(canvas, 'Compressed (High Resolution)', const Offset(20, 100), Colors.green);
+    _drawText(
+      canvas,
+      'Compressed (High Resolution)',
+      const Offset(20, 100),
+      Colors.green,
+    );
 
     // Compressed pulse shape (sinc-like)
     final compressedPath = Path();
@@ -963,18 +1019,32 @@ class PulseCompressionPainter extends CustomPainter {
         ..color = Colors.amber
         ..style = PaintingStyle.stroke,
     );
-    _drawText(canvas, 'Gp = B×T', Offset(gainBox.left + 10, gainBox.top + 5), Colors.amber);
-    _drawText(canvas, '= 20 dB', Offset(gainBox.left + 15, gainBox.top + 20), Colors.amber);
+    _drawText(
+      canvas,
+      'Gp = B×T',
+      Offset(gainBox.left + 10, gainBox.top + 5),
+      Colors.amber,
+    );
+    _drawText(
+      canvas,
+      '= 20 dB',
+      Offset(gainBox.left + 15, gainBox.top + 20),
+      Colors.amber,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1006,11 +1076,19 @@ class AESAPainter extends CustomPainter {
 
         // T/R Module
         canvas.drawRect(
-          Rect.fromCenter(center: Offset(x, y), width: cellWidth * 0.8, height: cellHeight * 0.8),
+          Rect.fromCenter(
+            center: Offset(x, y),
+            width: cellWidth * 0.8,
+            height: cellHeight * 0.8,
+          ),
           Paint()..color = Colors.green.withOpacity(brightness),
         );
         canvas.drawRect(
-          Rect.fromCenter(center: Offset(x, y), width: cellWidth * 0.8, height: cellHeight * 0.8),
+          Rect.fromCenter(
+            center: Offset(x, y),
+            width: cellWidth * 0.8,
+            height: cellHeight * 0.8,
+          ),
           Paint()
             ..color = Colors.green
             ..style = PaintingStyle.stroke
@@ -1031,17 +1109,26 @@ class AESAPainter extends CustomPainter {
         ..strokeWidth = 20,
     );
 
-    _drawText(canvas, 'AESA Array', Offset(size.width / 2 - 30, size.height - 15), Colors.white54);
+    _drawText(
+      canvas,
+      'AESA Array',
+      Offset(size.width / 2 - 30, size.height - 15),
+      Colors.white54,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1153,11 +1240,7 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
   Widget _buildIntroText(String text) {
     return Text(
       text,
-      style: const TextStyle(
-        color: Colors.white70,
-        fontSize: 15,
-        height: 1.5,
-      ),
+      style: const TextStyle(color: Colors.white70, fontSize: 15, height: 1.5),
     );
   }
 
@@ -1191,7 +1274,9 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
                   method,
                   style: TextStyle(
                     color: isSelected ? colors[index] : Colors.white54,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                     fontSize: 12,
                   ),
                 ),
@@ -1237,7 +1322,8 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
       {
         'title': 'TDOA (Time Difference of Arrival)',
         'formula': 'Δt = (d₁ - d₂) / c',
-        'description': 'วัดความต่างเวลาที่สัญญาณมาถึง Sensor แต่ละตัว\n'
+        'description':
+            'วัดความต่างเวลาที่สัญญาณมาถึง Sensor แต่ละตัว\n'
             'สร้าง Hyperbola จากคู่ Sensor, จุดตัด = ตำแหน่งเป้าหมาย',
         'pros': '• แม่นยำสูง (CEP < 50m)\n• ไม่ต้องรู้ความถี่แน่นอน',
         'cons': '• ต้อง Sync เวลาแม่นยำมาก\n• ต้องใช้ 3+ สถานี',
@@ -1246,7 +1332,8 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
       {
         'title': 'FDOA (Frequency Difference of Arrival)',
         'formula': 'Δf = f₀ × (v₁ - v₂) / c',
-        'description': 'วัดความต่าง Doppler Shift จาก Sensor ที่เคลื่อนที่\n'
+        'description':
+            'วัดความต่าง Doppler Shift จาก Sensor ที่เคลื่อนที่\n'
             'ใช้กับดาวเทียมหรือเครื่องบินลาดตระเวน',
         'pros': '• ใช้ได้กับ Sensor เคลื่อนที่\n• ไม่ต้อง Sync เวลา',
         'cons': '• ต้องรู้ความเร็ว Sensor แม่นยำ\n• ต้องการ SNR สูง',
@@ -1255,7 +1342,8 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
       {
         'title': 'AOA (Angle of Arrival)',
         'formula': 'θ = arctan(Δφ × λ / 2πd)',
-        'description': 'วัดมุมที่สัญญาณมาถึงด้วย Phase Interferometry\n'
+        'description':
+            'วัดมุมที่สัญญาณมาถึงด้วย Phase Interferometry\n'
             'ใช้ Baseline ระหว่าง Antenna หลายตัว',
         'pros': '• ใช้ได้กับสถานีเดียว\n• Real-time',
         'cons': '• Accuracy ขึ้นกับ Baseline\n• Ambiguity ที่มุมกว้าง',
@@ -1264,7 +1352,8 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
       {
         'title': 'Hybrid (TDOA + FDOA + AOA)',
         'formula': 'Combined Estimation',
-        'description': 'รวมหลายเทคนิคเพื่อเพิ่มความแม่นยำ\n'
+        'description':
+            'รวมหลายเทคนิคเพื่อเพิ่มความแม่นยำ\n'
             'ใช้ Kalman Filter หรือ Maximum Likelihood',
         'pros': '• แม่นยำสูงสุด\n• Robust ต่อ Error',
         'cons': '• ซับซ้อน\n• ต้องการ Processing สูง',
@@ -1317,7 +1406,11 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
           const SizedBox(height: 12),
           Text(
             detail['description'] as String,
-            style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.5),
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 13,
+              height: 1.5,
+            ),
           ),
 
           const SizedBox(height: 12),
@@ -1329,12 +1422,18 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
                   children: [
                     const Text(
                       'ข้อดี',
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       detail['pros'] as String,
-                      style: const TextStyle(color: Colors.white60, fontSize: 11),
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
@@ -1345,12 +1444,18 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
                   children: [
                     const Text(
                       'ข้อจำกัด',
-                      style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       detail['cons'] as String,
-                      style: const TextStyle(color: Colors.white60, fontSize: 11),
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
@@ -1370,10 +1475,10 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.blue.withOpacity(0.5)),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(Icons.gps_fixed, color: Colors.blue, size: 24),
               SizedBox(width: 10),
@@ -1387,8 +1492,8 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          const Text(
+          SizedBox(height: 12),
+          Text(
             'CEP คือรัศมีวงกลมที่มีโอกาส 50% ที่ตำแหน่งจริงอยู่ภายใน\n\n'
             '• CEP 50m = ตำแหน่งจริงอยู่ใน 50m มีโอกาส 50%\n'
             '• CEP ดี: < 100m (ยุทธวิธี), < 10km (Strategic)\n'
@@ -1433,19 +1538,47 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
                 children: const [
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text('Method', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+                    child: Text(
+                      'Method',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text('Accuracy', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+                    child: Text(
+                      'Accuracy',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text('Sensors', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+                    child: Text(
+                      'Sensors',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text('Real-time', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+                    child: Text(
+                      'Real-time',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -1460,13 +1593,42 @@ class _LessonAdvanced_DFState extends State<LessonAdvanced_DF>
     );
   }
 
-  TableRow _buildTableRow(String method, String accuracy, String sensors, String realtime) {
+  TableRow _buildTableRow(
+    String method,
+    String accuracy,
+    String sensors,
+    String realtime,
+  ) {
     return TableRow(
       children: [
-        Padding(padding: const EdgeInsets.all(8), child: Text(method, style: const TextStyle(color: Colors.white70, fontSize: 11))),
-        Padding(padding: const EdgeInsets.all(8), child: Text(accuracy, style: const TextStyle(color: Colors.white70, fontSize: 11))),
-        Padding(padding: const EdgeInsets.all(8), child: Text(sensors, style: const TextStyle(color: Colors.white70, fontSize: 11))),
-        Padding(padding: const EdgeInsets.all(8), child: Text(realtime, style: const TextStyle(color: Colors.white70, fontSize: 11))),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            method,
+            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            accuracy,
+            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            sensors,
+            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            realtime,
+            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          ),
+        ),
       ],
     );
   }
@@ -1493,13 +1655,34 @@ class TDOAPainter extends CustomPainter {
     final target = Offset(size.width * 0.55, size.height * 0.55);
 
     // Draw hyperbolas
-    _drawHyperbola(canvas, size, stations[0], stations[1], target, Colors.cyan, progress);
-    _drawHyperbola(canvas, size, stations[1], stations[2], target, Colors.purple, progress);
+    _drawHyperbola(
+      canvas,
+      size,
+      stations[0],
+      stations[1],
+      target,
+      Colors.cyan,
+      progress,
+    );
+    _drawHyperbola(
+      canvas,
+      size,
+      stations[1],
+      stations[2],
+      target,
+      Colors.purple,
+      progress,
+    );
 
     // Draw stations
     for (int i = 0; i < stations.length; i++) {
       canvas.drawCircle(stations[i], 10, Paint()..color = Colors.green);
-      _drawText(canvas, 'S${i + 1}', stations[i] + const Offset(-8, 15), Colors.green);
+      _drawText(
+        canvas,
+        'S${i + 1}',
+        stations[i] + const Offset(-8, 15),
+        Colors.green,
+      );
     }
 
     // Draw signal waves from target
@@ -1519,10 +1702,23 @@ class TDOAPainter extends CustomPainter {
     canvas.drawCircle(target, 8, Paint()..color = Colors.red);
     _drawText(canvas, 'TARGET', target + const Offset(-25, -20), Colors.red);
 
-    _drawText(canvas, 'TDOA: Hyperbola Intersection', const Offset(10, 10), Colors.white54);
+    _drawText(
+      canvas,
+      'TDOA: Hyperbola Intersection',
+      const Offset(10, 10),
+      Colors.white54,
+    );
   }
 
-  void _drawHyperbola(Canvas canvas, Size size, Offset s1, Offset s2, Offset target, Color color, double progress) {
+  void _drawHyperbola(
+    Canvas canvas,
+    Size size,
+    Offset s1,
+    Offset s2,
+    Offset target,
+    Color color,
+    double progress,
+  ) {
     // Simplified hyperbola visualization
     final midpoint = Offset((s1.dx + s2.dx) / 2, (s1.dy + s2.dy) / 2);
     final angle = atan2(s2.dy - s1.dy, s2.dx - s1.dx);
@@ -1549,9 +1745,16 @@ class TDOAPainter extends CustomPainter {
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(text: text, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1601,7 +1804,12 @@ class FDOAPainter extends CustomPainter {
     final shiftColor = approaching ? Colors.blue : Colors.red;
     final shiftText = approaching ? '+Δf (Blue Shift)' : '-Δf (Red Shift)';
 
-    _drawText(canvas, shiftText, Offset(sensorX - 30, sensorY + 20), shiftColor);
+    _drawText(
+      canvas,
+      shiftText,
+      Offset(sensorX - 30, sensorY + 20),
+      shiftColor,
+    );
 
     // Isodoppler lines
     for (int i = 0; i < 3; i++) {
@@ -1615,16 +1823,33 @@ class FDOAPainter extends CustomPainter {
       );
     }
 
-    _drawText(canvas, 'Moving Sensor', Offset(sensorX - 35, sensorY - 25), Colors.purple);
+    _drawText(
+      canvas,
+      'Moving Sensor',
+      Offset(sensorX - 35, sensorY - 25),
+      Colors.purple,
+    );
     _drawText(canvas, 'TARGET', target + const Offset(-25, 15), Colors.red);
-    _drawText(canvas, 'FDOA: Doppler Difference', const Offset(10, 10), Colors.white54);
+    _drawText(
+      canvas,
+      'FDOA: Doppler Difference',
+      const Offset(10, 10),
+      Colors.white54,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(text: text, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1683,7 +1908,12 @@ class AOAPainter extends CustomPainter {
 
     // Angle text
     final angleDeg = (targetAngle * 180 / pi).toStringAsFixed(1);
-    _drawText(canvas, '$angleDeg°', station + const Offset(55, -30), Colors.orange);
+    _drawText(
+      canvas,
+      '$angleDeg°',
+      station + const Offset(55, -30),
+      Colors.orange,
+    );
 
     // Target
     canvas.drawCircle(target, 8, Paint()..color = Colors.red);
@@ -1701,16 +1931,33 @@ class AOAPainter extends CustomPainter {
       );
     }
 
-    _drawText(canvas, 'Antenna Array', station + const Offset(-35, 10), Colors.orange);
+    _drawText(
+      canvas,
+      'Antenna Array',
+      station + const Offset(-35, 10),
+      Colors.orange,
+    );
     _drawText(canvas, 'TARGET', target + const Offset(-25, -20), Colors.red);
-    _drawText(canvas, 'AOA: Phase Interferometry', const Offset(10, 10), Colors.white54);
+    _drawText(
+      canvas,
+      'AOA: Phase Interferometry',
+      const Offset(10, 10),
+      Colors.white54,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(text: text, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }
@@ -1739,13 +1986,21 @@ class HybridDFPainter extends CustomPainter {
     final ellipseSize = 80 - progress * 50;
 
     canvas.drawOval(
-      Rect.fromCenter(center: target, width: ellipseSize * 1.5, height: ellipseSize),
+      Rect.fromCenter(
+        center: target,
+        width: ellipseSize * 1.5,
+        height: ellipseSize,
+      ),
       Paint()
         ..color = Colors.green.withOpacity(0.3)
         ..style = PaintingStyle.fill,
     );
     canvas.drawOval(
-      Rect.fromCenter(center: target, width: ellipseSize * 1.5, height: ellipseSize),
+      Rect.fromCenter(
+        center: target,
+        width: ellipseSize * 1.5,
+        height: ellipseSize,
+      ),
       Paint()
         ..color = Colors.green
         ..style = PaintingStyle.stroke
@@ -1759,7 +2014,12 @@ class HybridDFPainter extends CustomPainter {
     for (int i = 0; i < stations.length; i++) {
       // Station
       canvas.drawCircle(stations[i], 10, Paint()..color = colors[i]);
-      _drawText(canvas, labels[i], stations[i] + const Offset(-15, 15), colors[i]);
+      _drawText(
+        canvas,
+        labels[i],
+        stations[i] + const Offset(-15, 15),
+        colors[i],
+      );
 
       // Line to target
       canvas.drawLine(
@@ -1775,16 +2035,33 @@ class HybridDFPainter extends CustomPainter {
     canvas.drawCircle(target, 6, Paint()..color = Colors.red);
 
     // CEP indicator
-    _drawText(canvas, 'CEP: ${(ellipseSize / 2).toStringAsFixed(0)}m', target + const Offset(-25, 40), Colors.green);
+    _drawText(
+      canvas,
+      'CEP: ${(ellipseSize / 2).toStringAsFixed(0)}m',
+      target + const Offset(-25, 40),
+      Colors.green,
+    );
 
-    _drawText(canvas, 'Hybrid: Combined Estimation', const Offset(10, 10), Colors.white54);
+    _drawText(
+      canvas,
+      'Hybrid: Combined Estimation',
+      const Offset(10, 10),
+      Colors.white54,
+    );
   }
 
   void _drawText(Canvas canvas, String text, Offset pos, Color color) {
     TextPainter(
-      text: TextSpan(text: text, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
-      textDirection: TextDirection.ltr,
-    )
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )
       ..layout()
       ..paint(canvas, pos);
   }

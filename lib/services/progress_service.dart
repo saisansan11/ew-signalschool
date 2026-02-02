@@ -234,4 +234,176 @@ class ProgressService {
 
     return percentages;
   }
+
+  // ============ Flashcard Spaced Repetition System ============
+  static const String _flashcardDataKey = 'flashcard_data';
+
+  /// Record flashcard review result
+  /// quality: 0-5 (0=total blackout, 3=correct with hesitation, 5=perfect)
+  static Future<void> recordFlashcardReview(String cardId, int quality) async {
+    if (_prefs == null) await init();
+
+    final cardData = getFlashcardData(cardId);
+    final now = DateTime.now();
+
+    // SM-2 Algorithm implementation
+    int repetitions = cardData['repetitions'] ?? 0;
+    double easeFactor = cardData['easeFactor'] ?? 2.5;
+    int interval = cardData['interval'] ?? 1;
+
+    if (quality < 3) {
+      // Failed - reset
+      repetitions = 0;
+      interval = 1;
+    } else {
+      // Passed
+      if (repetitions == 0) {
+        interval = 1;
+      } else if (repetitions == 1) {
+        interval = 6;
+      } else {
+        interval = (interval * easeFactor).round();
+      }
+      repetitions++;
+    }
+
+    // Update ease factor
+    easeFactor = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+    if (easeFactor < 1.3) easeFactor = 1.3;
+
+    // Calculate next review date
+    final nextReview = now.add(Duration(days: interval));
+
+    // Save card data
+    final allData = _getAllFlashcardData();
+    allData[cardId] = {
+      'repetitions': repetitions,
+      'easeFactor': easeFactor,
+      'interval': interval,
+      'lastReview': now.millisecondsSinceEpoch,
+      'nextReview': nextReview.millisecondsSinceEpoch,
+      'quality': quality,
+    };
+
+    await _saveAllFlashcardData(allData);
+
+    // Add XP for review
+    await addXp(quality >= 3 ? 5 : 1);
+  }
+
+  /// Get data for a specific flashcard
+  static Map<String, dynamic> getFlashcardData(String cardId) {
+    final allData = _getAllFlashcardData();
+    return Map<String, dynamic>.from(allData[cardId] ?? {});
+  }
+
+  /// Get all flashcard data
+  static Map<String, dynamic> _getAllFlashcardData() {
+    final dataStr = _prefs?.getString(_flashcardDataKey);
+    if (dataStr == null) return {};
+
+    try {
+      final Map<String, dynamic> result = {};
+      final entries = dataStr.split('||');
+      for (final entry in entries) {
+        if (entry.isEmpty) continue;
+        final parts = entry.split('::');
+        if (parts.length >= 7) {
+          result[parts[0]] = {
+            'repetitions': int.tryParse(parts[1]) ?? 0,
+            'easeFactor': double.tryParse(parts[2]) ?? 2.5,
+            'interval': int.tryParse(parts[3]) ?? 1,
+            'lastReview': int.tryParse(parts[4]) ?? 0,
+            'nextReview': int.tryParse(parts[5]) ?? 0,
+            'quality': int.tryParse(parts[6]) ?? 0,
+          };
+        }
+      }
+      return result;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  /// Save all flashcard data
+  static Future<void> _saveAllFlashcardData(Map<String, dynamic> data) async {
+    if (_prefs == null) await init();
+
+    final entries = data.entries.map((e) {
+      final d = e.value as Map<String, dynamic>;
+      return '${e.key}::${d['repetitions']}::${d['easeFactor']}::${d['interval']}::${d['lastReview']}::${d['nextReview']}::${d['quality']}';
+    }).join('||');
+
+    await _prefs!.setString(_flashcardDataKey, entries);
+  }
+
+  /// Get cards that are due for review
+  static List<String> getDueFlashcards() {
+    final allData = _getAllFlashcardData();
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final dueCards = <String>[];
+
+    for (final entry in allData.entries) {
+      final nextReview = entry.value['nextReview'] ?? 0;
+      if (nextReview <= now) {
+        dueCards.add(entry.key);
+      }
+    }
+
+    return dueCards;
+  }
+
+  /// Get count of cards due for review
+  static int getDueFlashcardsCount() {
+    return getDueFlashcards().length;
+  }
+
+  /// Get total flashcards reviewed (mastery count)
+  static int getTotalFlashcardsReviewed() {
+    final allData = _getAllFlashcardData();
+    return allData.length;
+  }
+
+  /// Get mastery level (cards with repetitions >= 3)
+  static int getMasteredCardsCount() {
+    final allData = _getAllFlashcardData();
+    int count = 0;
+    for (final entry in allData.entries) {
+      final reps = entry.value['repetitions'] ?? 0;
+      if (reps >= 3) count++;
+    }
+    return count;
+  }
+
+  /// Get review stats for display
+  static Map<String, dynamic> getReviewStats() {
+    final allData = _getAllFlashcardData();
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    int dueCount = 0;
+    int masteredCount = 0;
+    int learningCount = 0;
+
+    for (final entry in allData.entries) {
+      final nextReview = entry.value['nextReview'] ?? 0;
+      final reps = entry.value['repetitions'] ?? 0;
+
+      if (nextReview <= now) {
+        dueCount++;
+      }
+
+      if (reps >= 3) {
+        masteredCount++;
+      } else if (reps > 0) {
+        learningCount++;
+      }
+    }
+
+    return {
+      'total': allData.length,
+      'due': dueCount,
+      'mastered': masteredCount,
+      'learning': learningCount,
+    };
+  }
 }

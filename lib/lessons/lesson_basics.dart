@@ -2190,3 +2190,657 @@ class KillChainPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
+// ==========================================
+// LESSON 10: RADAR SYSTEMS
+// ==========================================
+class Lesson10_Radar extends StatefulWidget {
+  const Lesson10_Radar({super.key});
+  @override
+  State<Lesson10_Radar> createState() => _Lesson10_RadarState();
+}
+
+class _Lesson10_RadarState extends State<Lesson10_Radar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  int _selectedRadarType = 0;
+
+  final List<Map<String, dynamic>> _radarTypes = [
+    {
+      'name': 'Pulse Radar',
+      'desc': 'ส่ง Pulse สั้น วัดระยะจากเวลาสะท้อนกลับ',
+      'icon': Icons.radio_button_checked,
+      'color': Colors.cyan,
+    },
+    {
+      'name': 'Doppler Radar',
+      'desc': 'ตรวจจับความเร็วจาก Doppler Shift',
+      'icon': Icons.speed,
+      'color': Colors.orange,
+    },
+    {
+      'name': 'Pulse-Doppler',
+      'desc': 'ผสมผสาน Pulse + Doppler ได้ทั้งระยะและความเร็ว',
+      'icon': Icons.radar,
+      'color': Colors.purple,
+    },
+    {
+      'name': 'SAR',
+      'desc': 'Synthetic Aperture - สร้างภาพความละเอียดสูง',
+      'icon': Icons.satellite_alt,
+      'color': Colors.green,
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Header("10. ระบบเรดาร์ (Radar Systems)", Colors.cyan),
+        const SizedBox(height: 15),
+        _Text(
+          "RADAR = RAdio Detection And Ranging\n"
+          "การใช้คลื่นวิทยุตรวจจับตำแหน่งและระยะทางของเป้าหมาย",
+        ),
+
+        const SizedBox(height: 20),
+        _SubHeader("หลักการพื้นฐาน", Colors.white),
+        const SizedBox(height: 15),
+
+        // Radar Basic Animation
+        Container(
+          height: 180,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.cyan.withOpacity(0.5)),
+          ),
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (c, _) => CustomPaint(
+              painter: RadarBasicPainter(_controller.value),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 15),
+        _Box(
+          title: "สมการเรดาร์ (Radar Equation)",
+          desc:
+              "Pr = (Pt × Gt × Gr × σ × λ²) / ((4π)³ × R⁴)\n\n"
+              "Pr = กำลังรับ | Pt = กำลังส่ง\n"
+              "Gt, Gr = Gain เสา | σ = RCS เป้าหมาย\n"
+              "λ = ความยาวคลื่น | R = ระยะทาง",
+          color: Colors.cyan,
+        ),
+
+        const SizedBox(height: 25),
+        _SubHeader("ประเภทเรดาร์", Colors.cyan),
+        const SizedBox(height: 15),
+
+        // Radar Type Selector
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: _radarTypes.asMap().entries.map((entry) {
+              final index = entry.key;
+              final radar = entry.value;
+              final isSelected = index == _selectedRadarType;
+              final color = radar['color'] as Color;
+
+              return GestureDetector(
+                onTap: () => setState(() => _selectedRadarType = index),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.only(right: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected ? color.withOpacity(0.3) : Colors.white10,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected ? color : Colors.white24,
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        radar['icon'] as IconData,
+                        color: isSelected ? color : Colors.white54,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        radar['name'] as String,
+                        style: TextStyle(
+                          color: isSelected ? color : Colors.white54,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+
+        const SizedBox(height: 15),
+
+        // Radar Type Visualization
+        Container(
+          height: 150,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: (_radarTypes[_selectedRadarType]['color'] as Color).withOpacity(0.5),
+            ),
+          ),
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (c, _) => CustomPaint(
+              painter: RadarTypePainter(_controller.value, _selectedRadarType),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: (_radarTypes[_selectedRadarType]['color'] as Color).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: (_radarTypes[_selectedRadarType]['color'] as Color).withOpacity(0.5),
+            ),
+          ),
+          child: Text(
+            _radarTypes[_selectedRadarType]['desc'] as String,
+            style: TextStyle(
+              color: _radarTypes[_selectedRadarType]['color'] as Color,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+
+        const SizedBox(height: 25),
+        _SubHeader("พารามิเตอร์สำคัญ", Colors.white),
+        const SizedBox(height: 15),
+
+        _ExpandableCard(
+          Icons.timer,
+          Colors.blue,
+          "PRF (Pulse Repetition Freq)",
+          "อัตราการส่ง Pulse ต่อวินาที\n\n"
+              "• PRF สูง → อัตรา Update สูง, ระยะสั้น\n"
+              "• PRF ต่ำ → ระยะไกล, อัตรา Update ต่ำ\n"
+              "• Ru (Unambiguous Range) = c / (2 × PRF)\n\n"
+              "ตัวอย่าง: PRF = 1 kHz → Ru = 150 km",
+        ),
+        const SizedBox(height: 10),
+
+        _ExpandableCard(
+          Icons.straighten,
+          Colors.green,
+          "Pulse Width (τ)",
+          "ความกว้าง Pulse\n\n"
+              "• Pulse กว้าง → พลังงานมาก, Range Resolution แย่\n"
+              "• Pulse แคบ → Range Resolution ดี, พลังงานน้อย\n"
+              "• Range Resolution = c × τ / 2\n\n"
+              "ตัวอย่าง: τ = 1 μs → Resolution = 150 m",
+        ),
+        const SizedBox(height: 10),
+
+        _ExpandableCard(
+          Icons.aspect_ratio,
+          Colors.orange,
+          "RCS (Radar Cross Section)",
+          "พื้นที่หน้าตัดสะท้อนเรดาร์ของเป้าหมาย (หน่วย: m²)\n\n"
+              "• เครื่องบินลำใหญ่: 100 m²\n"
+              "• เครื่องบินรบ: 1-10 m²\n"
+              "• Stealth Fighter: 0.001-0.01 m²\n"
+              "• นก: 0.01 m²\n"
+              "• คน: 1 m²",
+        ),
+        const SizedBox(height: 10),
+
+        _ExpandableCard(
+          Icons.waves,
+          Colors.purple,
+          "Doppler Shift",
+          "การเปลี่ยนความถี่เนื่องจากความเร็วสัมพัทธ์\n\n"
+              "• fd = 2 × v × f / c\n"
+              "• v = ความเร็วเป้าหมาย\n"
+              "• f = ความถี่เรดาร์\n\n"
+              "ใช้แยก Moving Target จาก Clutter (MTI)",
+        ),
+
+        const SizedBox(height: 25),
+        _SubHeader("เรดาร์ทางทหาร", Colors.white),
+        const SizedBox(height: 15),
+
+        _buildMilitaryRadarTable(),
+
+        const SizedBox(height: 25),
+        _SubHeader("Radar Clutter & Countermeasures", Colors.redAccent),
+        const SizedBox(height: 15),
+
+        _ExpandableCard(
+          Icons.landscape,
+          Colors.brown,
+          "Clutter (สิ่งรบกวน)",
+          "สัญญาณที่ไม่ต้องการสะท้อนกลับ:\n\n"
+              "• Ground Clutter: ภูมิประเทศ, อาคาร\n"
+              "• Sea Clutter: คลื่นทะเล\n"
+              "• Weather Clutter: ฝน, เมฆ\n"
+              "• Chaff: แถบโลหะจากข้าศึก",
+        ),
+        const SizedBox(height: 10),
+
+        _ExpandableCard(
+          Icons.security,
+          Colors.green,
+          "ECCM ของเรดาร์",
+          "เทคนิคต้านทาน Jamming:\n\n"
+              "• Frequency Agility - เปลี่ยนความถี่ทุก Pulse\n"
+              "• Pulse Compression - เพิ่ม SNR\n"
+              "• Sidelobe Blanking - ตัด Sidelobe\n"
+              "• Adaptive Beamforming - Null ทิศทาง Jammer\n"
+              "• Home-on-Jam (HOJ) - ติดตาม Jammer",
+        ),
+
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildMilitaryRadarTable() {
+    final radars = [
+      {
+        'name': 'AN/APG-77 (F-22)',
+        'type': 'AESA Multifunction',
+        'range': '400+ km',
+        'band': 'X-Band',
+      },
+      {
+        'name': 'AN/SPY-1 (Aegis)',
+        'type': 'Phased Array',
+        'range': '500+ km',
+        'band': 'S-Band',
+      },
+      {
+        'name': 'SA-6 Gainful',
+        'type': 'SAM Fire Control',
+        'range': '28 km',
+        'band': 'H/I-Band',
+      },
+      {
+        'name': 'JY-27',
+        'type': 'VHF Early Warning',
+        'range': '500 km',
+        'band': 'VHF',
+      },
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: Colors.cyan,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(9),
+                topRight: Radius.circular(9),
+              ),
+            ),
+            child: const Row(
+              children: [
+                Expanded(flex: 3, child: Text('ระบบ', style: TextStyle(fontWeight: FontWeight.bold))),
+                Expanded(flex: 2, child: Text('ระยะ', style: TextStyle(fontWeight: FontWeight.bold))),
+                Expanded(flex: 2, child: Text('Band', style: TextStyle(fontWeight: FontWeight.bold))),
+              ],
+            ),
+          ),
+          ...radars.map((radar) => Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: Colors.white10)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        radar['name']!,
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                      Text(
+                        radar['type']!,
+                        style: const TextStyle(color: Colors.white54, fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    radar['range']!,
+                    style: const TextStyle(color: Colors.cyan, fontSize: 12),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    radar['band']!,
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+// Radar Basic Painter - แสดงหลักการพื้นฐาน
+class RadarBasicPainter extends CustomPainter {
+  final double progress;
+  RadarBasicPainter(this.progress);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width * 0.2, size.height / 2);
+    final targetPos = Offset(size.width * 0.75, size.height / 2);
+
+    // Draw radar station
+    canvas.drawCircle(center, 15, Paint()..color = Colors.cyan);
+    canvas.drawCircle(
+      center,
+      20,
+      Paint()
+        ..color = Colors.cyan.withOpacity(0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    // Draw target
+    canvas.drawCircle(targetPos, 12, Paint()..color = Colors.red);
+
+    // Animate pulse
+    double pulseX = center.dx + (targetPos.dx - center.dx) * (progress % 0.5) * 2;
+    double returnX = targetPos.dx - (targetPos.dx - center.dx) * ((progress - 0.5).clamp(0, 0.5) * 2);
+
+    if (progress < 0.5) {
+      // Outgoing pulse
+      canvas.drawCircle(
+        Offset(pulseX, size.height / 2),
+        8,
+        Paint()..color = Colors.cyan.withOpacity(0.8),
+      );
+
+      // Draw beam
+      final beamPaint = Paint()
+        ..color = Colors.cyan.withOpacity(0.2)
+        ..style = PaintingStyle.fill;
+      final beamPath = Path()
+        ..moveTo(center.dx, center.dy - 20)
+        ..lineTo(pulseX, size.height / 2 - 30)
+        ..lineTo(pulseX, size.height / 2 + 30)
+        ..lineTo(center.dx, center.dy + 20)
+        ..close();
+      canvas.drawPath(beamPath, beamPaint);
+    } else {
+      // Returning echo
+      canvas.drawCircle(
+        Offset(returnX, size.height / 2),
+        6,
+        Paint()..color = Colors.green.withOpacity(0.8),
+      );
+    }
+
+    // Labels
+    _drawText(canvas, "Tx/Rx", center + const Offset(-12, 25), Colors.cyan);
+    _drawText(canvas, "Target", targetPos + const Offset(-15, 20), Colors.red);
+
+    // Distance indicator
+    canvas.drawLine(
+      Offset(center.dx, size.height - 20),
+      Offset(targetPos.dx, size.height - 20),
+      Paint()
+        ..color = Colors.white24
+        ..strokeWidth = 1,
+    );
+    _drawText(
+      canvas,
+      "R = c × t / 2",
+      Offset(size.width / 2 - 30, size.height - 15),
+      Colors.white54,
+    );
+  }
+
+  void _drawText(Canvas canvas, String text, Offset pos, Color color) {
+    TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
+      ),
+      textDirection: TextDirection.ltr,
+    )
+      ..layout()
+      ..paint(canvas, pos);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+// Radar Type Painter - แสดงประเภทเรดาร์ต่างๆ
+class RadarTypePainter extends CustomPainter {
+  final double progress;
+  final int type;
+  RadarTypePainter(this.progress, this.type);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    switch (type) {
+      case 0:
+        _drawPulseRadar(canvas, size);
+        break;
+      case 1:
+        _drawDopplerRadar(canvas, size);
+        break;
+      case 2:
+        _drawPulseDoppler(canvas, size);
+        break;
+      case 3:
+        _drawSAR(canvas, size);
+        break;
+    }
+  }
+
+  void _drawPulseRadar(Canvas canvas, Size size) {
+    // Draw time axis
+    canvas.drawLine(
+      Offset(20, size.height - 20),
+      Offset(size.width - 20, size.height - 20),
+      Paint()..color = Colors.white24..strokeWidth = 1,
+    );
+
+    // Draw pulses
+    for (int i = 0; i < 4; i++) {
+      double x = 50 + i * 80;
+      double pulseHeight = size.height * 0.6;
+
+      // Moving pulse animation
+      double offset = ((progress * 4 + i) % 4) * 20 - 40;
+
+      canvas.drawRect(
+        Rect.fromLTWH(x + offset, size.height - 20 - pulseHeight, 15, pulseHeight),
+        Paint()..color = Colors.cyan.withOpacity(0.7),
+      );
+    }
+
+    _drawText(canvas, "Pulse Radar - ส่ง Pulse วัดเวลาสะท้อน", Offset(20, 10), Colors.cyan);
+    _drawText(canvas, "Time →", Offset(size.width - 60, size.height - 15), Colors.white54);
+  }
+
+  void _drawDopplerRadar(Canvas canvas, Size size) {
+    final centerY = size.height / 2;
+
+    // Draw continuous wave
+    final path = Path();
+    for (double x = 20; x < size.width - 20; x++) {
+      double freqShift = x > size.width / 2 ? 1.5 : 1.0; // Doppler shift
+      double y = centerY + sin((x / 20 + progress * 10) * freqShift) * 30;
+      if (x == 20) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Colors.orange
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    // Frequency shift indicator
+    canvas.drawLine(
+      Offset(size.width / 2, 20),
+      Offset(size.width / 2, size.height - 20),
+      Paint()..color = Colors.white24..strokeWidth = 1,
+    );
+
+    _drawText(canvas, "CW Doppler - ตรวจจับความเร็ว", Offset(20, 10), Colors.orange);
+    _drawText(canvas, "Tx Freq", Offset(30, size.height - 35), Colors.white54);
+    _drawText(canvas, "Shifted", Offset(size.width - 70, size.height - 35), Colors.orange);
+  }
+
+  void _drawPulseDoppler(Canvas canvas, Size size) {
+    // Draw range-doppler matrix
+    int cols = 6;
+    int rows = 4;
+    double cellW = (size.width - 60) / cols;
+    double cellH = (size.height - 50) / rows;
+
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < cols; c++) {
+        double x = 30 + c * cellW;
+        double y = 25 + r * cellH;
+
+        // Highlight some cells as targets
+        bool isTarget = (r == 1 && c == 3) || (r == 2 && c == 4);
+        double pulse = sin((progress * 4 + r + c) * pi) * 0.5 + 0.5;
+
+        canvas.drawRect(
+          Rect.fromLTWH(x, y, cellW - 2, cellH - 2),
+          Paint()
+            ..color = isTarget
+                ? Colors.purple.withOpacity(0.5 + pulse * 0.5)
+                : Colors.purple.withOpacity(0.1),
+        );
+      }
+    }
+
+    _drawText(canvas, "Range-Doppler Matrix", Offset(20, 5), Colors.purple);
+    _drawText(canvas, "Range →", Offset(size.width - 70, size.height - 15), Colors.white54);
+    _drawText(canvas, "Velocity ↑", Offset(5, size.height / 2), Colors.white54);
+  }
+
+  void _drawSAR(Canvas canvas, Size size) {
+    // Draw aircraft path
+    double aircraftY = 30;
+    double aircraftX = 30 + progress * (size.width - 60);
+
+    canvas.drawCircle(
+      Offset(aircraftX, aircraftY),
+      8,
+      Paint()..color = Colors.green,
+    );
+
+    // Draw synthetic aperture
+    canvas.drawLine(
+      Offset(30, aircraftY),
+      Offset(aircraftX, aircraftY),
+      Paint()
+        ..color = Colors.green.withOpacity(0.5)
+        ..strokeWidth = 4,
+    );
+
+    // Draw imaging beam
+    final beamPath = Path()
+      ..moveTo(aircraftX, aircraftY + 8)
+      ..lineTo(aircraftX - 40, size.height - 20)
+      ..lineTo(aircraftX + 40, size.height - 20)
+      ..close();
+    canvas.drawPath(beamPath, Paint()..color = Colors.green.withOpacity(0.2));
+
+    // Draw ground image pixels
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 4; j++) {
+        double x = size.width / 2 - 80 + i * 20;
+        double y = size.height - 60 + j * 10;
+        double intensity = sin((i + j + progress * 5) * 0.5) * 0.5 + 0.5;
+
+        canvas.drawRect(
+          Rect.fromLTWH(x, y, 18, 8),
+          Paint()..color = Colors.green.withOpacity(intensity * 0.7),
+        );
+      }
+    }
+
+    _drawText(canvas, "SAR - Synthetic Aperture Radar", Offset(20, 5), Colors.green);
+    _drawText(canvas, "Synthetic Aperture", Offset(50, aircraftY + 10), Colors.green);
+  }
+
+  void _drawText(Canvas canvas, String text, Offset pos, Color color) {
+    TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
+      ),
+      textDirection: TextDirection.ltr,
+    )
+      ..layout()
+      ..paint(canvas, pos);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}

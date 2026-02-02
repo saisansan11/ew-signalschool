@@ -551,9 +551,14 @@ class _QuizLevel2ScreenState extends State<QuizLevel2Screen>
                       );
                     }),
 
-                    // Explanation
+                    // Feedback
                     if (_answered)
-                      _buildExplanationCard(question.explanation),
+                      _buildFeedbackCard(
+                        isCorrect: _selectedAnswer == question.correctIndex,
+                        explanation: question.explanation,
+                        correctAnswer: question.options[question.correctIndex],
+                        category: question.category,
+                      ),
                   ],
                 ),
               ),
@@ -678,47 +683,172 @@ class _QuizLevel2ScreenState extends State<QuizLevel2Screen>
     );
   }
 
-  Widget _buildExplanationCard(String explanation) {
+  Widget _buildFeedbackCard({
+    required bool isCorrect,
+    required String explanation,
+    required String correctAnswer,
+    required String category,
+  }) {
+    final categoryColor = _getCategoryColor(category);
+
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primary.withAlpha(20),
+        color: isCorrect
+            ? AppColors.success.withAlpha(20)
+            : AppColors.danger.withAlpha(15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.primary.withAlpha(50),
+          color: isCorrect
+              ? AppColors.success.withAlpha(60)
+              : AppColors.danger.withAlpha(40),
+          width: 1.5,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          // Header - Correct or Incorrect
+          Row(
             children: [
-              Icon(
-                Icons.lightbulb,
-                color: AppColors.primary,
-                size: 24,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isCorrect
+                      ? AppColors.success.withAlpha(30)
+                      : AppColors.danger.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCorrect ? Icons.check_circle : Icons.cancel,
+                  color: isCorrect ? AppColors.success : AppColors.danger,
+                  size: 24,
+                ),
               ),
-              SizedBox(width: 8),
-              Text(
-                'อธิบาย',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isCorrect ? 'ถูกต้อง! 🎉' : 'ไม่ถูกต้อง',
+                      style: TextStyle(
+                        color: isCorrect ? AppColors.success : AppColors.danger,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (!isCorrect)
+                      Text(
+                        'คำตอบที่ถูก: $correctAnswer',
+                        style: const TextStyle(
+                          color: AppColors.success,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              // Category badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: categoryColor.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  category,
+                  style: TextStyle(
+                    color: categoryColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 12),
-          Text(
-            explanation,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              height: 1.5,
-            ),
+
+          // Divider
+          Container(
+            height: 1,
+            color: isCorrect
+                ? AppColors.success.withAlpha(30)
+                : AppColors.danger.withAlpha(20),
           ),
+
+          const SizedBox(height: 12),
+
+          // Explanation
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                color: AppColors.warning,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'อธิบาย:',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      explanation,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          // Tip for wrong answers
+          if (!isCorrect) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: categoryColor.withAlpha(15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.school,
+                    color: categoryColor,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'ทบทวนหัวข้อ $category เพื่อความเข้าใจที่ดีขึ้น',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -5,6 +5,7 @@ import '../../services/auth_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/theme_provider.dart';
 import '../game/jamming_simulator.dart';
+import '../globe/ew_globe_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,6 +81,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                       // Status Dashboard
                       _buildStatusDashboard(isDark),
+                      const SizedBox(height: 20),
+
+                      // Review Due Section
+                      _buildReviewDueSection(isDark),
                       const SizedBox(height: 20),
 
                       // Quick Command Grid
@@ -288,11 +293,218 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildReviewDueSection(bool isDark) {
+    final reviewStats = ProgressService.getReviewStats();
+    final dueCount = reviewStats['due'] ?? 0;
+    final masteredCount = reviewStats['mastered'] ?? 0;
+    final learningCount = reviewStats['learning'] ?? 0;
+    final totalReviewed = reviewStats['total'] ?? 0;
+
+    // Don't show if no cards have been reviewed yet
+    if (totalReviewed == 0) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? LinearGradient(
+                colors: [
+                  AppColors.warning.withAlpha(20),
+                  AppColors.surface,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
+        color: isDark ? null : AppColorsLight.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: dueCount > 0
+              ? AppColors.warning.withAlpha(100)
+              : (isDark ? AppColors.border : AppColorsLight.border),
+          width: dueCount > 0 ? 2 : 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.warning.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  dueCount > 0 ? Icons.notifications_active : Icons.check_circle,
+                  color: dueCount > 0 ? AppColors.warning : AppColors.success,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'FLASHCARD REVIEW',
+                      style: TextStyle(
+                        color: isDark ? AppColors.warning : AppColorsLight.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    Text(
+                      dueCount > 0
+                          ? 'มี $dueCount การ์ดรอทบทวน'
+                          : 'ไม่มีการ์ดรอทบทวน',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (dueCount > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$dueCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Stats row
+          Row(
+            children: [
+              Expanded(
+                child: _buildReviewStatItem(
+                  icon: Icons.school,
+                  value: '$masteredCount',
+                  label: 'เชี่ยวชาญ',
+                  color: AppColors.success,
+                  isDark: isDark,
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: isDark ? AppColors.border : AppColorsLight.border,
+              ),
+              Expanded(
+                child: _buildReviewStatItem(
+                  icon: Icons.trending_up,
+                  value: '$learningCount',
+                  label: 'กำลังเรียน',
+                  color: AppColors.primary,
+                  isDark: isDark,
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: isDark ? AppColors.border : AppColorsLight.border,
+              ),
+              Expanded(
+                child: _buildReviewStatItem(
+                  icon: Icons.history,
+                  value: '$totalReviewed',
+                  label: 'ทบทวนแล้ว',
+                  color: AppColors.accent,
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+
+          // Review button if cards are due
+          if (dueCount > 0) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Navigate to flashcard screen
+                  Navigator.pushNamed(context, '/flashcards');
+                },
+                icon: const Icon(Icons.play_arrow, size: 20),
+                label: const Text('เริ่มทบทวนเลย'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.warning,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewStatItem({
+    required IconData icon,
+    required String value,
+    required String label,
+    required Color color,
+    required bool isDark,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
+            fontSize: 10,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildStatusDashboard(bool isDark) {
     final stats = ProgressService.getLearningStats();
     final streak = stats['currentStreak'] ?? 0;
     final completedLessons = stats['lessonsCompleted'] ?? 0;
     final totalXp = stats['totalXp'] ?? 0;
+    final level = stats['level'] ?? 1;
+
+    // Calculate XP progress for current level
+    final levelStartXp = (level - 1) * 100;
+    final xpInCurrentLevel = totalXp - levelStartXp;
+    const xpForNextLevel = 100; // Each level requires 100 XP
+    final levelProgress = (xpInCurrentLevel / xpForNextLevel).clamp(0.0, 1.0);
 
     return AnimatedBuilder(
       animation: _scanController,
@@ -370,11 +582,212 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   )),
                 ],
               ),
+
+              const SizedBox(height: 16),
+
+              // Level Progress Bar
+              _buildLevelProgressBar(
+                level: level,
+                xpInCurrentLevel: xpInCurrentLevel,
+                xpForNextLevel: xpForNextLevel,
+                levelProgress: levelProgress,
+                isDark: isDark,
+              ),
             ],
           ),
         );
       },
     );
+  }
+
+  Widget _buildLevelProgressBar({
+    required int level,
+    required int xpInCurrentLevel,
+    required int xpForNextLevel,
+    required double levelProgress,
+    required bool isDark,
+  }) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [
+                      AppColors.accent.withAlpha(15),
+                      AppColors.primary.withAlpha(10),
+                    ]
+                  : [
+                      AppColorsLight.accent.withAlpha(30),
+                      AppColorsLight.primary.withAlpha(20),
+                    ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark
+                  ? AppColors.accent.withAlpha((40 * _pulseAnimation.value).toInt())
+                  : AppColorsLight.accent.withAlpha(60),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Level info row
+              Row(
+                children: [
+                  // Level badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppColors.accent, AppColors.primary],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: isDark
+                          ? [
+                              BoxShadow(
+                                color: AppColors.accent.withAlpha((60 * _pulseAnimation.value).toInt()),
+                                blurRadius: 8,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.military_tech,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'LV.$level',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // XP progress text
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _getLevelTitle(level),
+                          style: TextStyle(
+                            color: isDark ? AppColors.textPrimary : AppColorsLight.textPrimary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '$xpInCurrentLevel / $xpForNextLevel XP',
+                          style: TextStyle(
+                            color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Next level indicator
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.surfaceLight.withAlpha(100)
+                          : AppColorsLight.surfaceLight,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_upward,
+                          color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
+                          size: 12,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          'LV.${level + 1}',
+                          style: TextStyle(
+                            color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              // Progress bar
+              Stack(
+                children: [
+                  // Background
+                  Container(
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.surfaceLight.withAlpha(100)
+                          : AppColorsLight.surfaceLight,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  // Progress fill with animation
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeOutCubic,
+                    height: 8,
+                    width: (MediaQuery.of(context).size.width - 108) * levelProgress,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppColors.accent, AppColors.primary],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: isDark
+                          ? [
+                              BoxShadow(
+                                color: AppColors.accent.withAlpha((80 * _pulseAnimation.value).toInt()),
+                                blurRadius: 6,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _getLevelTitle(int level) {
+    if (level <= 2) return 'Recruit';
+    if (level <= 5) return 'Operator';
+    if (level <= 10) return 'Specialist';
+    if (level <= 15) return 'Expert';
+    if (level <= 20) return 'Master';
+    return 'Commander';
   }
 
   Widget _buildStatusIndicator(String label, Color color, bool isDark) {
@@ -570,6 +983,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ],
         ),
+
+        const SizedBox(height: 16),
+
+        // Global Operations Button
+        _buildGlobalOpsCard(isDark),
       ],
     );
   }
@@ -651,6 +1069,117 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
                     fontSize: 11,
                   ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGlobalOpsCard(bool isDark) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const EWGlobeScreen()),
+            );
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isDark
+                  ? [
+                      Colors.cyan.withAlpha(30),
+                      Colors.blue.withAlpha(20),
+                    ]
+                  : [
+                      Colors.cyan.withAlpha(50),
+                      Colors.blue.withAlpha(30),
+                    ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark
+                  ? Colors.cyan.withAlpha((100 * _pulseAnimation.value).toInt())
+                  : Colors.cyan.withAlpha(150),
+                width: 2,
+              ),
+              boxShadow: isDark ? [
+                BoxShadow(
+                  color: Colors.cyan.withAlpha((30 * _pulseAnimation.value).toInt()),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
+              ] : null,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.cyan.withAlpha(isDark ? 50 : 80),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.public, color: Colors.cyan, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'GLOBAL OPERATIONS',
+                            style: TextStyle(
+                              color: isDark ? Colors.cyan : Colors.cyan.shade700,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.cyan,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'NEW',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'สำรวจเหตุการณ์ EW ทั่วโลกบน 3D Globe',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.grey.shade700,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: isDark ? Colors.cyan : Colors.cyan.shade700,
+                  size: 18,
                 ),
               ],
             ),
