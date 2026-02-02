@@ -50,6 +50,21 @@ class Lesson1_Basics extends StatelessWidget {
           "3. EP (Protection)",
           "ภารกิจ: ป้องกันฝ่ายเราจากการถูกรบกวน\nเทคนิค: กระโดดความถี่ (Frequency Hopping), ลดกำลังส่ง, ใช้รหัสลับ",
         ),
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'องค์ประกอบใดของ EW ที่มีหน้าที่ "ค้นหา ดักรับ และหาพิกัด" ของข้าศึก?',
+          options: [
+            'EA (Electronic Attack)',
+            'EP (Electronic Protection)',
+            'ES (Electronic Support)',
+            'ECM (Electronic Countermeasures)',
+          ],
+          correctIndex: 2,
+          explanation: 'ES (Electronic Support) หรือ ESM มีหน้าที่ค้นหา (Search), ดักรับ (Intercept), และหาพิกัด (Locate) สัญญาณของข้าศึก เพื่อนำข้อมูลไปใช้ในการวางแผนรบ',
+          color: Colors.amber,
+        ),
       ],
     );
   }
@@ -196,6 +211,21 @@ class _Lesson2_SpectrumState extends State<Lesson2_Spectrum> {
         _SubHeader("ลักษณะการแพร่กระจายคลื่น (Propagation)", Colors.white),
         const SizedBox(height: 15),
         const PropagationVisual(), // [Visual] แสดงภาพการเดินทางของคลื่น
+
+        // Knowledge Check
+        const SizedBox(height: 20),
+        const KnowledgeCheck(
+          question: 'ย่านความถี่ใดเหมาะสำหรับการสื่อสารระยะไกลข้ามภูเขาโดยอาศัยการสะท้อนชั้นบรรยากาศ?',
+          options: [
+            'UHF (300 MHz - 3 GHz)',
+            'SHF (3 - 30 GHz)',
+            'HF (3 - 30 MHz)',
+            'VHF (30 - 300 MHz)',
+          ],
+          correctIndex: 2,
+          explanation: 'HF (High Frequency) สามารถสะท้อนชั้นบรรยากาศไอโอโนสเฟียร์ (Sky Wave) ทำให้สื่อสารได้ระยะไกลข้ามภูเขาหรือข้ามจังหวัด แต่คุณภาพเสียงต่ำกว่า VHF/UHF',
+          color: Colors.purple,
+        ),
       ],
     );
   }
@@ -569,6 +599,238 @@ Widget _ExpandableCard(
       ],
     ),
   );
+}
+
+// ==========================================
+// KNOWLEDGE CHECK WIDGET (ตรวจสอบความเข้าใจ)
+// ==========================================
+class KnowledgeCheck extends StatefulWidget {
+  final String question;
+  final List<String> options;
+  final int correctIndex;
+  final String explanation;
+  final Color color;
+
+  const KnowledgeCheck({
+    super.key,
+    required this.question,
+    required this.options,
+    required this.correctIndex,
+    required this.explanation,
+    this.color = Colors.cyan,
+  });
+
+  @override
+  State<KnowledgeCheck> createState() => _KnowledgeCheckState();
+}
+
+class _KnowledgeCheckState extends State<KnowledgeCheck> {
+  int? _selectedIndex;
+  bool _answered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            widget.color.withOpacity(0.15),
+            widget.color.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: widget.color.withOpacity(0.4),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: widget.color.withOpacity(0.2),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.help_outline, color: widget.color, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'ตรวจสอบความเข้าใจ',
+                  style: TextStyle(
+                    color: widget.color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+                const Spacer(),
+                if (_answered && _selectedIndex == widget.correctIndex)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check, color: Colors.green, size: 14),
+                        SizedBox(width: 4),
+                        Text('+5 XP', style: TextStyle(color: Colors.green, fontSize: 11, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // Question
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              widget.question,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+
+          // Options
+          ...widget.options.asMap().entries.map((entry) {
+            final index = entry.key;
+            final option = entry.value;
+            final isSelected = _selectedIndex == index;
+            final isCorrect = index == widget.correctIndex;
+
+            Color bgColor = Colors.white.withOpacity(0.05);
+            Color borderColor = Colors.white.withOpacity(0.1);
+            Color textColor = Colors.white70;
+            IconData? trailingIcon;
+
+            if (_answered) {
+              if (isCorrect) {
+                bgColor = Colors.green.withOpacity(0.2);
+                borderColor = Colors.green;
+                textColor = Colors.green;
+                trailingIcon = Icons.check_circle;
+              } else if (isSelected && !isCorrect) {
+                bgColor = Colors.red.withOpacity(0.2);
+                borderColor = Colors.red;
+                textColor = Colors.red;
+                trailingIcon = Icons.cancel;
+              }
+            } else if (isSelected) {
+              bgColor = widget.color.withOpacity(0.2);
+              borderColor = widget.color;
+              textColor = widget.color;
+            }
+
+            return GestureDetector(
+              onTap: _answered ? null : () => setState(() => _selectedIndex = index),
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: borderColor),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isSelected ? borderColor : Colors.transparent,
+                        border: Border.all(color: borderColor),
+                      ),
+                      child: isSelected
+                          ? Icon(Icons.check, size: 14, color: _answered ? textColor : Colors.white)
+                          : null,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        option,
+                        style: TextStyle(color: textColor, fontSize: 13),
+                      ),
+                    ),
+                    if (trailingIcon != null)
+                      Icon(trailingIcon, color: textColor, size: 20),
+                  ],
+                ),
+              ),
+            );
+          }),
+
+          // Submit button or explanation
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+            child: _answered
+                ? Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: (_selectedIndex == widget.correctIndex ? Colors.green : Colors.orange).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: (_selectedIndex == widget.correctIndex ? Colors.green : Colors.orange).withOpacity(0.3),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline,
+                          color: _selectedIndex == widget.correctIndex ? Colors.green : Colors.orange,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.explanation,
+                            style: TextStyle(
+                              color: _selectedIndex == widget.correctIndex ? Colors.green.shade300 : Colors.orange.shade300,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _selectedIndex != null
+                          ? () => setState(() => _answered = true)
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: widget.color,
+                        disabledBackgroundColor: Colors.grey.withOpacity(0.3),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'ตรวจคำตอบ',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // ==========================================
