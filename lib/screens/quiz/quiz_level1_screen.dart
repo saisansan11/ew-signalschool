@@ -24,7 +24,13 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
   int _questionsAnswered = 0;
   static const int _totalQuestionsToAnswer = 10;
 
-  // All questions pool with difficulty levels
+  // Scaffolding Variables
+  bool _hintShown = false;
+  int _hintsUsed = 0;
+  bool _eliminatedOptions = false;
+  List<int> _eliminatedIndices = [];
+
+  // All questions pool with difficulty levels and hints for scaffolding
   final List<QuizQuestion> _allQuestions = [
     // === EASY QUESTIONS ===
     QuizQuestion(
@@ -38,6 +44,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'EW = Electronic Warfare หรือ สงครามอิเล็กทรอนิกส์',
       difficulty: QuizDifficulty.easy,
+      hint: 'EW เกี่ยวข้องกับการใช้คลื่นแม่เหล็กไฟฟ้าในการรบ คำว่า "Electronic" หมายถึง อิเล็กทรอนิกส์',
     ),
     QuizQuestion(
       question: '3 องค์ประกอบหลักของ EW คืออะไร?',
@@ -50,6 +57,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'ESM (ดักรับ), ECM (รบกวน), ECCM (ป้องกัน)',
       difficulty: QuizDifficulty.easy,
+      hint: 'คิดถึง 3 ภารกิจหลัก: ดักรับ (Support), รบกวน (Countermeasures), ป้องกัน (Counter-Countermeasures)',
     ),
     QuizQuestion(
       question: 'ESM มีหน้าที่หลักคืออะไร?',
@@ -63,6 +71,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       explanation:
           'ESM = Electronic Support Measures ค้นหา ดักรับ และระบุแหล่งสัญญาณ',
       difficulty: QuizDifficulty.easy,
+      hint: 'ESM = Electronic "Support" Measures หมายถึงการสนับสนุนด้วยการ "ฟัง" หรือ "ดักรับ"',
     ),
     QuizQuestion(
       question: 'COMSEC หมายถึงอะไร?',
@@ -75,6 +84,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'COMSEC = Communication Security ความปลอดภัยในการสื่อสาร',
       difficulty: QuizDifficulty.easy,
+      hint: 'COM มาจากคำว่า Communication (การสื่อสาร) และ SEC มาจาก Security (ความปลอดภัย)',
     ),
 
     // === MEDIUM QUESTIONS ===
@@ -84,6 +94,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'VHF = Very High Frequency อยู่ในช่วง 30-300 MHz',
       difficulty: QuizDifficulty.medium,
+      hint: 'VHF อยู่ระหว่าง HF (3-30 MHz) และ UHF (300 MHz-3 GHz) ลองหาตัวเลขที่อยู่ตรงกลาง',
     ),
     QuizQuestion(
       question: 'Spot Jamming คืออะไร?',
@@ -96,6 +107,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'Spot Jamming = รบกวนความถี่เดียวอย่างเข้มข้น',
       difficulty: QuizDifficulty.medium,
+      hint: 'คำว่า "Spot" ในภาษาอังกฤษแปลว่า "จุด" หรือ "เฉพาะที่"',
     ),
     QuizQuestion(
       question: 'FHSS ใช้เพื่อวัตถุประสงค์ใด?',
@@ -109,6 +121,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       explanation:
           'FHSS = Frequency Hopping Spread Spectrum กระโดดความถี่เพื่อหลบการรบกวน',
       difficulty: QuizDifficulty.medium,
+      hint: 'FHSS = Frequency Hopping (กระโดดความถี่) ถ้ากระโดดไปเรื่อยๆ Jammer จะตามไม่ทัน',
     ),
     QuizQuestion(
       question: 'DF ในงาน ESM หมายถึงอะไร?',
@@ -121,6 +134,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'DF = Direction Finding การหาทิศทางแหล่งกำเนิดสัญญาณ',
       difficulty: QuizDifficulty.medium,
+      hint: 'งาน ESM ต้องการหาว่าสัญญาณมาจาก "ทิศทาง" ไหน (Direction)',
     ),
     QuizQuestion(
       question: 'Anti-Drone EW มักรบกวนความถี่ใด?',
@@ -133,6 +147,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 2,
       explanation: 'โดรนส่วนใหญ่ใช้ 2.4 GHz (command) และ 5.8 GHz (video)',
       difficulty: QuizDifficulty.medium,
+      hint: 'โดรนพลเรือนใช้ความถี่เดียวกับ Wi-Fi (2.4 GHz) และ FPV video (5.8 GHz)',
     ),
 
     // === HARD QUESTIONS ===
@@ -142,6 +157,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'GPS L1 = 1575.42 MHz สำหรับการใช้งานพลเรือน',
       difficulty: QuizDifficulty.hard,
+      hint: 'GPS L1 อยู่ในย่าน L-Band (1-2 GHz) ตัดตัวเลือกที่สูงกว่า 2 GHz ออก',
     ),
     QuizQuestion(
       question: 'Barrage Jamming แตกต่างจาก Spot Jamming อย่างไร?',
@@ -154,6 +170,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'Barrage Jamming รบกวนช่วงความถี่กว้าง ใช้พลังงานสูงกว่า Spot แต่ครอบคลุม FHSS ได้',
       difficulty: QuizDifficulty.hard,
+      hint: 'Barrage แปลว่า "ยิงถล่ม" หรือ "กราดยิง" คือกระจายไปทุกทิศทาง/ทุกความถี่',
     ),
     QuizQuestion(
       question: 'J/S Ratio ในการ Jamming หมายถึงอะไร?',
@@ -166,6 +183,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 0,
       explanation: 'J/S Ratio = อัตราส่วนกำลัง Jammer ต่อกำลังสัญญาณเป้าหมาย ค่ายิ่งสูงยิ่ง Jam ได้ผล',
       difficulty: QuizDifficulty.hard,
+      hint: 'J = Jammer, S = Signal, Ratio = อัตราส่วน ดังนั้น J/S คืออัตราส่วนระหว่าง...',
     ),
     QuizQuestion(
       question: 'SINCGARS กระโดดความถี่กี่ครั้งต่อวินาที?',
@@ -173,6 +191,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       correctIndex: 1,
       explanation: 'SINCGARS กระโดดความถี่ 111 ครั้ง/วินาที ในย่าน 30-87.975 MHz',
       difficulty: QuizDifficulty.hard,
+      hint: 'SINCGARS เป็นวิทยุยุคเก่า (1980s) ยังไม่เร็วมาก ไม่ถึง 500 ครั้ง แต่ก็ไม่ช้าเกินไป',
     ),
   ];
 
@@ -262,6 +281,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
         _currentQuestionIndex++;
         _answered = false;
         _selectedAnswer = null;
+        _resetScaffolding(); // Reset hint and 50/50 for next question
 
         // Get new questions for current difficulty if needed
         final newQuestions = _getQuestionsForDifficulty(_currentDifficulty);
@@ -291,8 +311,50 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       _consecutiveCorrect = 0;
       _consecutiveWrong = 0;
       _questionsAnswered = 0;
+      // Reset scaffolding
+      _hintShown = false;
+      _hintsUsed = 0;
+      _eliminatedOptions = false;
+      _eliminatedIndices = [];
       _initializeAdaptiveQuiz();
     });
+  }
+
+  // Scaffolding: Show hint
+  void _showHint() {
+    if (_answered || _hintShown) return;
+    setState(() {
+      _hintShown = true;
+      _hintsUsed++;
+    });
+  }
+
+  // Scaffolding: Eliminate two wrong options (50/50)
+  void _eliminateTwoOptions() {
+    if (_answered || _eliminatedOptions) return;
+
+    final question = _currentQuestion;
+    final wrongIndices = <int>[];
+
+    for (int i = 0; i < question.options.length; i++) {
+      if (i != question.correctIndex) {
+        wrongIndices.add(i);
+      }
+    }
+
+    // Randomly select 2 wrong options to eliminate
+    wrongIndices.shuffle();
+    setState(() {
+      _eliminatedIndices = wrongIndices.take(2).toList();
+      _eliminatedOptions = true;
+    });
+  }
+
+  // Reset scaffolding for next question
+  void _resetScaffolding() {
+    _hintShown = false;
+    _eliminatedOptions = false;
+    _eliminatedIndices = [];
   }
 
   String _getDifficultyText() {
@@ -441,7 +503,78 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  // Scaffolding: Help buttons (Hint & 50/50)
+                  if (!_answered)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        children: [
+                          // Hint button
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _hintShown ? null : _showHint,
+                              icon: Icon(
+                                _hintShown ? Icons.lightbulb : Icons.lightbulb_outline,
+                                size: 18,
+                              ),
+                              label: Text(_hintShown ? 'ใช้แล้ว' : 'ขอคำใบ้'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: _hintShown ? Colors.grey : Colors.amber,
+                                side: BorderSide(
+                                  color: _hintShown ? Colors.grey : Colors.amber,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // 50/50 button
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _eliminatedOptions ? null : _eliminateTwoOptions,
+                              icon: const Icon(Icons.filter_2, size: 18),
+                              label: Text(_eliminatedOptions ? 'ใช้แล้ว' : '50/50'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: _eliminatedOptions ? Colors.grey : Colors.cyan,
+                                side: BorderSide(
+                                  color: _eliminatedOptions ? Colors.grey : Colors.cyan,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Show hint if requested
+                  if (_hintShown && question.hint != null && !_answered)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withAlpha(20),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.amber.withAlpha(100)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.lightbulb, color: Colors.amber, size: 24),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              question.hint!,
+                              style: const TextStyle(
+                                color: Colors.amber,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(height: 8),
 
                   // Options
                   ...question.options.asMap().entries.map((entry) {
@@ -449,6 +582,12 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                     final option = entry.value;
                     final isSelected = _selectedAnswer == index;
                     final isCorrect = index == question.correctIndex;
+                    final isEliminated = _eliminatedIndices.contains(index);
+
+                    // Skip eliminated options
+                    if (isEliminated && !_answered) {
+                      return const SizedBox.shrink();
+                    }
 
                     Color bgColor = AppColors.surface;
                     Color borderColor = AppColors.border;
@@ -539,6 +678,9 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                       isCorrect: _selectedAnswer == question.correctIndex,
                       explanation: question.explanation,
                       correctAnswer: question.options[question.correctIndex],
+                      streak: _consecutiveCorrect,
+                      wrongStreak: _consecutiveWrong,
+                      difficulty: _currentDifficulty,
                     ),
                 ],
               ),
@@ -583,7 +725,44 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
     required bool isCorrect,
     required String explanation,
     required String correctAnswer,
+    required int streak,
+    required int wrongStreak,
+    required QuizDifficulty difficulty,
   }) {
+    // Generate encouraging message based on performance
+    String encourageMessage = '';
+    if (isCorrect) {
+      if (streak >= 3) {
+        encourageMessage = '🔥 ยอดเยี่ยม! ตอบถูกติดต่อกัน $streak ข้อ!';
+      } else if (streak == 2) {
+        encourageMessage = '⭐ เก่งมาก! ตอบถูก 2 ข้อติด!';
+      } else {
+        encourageMessage = '✨ ถูกต้อง! ทำได้ดีมาก!';
+      }
+    } else {
+      if (wrongStreak >= 2) {
+        encourageMessage = '💪 ไม่เป็นไร ลองทบทวนบทเรียนและลองใหม่';
+      } else {
+        encourageMessage = '📚 อย่าท้อ! เรียนรู้จากข้อผิดพลาด';
+      }
+    }
+
+    // XP earned (more for harder questions, less if used hint)
+    int xpEarned = 0;
+    if (isCorrect) {
+      switch (difficulty) {
+        case QuizDifficulty.easy:
+          xpEarned = 5;
+          break;
+        case QuizDifficulty.medium:
+          xpEarned = 10;
+          break;
+        case QuizDifficulty.hard:
+          xpEarned = 15;
+          break;
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(16),
@@ -602,7 +781,7 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header - Correct or Incorrect
+          // Header - Correct or Incorrect with XP
           Row(
             children: [
               Container(
@@ -624,13 +803,35 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      isCorrect ? 'ถูกต้อง! 🎉' : 'ไม่ถูกต้อง',
-                      style: TextStyle(
-                        color: isCorrect ? AppColors.success : AppColors.danger,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          isCorrect ? 'ถูกต้อง!' : 'ไม่ถูกต้อง',
+                          style: TextStyle(
+                            color: isCorrect ? AppColors.success : AppColors.danger,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (isCorrect) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withAlpha(40),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '+$xpEarned XP',
+                              style: const TextStyle(
+                                color: Colors.amber,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     if (!isCorrect)
                       Text(
@@ -645,6 +846,17 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 ),
               ),
             ],
+          ),
+
+          // Encouraging message
+          const SizedBox(height: 8),
+          Text(
+            encourageMessage,
+            style: TextStyle(
+              color: isCorrect ? Colors.green[700] : Colors.orange[700],
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
           ),
 
           const SizedBox(height: 12),
@@ -705,20 +917,57 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                 color: AppColors.primary.withAlpha(15),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.school,
                     color: AppColors.primary,
                     size: 18,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'ทบทวนเนื้อหานี้ใน Flashcard เพื่อความเข้าใจที่ดีขึ้น',
-                      style: TextStyle(
+                      wrongStreak >= 2
+                          ? 'ลองใช้ปุ่ม "ขอคำใบ้" หรือ "50/50" ในข้อถัดไปเพื่อช่วยเหลือ'
+                          : 'ทบทวนเนื้อหานี้ใน Flashcard เพื่อความเข้าใจที่ดีขึ้น',
+                      style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // Streak bonus for correct answers
+          if (isCorrect && streak >= 2) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.amber.withAlpha(20),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.amber.withAlpha(50)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.local_fire_department,
+                    color: Colors.orange,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      streak >= 3
+                          ? 'Streak Bonus! ระดับความยากจะเพิ่มขึ้น'
+                          : 'ตอบถูกอีก 1 ข้อเพื่อเลื่อนระดับ!',
+                      style: const TextStyle(
+                        color: Colors.orange,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -866,6 +1115,26 @@ class _QuizLevel1ScreenState extends State<QuizLevel1Screen> {
                   textAlign: TextAlign.center,
                 ),
 
+                // Scaffolding stats
+                if (_hintsUsed > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          'ใช้คำใบ้ $_hintsUsed ครั้ง',
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
               const SizedBox(height: 32),
 
               // Action buttons
@@ -921,6 +1190,7 @@ class QuizQuestion {
   final int correctIndex;
   final String explanation;
   final QuizDifficulty difficulty;
+  final String? hint; // Scaffolding: hint for struggling learners
 
   QuizQuestion({
     required this.question,
@@ -928,5 +1198,6 @@ class QuizQuestion {
     required this.correctIndex,
     required this.explanation,
     this.difficulty = QuizDifficulty.medium,
+    this.hint,
   });
 }
