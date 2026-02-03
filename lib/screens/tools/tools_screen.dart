@@ -14,7 +14,9 @@ import 'nato_symbols_screen.dart';
 import 'phonetic_alphabet_screen.dart';
 import 'signal_library_screen.dart';
 import 'flashcard_study_screen.dart';
+import 'quick_reference_screen.dart';
 import '../game/drone_id_training_screen.dart';
+import '../game/daily_challenge_screen.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -343,6 +345,26 @@ class ToolsScreen extends StatelessWidget {
 
   Widget _buildReferenceList(BuildContext context, bool isDark) {
     final references = [
+      _RefItem(
+        icon: Icons.menu_book,
+        title: 'Quick Reference',
+        subtitle: 'สูตร EW, ความถี่, เทคนิค Jamming',
+        color: Colors.blue,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const QuickReferenceScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.today,
+        title: 'Daily Challenge',
+        subtitle: 'ภารกิจประจำวัน รับ XP',
+        color: Colors.amber,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DailyChallengeScreen()),
+        ),
+      ),
       _RefItem(
         icon: Icons.waves,
         title: 'Signal Library',

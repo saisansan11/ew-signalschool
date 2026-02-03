@@ -7,6 +7,7 @@ import '../../services/theme_provider.dart';
 import '../game/jamming_simulator.dart';
 import '../game/interactive_scenarios_screen.dart';
 import '../game/drone_id_training_screen.dart';
+import '../game/daily_challenge_screen.dart';
 import '../globe/ew_globe_screen.dart';
 import '../tools/link_budget_calculator.dart';
 import '../tools/signal_library_screen.dart';
@@ -1008,6 +1009,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const SignalLibraryScreen()),
+                );
+              },
+            ),
+            _buildCompactCommandCard(
+              icon: Icons.today,
+              title: 'DAILY',
+              color: Colors.amber,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DailyChallengeScreen()),
                 );
               },
             ),
