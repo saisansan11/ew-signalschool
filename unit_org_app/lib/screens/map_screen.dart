@@ -15,6 +15,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   SignalUnit? _selectedUnit;
   bool _showingDetail = false;
   bool _isSatellite = true;
+  int? _selectedArmyArea; // null = all, 0 = central, 1-4 = army areas
 
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -140,6 +141,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             ],
           ),
 
+          // Filter chips at top
+          Positioned(
+            top: 8,
+            left: 16,
+            right: 16,
+            child: _buildFilterChips(),
+          ),
+
           // Legend
           Positioned(
             left: 16,
@@ -162,13 +171,104 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildFilterChips() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _buildFilterChip(
+              label: 'ทั้งหมด',
+              isSelected: _selectedArmyArea == null,
+              color: AppColors.signalCorps,
+              onTap: () => setState(() => _selectedArmyArea = null),
+            ),
+            const SizedBox(width: 8),
+            _buildFilterChip(
+              label: 'นขต.สส.',
+              isSelected: _selectedArmyArea == 0,
+              color: AppColors.signalCorps,
+              onTap: () => setState(() => _selectedArmyArea = 0),
+            ),
+            const SizedBox(width: 8),
+            ...RTASignalCorps.armyAreaInfo.map((area) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: _buildFilterChip(
+                label: area.abbreviation,
+                isSelected: _selectedArmyArea == area.id,
+                color: area.color,
+                onTap: () {
+                  setState(() => _selectedArmyArea = area.id);
+                  // Move map to army area center
+                  _mapController.move(
+                    LatLng(area.latitude, area.longitude),
+                    7.0,
+                  );
+                },
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip({
+    required String label,
+    required bool isSelected,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? color : AppColors.surface.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? color : color.withValues(alpha: 0.5),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? Colors.white : color,
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Marker> _buildMarkers() {
-    final allUnits = RTASignalCorps.allCombinedUnits
+    var allUnits = RTASignalCorps.allCombinedUnits
         .where((u) =>
             u.level == UnitLevel.department ||
             u.level == UnitLevel.battalion ||
             u.level == UnitLevel.school)
         .toList();
+
+    // Filter by selected army area
+    if (_selectedArmyArea != null) {
+      if (_selectedArmyArea == 0) {
+        // Central units only
+        allUnits = allUnits.where((u) => u.armyArea == null).toList();
+      } else {
+        // Specific army area
+        allUnits = allUnits.where((u) => u.armyArea == _selectedArmyArea).toList();
+      }
+    }
 
     // Group units by proximity to add offset for overlapping markers
     final processedUnits = _addOffsetForOverlappingUnits(allUnits);
