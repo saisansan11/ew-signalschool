@@ -17,6 +17,7 @@ import 'flashcard_study_screen.dart';
 import 'quick_reference_screen.dart';
 import '../game/drone_id_training_screen.dart';
 import '../game/daily_challenge_screen.dart';
+import '../learning/practice_mode_screen.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -393,6 +394,16 @@ class ToolsScreen extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const FlashcardStudyScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.replay,
+        title: 'Practice Mode',
+        subtitle: 'ทบทวนเนื้อหาด้วย Spaced Repetition',
+        color: Colors.purple,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PracticeModeScreen()),
         ),
       ),
       _RefItem(
