@@ -13,6 +13,7 @@ import 'glossary_screen.dart';
 import 'nato_symbols_screen.dart';
 import 'phonetic_alphabet_screen.dart';
 import 'signal_library_screen.dart';
+import '../game/drone_id_training_screen.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -349,6 +350,16 @@ class ToolsScreen extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const SignalLibraryScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.flight,
+        title: 'Drone ID Training',
+        subtitle: 'ฝึกจำแนกโดรนจาก Visual และ RF',
+        color: AppColors.warning,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DroneIdTrainingScreen()),
         ),
       ),
       _RefItem(
