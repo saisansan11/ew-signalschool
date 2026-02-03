@@ -7,6 +7,7 @@ import 'settings_screen.dart';
 import 'edit_profile_screen.dart';
 import 'achievements_screen.dart';
 import 'statistics_screen.dart';
+import 'certificates_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -787,6 +788,16 @@ class _ProfileScreenState extends State<ProfileScreen>
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+            ),
+          ),
+          _buildDivider(),
+          _buildMenuItem(
+            Icons.card_membership,
+            'ประกาศนียบัตร',
+            'ดูประกาศนียบัตรที่ได้รับ',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CertificatesScreen()),
             ),
           ),
           _buildDivider(),
