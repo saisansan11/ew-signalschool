@@ -12,6 +12,7 @@ import '../globe/ew_globe_screen.dart';
 import '../tools/link_budget_calculator.dart';
 import '../tools/signal_library_screen.dart';
 import '../learning/learning_screen.dart';
+import '../../widgets/streak_notification_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,7 +84,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     children: [
                       // Command Center Header
                       _buildCommandHeader(isDark),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
+
+                      // Streak Notification
+                      StreakNotificationWidget(
+                        onAction: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const DailyChallengeScreen()),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
 
                       // Status Dashboard
                       _buildStatusDashboard(isDark),
