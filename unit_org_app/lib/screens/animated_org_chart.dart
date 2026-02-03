@@ -13,6 +13,10 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
     with TickerProviderStateMixin {
   final Set<String> _expandedUnits = {'signal_dept'};
   final Map<String, AnimationController> _expandControllers = {};
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  List<SignalUnit> _searchResults = [];
+  bool _isSearching = false;
 
   late AnimationController _entryController;
   late Animation<double> _entryAnimation;
@@ -34,10 +38,34 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
   @override
   void dispose() {
     _entryController.dispose();
+    _searchController.dispose();
     for (final controller in _expandControllers.values) {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query.toLowerCase();
+      if (_searchQuery.isEmpty) {
+        _searchResults = [];
+        _isSearching = false;
+      } else {
+        _isSearching = true;
+        _searchResults = RTASignalCorps.allCombinedUnits.where((unit) {
+          return unit.name.toLowerCase().contains(_searchQuery) ||
+              unit.abbreviation.toLowerCase().contains(_searchQuery) ||
+              unit.nameEn.toLowerCase().contains(_searchQuery) ||
+              unit.location.province.toLowerCase().contains(_searchQuery);
+        }).toList();
+      }
+    });
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    _onSearchChanged('');
   }
 
   AnimationController _getExpandController(String unitId) {
@@ -144,25 +172,286 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section: หน่วยขึ้นตรง สส.
-          _buildSectionCard(
-            title: 'หน่วยขึ้นตรง กรมการทหารสื่อสาร',
-            subtitle: 'นขต.สส.',
-            icon: Icons.account_tree,
-            color: AppColors.signalCorps,
-            child: _buildCentralUnitsTree(),
-          ),
-          const SizedBox(height: 20),
+          // Search bar
+          _buildSearchBar(),
+          const SizedBox(height: 16),
 
-          // Section: หน่วยสื่อสารประจำ ทภ.
-          _buildSectionCard(
-            title: 'หน่วยสื่อสารประจำกองทัพภาค',
-            subtitle: 'ส.พัน. ขึ้นตรง ทภ.',
-            icon: Icons.map,
-            color: AppColors.primary,
-            child: _buildArmyAreaSection(),
+          // Show search results or normal content
+          if (_isSearching)
+            _buildSearchResults()
+          else ...[
+            // Statistics summary
+            _buildStatisticsSummary(),
+            const SizedBox(height: 16),
+
+            // Section: หน่วยขึ้นตรง สส.
+            _buildSectionCard(
+              title: 'หน่วยขึ้นตรง กรมการทหารสื่อสาร',
+              subtitle: 'นขต.สส.',
+              icon: Icons.account_tree,
+              color: AppColors.signalCorps,
+              child: _buildCentralUnitsTree(),
+            ),
+            const SizedBox(height: 20),
+
+            // Section: หน่วยสื่อสารประจำ ทภ.
+            _buildSectionCard(
+              title: 'หน่วยสื่อสารประจำกองทัพภาค',
+              subtitle: 'ส.พัน. ขึ้นตรง ทภ.',
+              icon: Icons.map,
+              color: AppColors.primary,
+              child: _buildArmyAreaSection(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: _onSearchChanged,
+        decoration: InputDecoration(
+          hintText: 'ค้นหาหน่วย... (ชื่อ, ชื่อย่อ, จังหวัด)',
+          hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+          prefixIcon: const Icon(Icons.search, color: AppColors.textMuted),
+          suffixIcon: _searchQuery.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: _clearSearch,
+                )
+              : null,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatisticsSummary() {
+    final centralCount = RTASignalCorps.centralUnits.length;
+    final armyAreaCount = RTASignalCorps.armyAreaUnits.length;
+    final totalCount = centralCount + armyAreaCount;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.signalCorps.withValues(alpha: 0.1),
+            AppColors.primary.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.signalCorps.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.analytics, color: AppColors.signalCorps, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'สถิติหน่วยทหารสื่อสาร',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _buildStatItem('หน่วยทั้งหมด', '$totalCount', AppColors.signalCorps),
+              const SizedBox(width: 12),
+              _buildStatItem('นขต.สส.', '$centralCount', AppColors.signalCorps),
+              const SizedBox(width: 12),
+              _buildStatItem('ส.พัน.ทภ.', '$armyAreaCount', AppColors.primary),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.textMuted,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    if (_searchResults.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          children: [
+            Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
+            const SizedBox(height: 12),
+            Text(
+              'ไม่พบหน่วยที่ค้นหา',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+            ),
+            Text(
+              '"$_searchQuery"',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Text(
+            'พบ ${_searchResults.length} หน่วย',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textMuted,
+            ),
+          ),
+        ),
+        ...(_searchResults.map((unit) => _buildSearchResultItem(unit))),
+      ],
+    );
+  }
+
+  Widget _buildSearchResultItem(SignalUnit unit) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showUnitDetail(unit),
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: unit.color.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: unit.color.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(_getUnitIcon(unit), color: unit.color, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: unit.color.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              unit.level.symbol,
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: unit.color,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            unit.abbreviation,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: unit.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        unit.name,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on, size: 10, color: AppColors.textMuted),
+                          const SizedBox(width: 4),
+                          Text(
+                            unit.location.province,
+                            style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(Icons.military_tech, size: 10, color: AppColors.textMuted),
+                          const SizedBox(width: 4),
+                          Text(
+                            unit.commanderRank,
+                            style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: unit.color.withValues(alpha: 0.5)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -355,14 +644,14 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                       ),
                       Row(
                         children: [
-                          Icon(Icons.military_tech, size: 12, color: AppColors.officer),
+                          const Icon(Icons.military_tech, size: 12, color: AppColors.officer),
                           const SizedBox(width: 4),
                           Text(
                             unit.commanderRank,
                             style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
                           ),
                           const SizedBox(width: 12),
-                          Icon(Icons.location_on, size: 12, color: AppColors.error),
+                          const Icon(Icons.location_on, size: 12, color: AppColors.error),
                           const SizedBox(width: 4),
                           Text(
                             unit.location.province,
@@ -574,7 +863,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Icon(Icons.military_tech, size: 10, color: AppColors.officer),
+                        const Icon(Icons.military_tech, size: 10, color: AppColors.officer),
                         const SizedBox(width: 2),
                         Text(
                           unit.commanderRank,
@@ -789,13 +1078,13 @@ class _TreeLinePainter extends CustomPainter {
     // Vertical line from top
     if (!isLast) {
       canvas.drawLine(
-        Offset(10, 0),
+        const Offset(10, 0),
         Offset(10, size.height),
         paint,
       );
     } else {
       canvas.drawLine(
-        Offset(10, 0),
+        const Offset(10, 0),
         Offset(10, size.height / 2),
         paint,
       );
