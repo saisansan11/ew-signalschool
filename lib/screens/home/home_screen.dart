@@ -5,8 +5,11 @@ import '../../services/auth_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/theme_provider.dart';
 import '../game/jamming_simulator.dart';
+import '../game/interactive_scenarios_screen.dart';
+import '../game/drone_id_training_screen.dart';
 import '../globe/ew_globe_screen.dart';
 import '../tools/link_budget_calculator.dart';
+import '../tools/signal_library_screen.dart';
 import '../learning/learning_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -969,6 +972,42 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const EWGlobeScreen()),
+                );
+              },
+            ),
+            _buildCompactCommandCard(
+              icon: Icons.sports_esports,
+              title: 'SCENARIOS',
+              color: AppColors.warning,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const InteractiveScenariosScreen()),
+                );
+              },
+            ),
+            _buildCompactCommandCard(
+              icon: Icons.flight,
+              title: 'DRONE ID',
+              color: Colors.orange,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DroneIdTrainingScreen()),
+                );
+              },
+            ),
+            _buildCompactCommandCard(
+              icon: Icons.waves,
+              title: 'SIGNAL LIB',
+              color: AppColors.radar,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SignalLibraryScreen()),
                 );
               },
             ),
