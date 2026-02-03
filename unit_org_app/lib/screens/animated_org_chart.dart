@@ -17,6 +17,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
   String _searchQuery = '';
   List<SignalUnit> _searchResults = [];
   bool _isSearching = false;
+  int? _selectedArmyArea; // null = show all, 0 = central, 1-4 = army areas
 
   late AnimationController _entryController;
   late Animation<double> _entryAnimation;
@@ -184,24 +185,37 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
             _buildStatisticsSummary(),
             const SizedBox(height: 16),
 
-            // Section: หน่วยขึ้นตรง สส.
-            _buildSectionCard(
-              title: 'หน่วยขึ้นตรง กรมการทหารสื่อสาร',
-              subtitle: 'นขต.สส.',
-              icon: Icons.account_tree,
-              color: AppColors.signalCorps,
-              child: _buildCentralUnitsTree(),
-            ),
-            const SizedBox(height: 20),
+            // Filter chips
+            _buildFilterChips(),
+            const SizedBox(height: 16),
 
-            // Section: หน่วยสื่อสารประจำ ทภ.
-            _buildSectionCard(
-              title: 'หน่วยสื่อสารประจำกองทัพภาค',
-              subtitle: 'ส.พัน. ขึ้นตรง ทภ.',
-              icon: Icons.map,
-              color: AppColors.primary,
-              child: _buildArmyAreaSection(),
-            ),
+            // Section: หน่วยขึ้นตรง สส. (show when no filter or filter is 0)
+            if (_selectedArmyArea == null || _selectedArmyArea == 0) ...[
+              _buildSectionCard(
+                title: 'หน่วยขึ้นตรง กรมการทหารสื่อสาร',
+                subtitle: 'นขต.สส.',
+                icon: Icons.account_tree,
+                color: AppColors.signalCorps,
+                child: _buildCentralUnitsTree(),
+              ),
+              const SizedBox(height: 20),
+            ],
+
+            // Section: หน่วยสื่อสารประจำ ทภ. (show when no filter or filter is 1-4)
+            if (_selectedArmyArea == null || (_selectedArmyArea != null && _selectedArmyArea! > 0))
+              _buildSectionCard(
+                title: _selectedArmyArea != null && _selectedArmyArea! > 0
+                    ? 'หน่วยสื่อสาร กองทัพภาคที่ $_selectedArmyArea'
+                    : 'หน่วยสื่อสารประจำกองทัพภาค',
+                subtitle: _selectedArmyArea != null && _selectedArmyArea! > 0
+                    ? 'ส.พัน. ขึ้นตรง ทภ.$_selectedArmyArea'
+                    : 'ส.พัน. ขึ้นตรง ทภ.',
+                icon: Icons.map,
+                color: _selectedArmyArea != null && _selectedArmyArea! > 0
+                    ? RTASignalCorps.getArmyAreaInfo(_selectedArmyArea!)?.color ?? AppColors.primary
+                    : AppColors.primary,
+                child: _buildArmyAreaSection(),
+              ),
           ],
         ],
       ),
@@ -318,6 +332,82 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
               textAlign: TextAlign.center,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChips() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // All units
+          _buildFilterChip(
+            label: 'ทั้งหมด',
+            isSelected: _selectedArmyArea == null,
+            color: AppColors.signalCorps,
+            onTap: () => setState(() => _selectedArmyArea = null),
+          ),
+          const SizedBox(width: 8),
+          // Central units
+          _buildFilterChip(
+            label: 'นขต.สส.',
+            isSelected: _selectedArmyArea == 0,
+            color: AppColors.signalCorps,
+            onTap: () => setState(() => _selectedArmyArea = 0),
+          ),
+          const SizedBox(width: 8),
+          // Army areas
+          ...RTASignalCorps.armyAreaInfo.map((area) => Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: _buildFilterChip(
+              label: area.abbreviation,
+              isSelected: _selectedArmyArea == area.id,
+              color: area.color,
+              onTap: () => setState(() => _selectedArmyArea = area.id),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip({
+    required String label,
+    required bool isSelected,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? color : color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? color : color.withValues(alpha: 0.3),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? Colors.white : color,
+          ),
         ),
       ),
     );
@@ -916,8 +1006,13 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
   }
 
   Widget _buildArmyAreaSection() {
+    // Filter by selected army area if applicable
+    final areasToShow = _selectedArmyArea != null && _selectedArmyArea! > 0
+        ? RTASignalCorps.armyAreaInfo.where((a) => a.id == _selectedArmyArea).toList()
+        : RTASignalCorps.armyAreaInfo;
+
     return Column(
-      children: RTASignalCorps.armyAreaInfo.map((area) {
+      children: areasToShow.map((area) {
         final battalions = RTASignalCorps.getUnitsByArmyArea(area.id);
         return _buildArmyAreaCard(area, battalions);
       }).toList(),
