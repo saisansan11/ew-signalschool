@@ -12,6 +12,7 @@ import 'frequency_chart_screen.dart';
 import 'glossary_screen.dart';
 import 'nato_symbols_screen.dart';
 import 'phonetic_alphabet_screen.dart';
+import 'signal_library_screen.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -340,6 +341,16 @@ class ToolsScreen extends StatelessWidget {
 
   Widget _buildReferenceList(BuildContext context, bool isDark) {
     final references = [
+      _RefItem(
+        icon: Icons.waves,
+        title: 'Signal Library',
+        subtitle: 'ฐานข้อมูลสัญญาณ RF พร้อม Waveform',
+        color: AppColors.radar,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SignalLibraryScreen()),
+        ),
+      ),
       _RefItem(
         icon: Icons.radio,
         title: 'Frequency Chart',
