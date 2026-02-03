@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../app/constants.dart';
 import '../../services/theme_provider.dart';
+import '../../services/bookmark_service.dart';
+import '../../widgets/bookmark_button.dart';
 
 class GlossaryScreen extends StatefulWidget {
   const GlossaryScreen({super.key});
@@ -198,6 +200,24 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             color: isDark ? AppColors.textSecondary : AppColorsLight.textSecondary,
             fontSize: 12,
           ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BookmarkButton(
+              itemId: 'glossary_${term.term.replaceAll(' ', '_').toLowerCase()}',
+              type: BookmarkType.glossaryTerm,
+              title: term.term,
+              subtitle: term.thaiTerm,
+              category: term.category,
+              size: 22,
+              activeColor: _getCategoryColor(term.category),
+            ),
+            Icon(
+              Icons.expand_more,
+              color: isDark ? AppColors.textMuted : AppColorsLight.textMuted,
+            ),
+          ],
         ),
         children: [
           Padding(

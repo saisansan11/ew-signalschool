@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../app/constants.dart';
 import '../../services/auth_service.dart';
+import '../../services/bookmark_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/theme_provider.dart';
 import 'settings_screen.dart';
@@ -8,6 +9,8 @@ import 'edit_profile_screen.dart';
 import 'achievements_screen.dart';
 import 'statistics_screen.dart';
 import 'certificates_screen.dart';
+import 'study_goals_screen.dart';
+import 'bookmarks_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -788,6 +791,26 @@ class _ProfileScreenState extends State<ProfileScreen>
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+            ),
+          ),
+          _buildDivider(),
+          _buildMenuItem(
+            Icons.flag,
+            'เป้าหมายการเรียน',
+            'ตั้งเป้าหมายประจำสัปดาห์',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const StudyGoalsScreen()),
+            ),
+          ),
+          _buildDivider(),
+          _buildMenuItem(
+            Icons.bookmark,
+            'Bookmarks',
+            'รายการที่บันทึกไว้ ${bookmarkService.totalCount > 0 ? "(${bookmarkService.totalCount})" : ""}',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const BookmarksScreen()),
             ),
           ),
           _buildDivider(),
