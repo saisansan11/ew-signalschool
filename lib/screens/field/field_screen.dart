@@ -5,6 +5,7 @@ import '../radio/prc624_menu.dart';
 import '../radio/prc710_menu.dart';
 import '../radio/cnr900_menu.dart';
 import '../radio/cnr900t_menu.dart';
+import '../game/interactive_scenarios_screen.dart';
 import 'drone_field_screen.dart';
 import 'gps_jam_screen.dart';
 import 'comm_jam_screen.dart';
@@ -60,6 +61,10 @@ class FieldScreen extends StatelessWidget {
                 _buildWarningBanner(),
                 const SizedBox(height: 20),
 
+                // Training Scenarios Section
+                _buildTrainingScenariosSection(context),
+                const SizedBox(height: 24),
+
                 // Emergency Section
                 _buildEmergencySection(context),
                 const SizedBox(height: 24),
@@ -79,6 +84,105 @@ class FieldScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildTrainingScenariosSection(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const InteractiveScenariosScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.warning, AppColors.warning.withAlpha(180)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.warning.withAlpha(60),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(30),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.sports_esports,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(30),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.new_releases, color: Colors.white, size: 12),
+                        SizedBox(width: 4),
+                        Text(
+                          'TRAINING',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'INTERACTIVE SCENARIOS',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'ฝึกสถานการณ์จำลอง Anti-Drone, SIGINT, GPS',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(220),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
