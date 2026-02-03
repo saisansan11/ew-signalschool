@@ -69,6 +69,14 @@ class _AchievementsScreenState extends State<AchievementsScreen>
               ),
               const SizedBox(height: 24),
 
+              // Training Achievements
+              _buildCategorySection(
+                'การฝึก',
+                Icons.sports_esports,
+                _trainingAchievements,
+              ),
+              const SizedBox(height: 24),
+
               // Special Achievements
               _buildCategorySection(
                 'พิเศษ',
@@ -541,6 +549,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
     return [
       ..._learningAchievements,
       ..._quizAchievements,
+      ..._trainingAchievements,
       ..._specialAchievements,
       ..._dedicationAchievements,
     ];
@@ -735,6 +744,79 @@ class _AchievementsScreenState extends State<AchievementsScreen>
         requirement: 'ใช้เวลาเรียนรวม 300 นาที',
         isUnlocked: studyTime >= 300,
         progress: (studyTime / 300).clamp(0.0, 1.0),
+        xpReward: 500,
+      ),
+    ];
+  }
+
+  List<Achievement> get _trainingAchievements {
+    final totalXP = ProgressService.getTotalXp();
+
+    return [
+      Achievement(
+        id: 'drone_spotter',
+        title: 'Drone Spotter',
+        description: 'เริ่มฝึก Drone ID Training',
+        icon: Icons.flight,
+        rarity: AchievementRarity.common,
+        requirement: 'เข้าใช้งาน Drone ID Training',
+        isUnlocked: totalXP >= 50,
+        progress: totalXP >= 50 ? 1.0 : (totalXP / 50).clamp(0.0, 1.0),
+        xpReward: 50,
+      ),
+      Achievement(
+        id: 'drone_expert',
+        title: 'Drone Expert',
+        description: 'เชี่ยวชาญการจำแนกโดรน',
+        icon: Icons.gps_fixed,
+        rarity: AchievementRarity.rare,
+        requirement: 'ทำ Drone Quiz ได้ 80% ขึ้นไป',
+        isUnlocked: totalXP >= 300,
+        progress: (totalXP / 300).clamp(0.0, 1.0),
+        xpReward: 200,
+      ),
+      Achievement(
+        id: 'scenario_rookie',
+        title: 'Scenario Rookie',
+        description: 'เริ่มฝึกสถานการณ์จำลอง',
+        icon: Icons.sports_esports,
+        rarity: AchievementRarity.common,
+        requirement: 'เล่น Interactive Scenario ครั้งแรก',
+        isUnlocked: totalXP >= 100,
+        progress: totalXP >= 100 ? 1.0 : (totalXP / 100).clamp(0.0, 1.0),
+        xpReward: 50,
+      ),
+      Achievement(
+        id: 'scenario_veteran',
+        title: 'Scenario Veteran',
+        description: 'ผ่านสถานการณ์จำลองหลายรูปแบบ',
+        icon: Icons.military_tech,
+        rarity: AchievementRarity.rare,
+        requirement: 'ผ่าน 5 สถานการณ์จำลอง',
+        isUnlocked: totalXP >= 500,
+        progress: (totalXP / 500).clamp(0.0, 1.0),
+        xpReward: 300,
+      ),
+      Achievement(
+        id: 'signal_hunter',
+        title: 'Signal Hunter',
+        description: 'ศึกษา Signal Library',
+        icon: Icons.waves,
+        rarity: AchievementRarity.uncommon,
+        requirement: 'เข้าใช้งาน Signal Library',
+        isUnlocked: totalXP >= 150,
+        progress: (totalXP / 150).clamp(0.0, 1.0),
+        xpReward: 100,
+      ),
+      Achievement(
+        id: 'spectrum_master',
+        title: 'Spectrum Master',
+        description: 'เชี่ยวชาญการวิเคราะห์สเปกตรัม',
+        icon: Icons.insights,
+        rarity: AchievementRarity.epic,
+        requirement: 'ได้คะแนน 500+ ใน Spectrum Analyzer',
+        isUnlocked: totalXP >= 800,
+        progress: (totalXP / 800).clamp(0.0, 1.0),
         xpReward: 500,
       ),
     ];
