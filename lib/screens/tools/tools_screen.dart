@@ -13,6 +13,7 @@ import 'glossary_screen.dart';
 import 'nato_symbols_screen.dart';
 import 'phonetic_alphabet_screen.dart';
 import 'signal_library_screen.dart';
+import 'flashcard_study_screen.dart';
 import '../game/drone_id_training_screen.dart';
 
 class ToolsScreen extends StatelessWidget {
@@ -360,6 +361,16 @@ class ToolsScreen extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const DroneIdTrainingScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.style,
+        title: 'Flashcard Study',
+        subtitle: 'ท่องจำสัญญาณและคำศัพท์ EW',
+        color: AppColors.tabLearning,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const FlashcardStudyScreen()),
         ),
       ),
       _RefItem(
