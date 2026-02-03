@@ -261,6 +261,54 @@ class _SpectrumAnalyzerState extends State<SpectrumAnalyzer>
           ],
         ),
         actions: [
+          // Threats counter
+          if (_challengeMode)
+            Container(
+              margin: const EdgeInsets.only(right: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(30),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.gps_fixed, color: Colors.red, size: 16),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${_identifiedThreats.length}/$_signalsToIdentify',
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          // Missed counter
+          if (_missedThreats > 0)
+            Container(
+              margin: const EdgeInsets.only(right: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.orange.withAlpha(30),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.cancel, color: Colors.orange, size: 16),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$_missedThreats',
+                    style: const TextStyle(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           // Score display
           Container(
             margin: const EdgeInsets.only(right: 8),

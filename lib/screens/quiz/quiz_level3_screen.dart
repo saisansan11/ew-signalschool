@@ -487,7 +487,6 @@ class _QuizLevel3ScreenState extends State<QuizLevel3Screen>
   }
 
   void _saveScore() {
-    final percent = (_score / _shuffledQuestions.length * 100).round();
     ProgressService.saveQuizScore(
       'quiz_level3',
       _score,
