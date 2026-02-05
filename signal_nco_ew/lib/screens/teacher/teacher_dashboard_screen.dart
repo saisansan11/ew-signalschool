@@ -63,10 +63,8 @@ class _StudentsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .orderBy('totalXP', descending: true)
-          .snapshots(),
+      // Simplified query - no orderBy to avoid composite index requirement
+      stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -74,30 +72,55 @@ class _StudentsTab extends StatelessWidget {
 
         if (snapshot.hasError) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline, size: 48, color: AppColors.error),
-                const SizedBox(height: 16),
-                Text(
-                  'เกิดข้อผิดพลาด',
-                  style: AppTextStyles.titleMedium.copyWith(
-                    color: AppColors.textPrimary,
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const SizedBox(height: 16),
+                  Text(
+                    'เกิดข้อผิดพลาด',
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'ไม่สามารถโหลดข้อมูลนักเรียนได้',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
+                  const SizedBox(height: 8),
+                  Text(
+                    'ไม่สามารถโหลดข้อมูลนักเรียนได้',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    '${snapshot.error}',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textMuted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         }
 
-        final students = snapshot.data?.docs ?? [];
+        // Sort on client side to avoid Firestore composite index
+        final studentDocs = snapshot.data?.docs ?? [];
+        // Filter only students (exclude teachers)
+        final students = studentDocs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .where((user) => user['role'] == 'student')
+            .toList();
+        // Sort by totalXP (which is inside progress object)
+        students.sort((a, b) {
+          final aProgress = a['progress'] as Map<String, dynamic>?;
+          final bProgress = b['progress'] as Map<String, dynamic>?;
+          final aXP = (aProgress?['totalXP'] ?? 0) as int;
+          final bXP = (bProgress?['totalXP'] ?? 0) as int;
+          return bXP.compareTo(aXP); // Descending
+        });
 
         if (students.isEmpty) {
           return Center(
@@ -121,7 +144,7 @@ class _StudentsTab extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           itemCount: students.length,
           itemBuilder: (context, index) {
-            final student = students[index].data() as Map<String, dynamic>;
+            final student = students[index];
             return _StudentCard(
               student: student,
               rank: index + 1,
@@ -143,10 +166,12 @@ class _StudentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = student['displayName'] ?? 'ไม่ระบุชื่อ';
     final email = student['email'] ?? '';
-    final totalXP = student['totalXP'] ?? 0;
-    final level = ((totalXP as int) / 100).floor() + 1;
-    final streak = student['currentStreak'] ?? 0;
-    final lessonsCompleted = student['lessonsCompleted'] ?? 0;
+    // Access progress data from nested object
+    final progress = student['progress'] as Map<String, dynamic>?;
+    final totalXP = (progress?['totalXP'] ?? 0) as int;
+    final level = (totalXP / 100).floor() + 1;
+    final streak = (progress?['currentStreak'] ?? 0) as int;
+    final lessonsCompleted = (progress?['completedLessons'] as List?)?.length ?? 0;
 
     return Card(
       color: AppColors.surface,
@@ -281,12 +306,15 @@ class _StudentDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = student['displayName'] ?? 'ไม่ระบุชื่อ';
     final email = student['email'] ?? '';
-    final totalXP = student['totalXP'] ?? 0;
-    final level = ((totalXP as int) / 100).floor() + 1;
-    final streak = student['currentStreak'] ?? 0;
-    final lessonsCompleted = student['lessonsCompleted'] ?? 0;
-    final quizzesPassed = student['quizzesPassed'] ?? 0;
-    final flashcardsStudied = student['flashcardsStudied'] ?? 0;
+    // Access progress data from nested object
+    final progress = student['progress'] as Map<String, dynamic>?;
+    final totalXP = (progress?['totalXP'] ?? 0) as int;
+    final level = (totalXP / 100).floor() + 1;
+    final streak = (progress?['currentStreak'] ?? 0) as int;
+    final lessonsCompleted = (progress?['completedLessons'] as List?)?.length ?? 0;
+    final quizScores = progress?['quizScores'] as Map<String, dynamic>?;
+    final quizzesPassed = quizScores?.length ?? 0;
+    final flashcardsStudied = 0; // TODO: Add flashcard tracking if needed
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -469,29 +497,42 @@ class _LeaderboardTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .orderBy('totalXP', descending: true)
-          .limit(20)
-          .snapshots(),
+      // Simplified query - sort on client side
+      stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final students = snapshot.data?.docs ?? [];
+        // Sort on client side and take top 20
+        final studentDocs = snapshot.data?.docs ?? [];
+        // Filter only students (exclude teachers)
+        final students = studentDocs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .where((user) => user['role'] == 'student')
+            .toList();
+        // Sort by totalXP (which is inside progress object)
+        students.sort((a, b) {
+          final aProgress = a['progress'] as Map<String, dynamic>?;
+          final bProgress = b['progress'] as Map<String, dynamic>?;
+          final aXP = (aProgress?['totalXP'] ?? 0) as int;
+          final bXP = (bProgress?['totalXP'] ?? 0) as int;
+          return bXP.compareTo(aXP);
+        });
+        final top20 = students.take(20).toList();
 
-        if (students.isEmpty) {
+        if (top20.isEmpty) {
           return const Center(child: Text('ไม่มีข้อมูล'));
         }
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: students.length,
+          itemCount: top20.length,
           itemBuilder: (context, index) {
-            final student = students[index].data() as Map<String, dynamic>;
+            final student = top20[index];
             final name = student['displayName'] ?? 'ไม่ระบุชื่อ';
-            final totalXP = student['totalXP'] ?? 0;
+            final progress = student['progress'] as Map<String, dynamic>?;
+            final totalXP = (progress?['totalXP'] ?? 0) as int;
 
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
@@ -566,19 +607,29 @@ class _ActivityTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('activity_log')
-          .orderBy('timestamp', descending: true)
-          .limit(50)
-          .snapshots(),
+      // Simplified query - sort on client side
+      stream: FirebaseFirestore.instance.collection('activity_log').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final activities = snapshot.data?.docs ?? [];
+        // Sort on client side and take latest 50
+        final activityDocs = snapshot.data?.docs ?? [];
+        final activities = activityDocs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+        activities.sort((a, b) {
+          final aTime = a['timestamp'] as Timestamp?;
+          final bTime = b['timestamp'] as Timestamp?;
+          if (aTime == null && bTime == null) return 0;
+          if (aTime == null) return 1;
+          if (bTime == null) return -1;
+          return bTime.compareTo(aTime);
+        });
+        final latest50 = activities.take(50).toList();
 
-        if (activities.isEmpty) {
+        if (latest50.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -598,9 +649,9 @@ class _ActivityTab extends StatelessWidget {
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: activities.length,
+          itemCount: latest50.length,
           itemBuilder: (context, index) {
-            final activity = activities[index].data() as Map<String, dynamic>;
+            final activity = latest50[index];
             return _ActivityItem(activity: activity)
                 .animate()
                 .fadeIn(duration: 300.ms, delay: (index * 30).ms);
