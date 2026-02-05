@@ -7049,7 +7049,7 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'บทที่ ${widget.module.moduleNumber}',
+          'บทที่ ${widget.module.moduleNumber + 1}',
           style: AppTextStyles.headlineSmall.copyWith(
             color: AppColors.textPrimary,
           ),
