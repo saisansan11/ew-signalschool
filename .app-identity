@@ -1,0 +1,7 @@
+APP_NAME=ew-signalschool
+DEPLOY_URL=https://saisansan11.github.io/ew-signalschool/
+BASE_HREF=/ew-signalschool/
+REPO=saisansan11/ew-signalschool
+
+# WARNING: Do not deploy this app to any other URL
+# This file helps identify which app this is
