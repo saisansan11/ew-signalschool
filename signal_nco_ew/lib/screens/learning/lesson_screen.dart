@@ -20,6 +20,8 @@ import '../../widgets/educational/radar_equation_widget.dart';
 import '../../widgets/educational/ew_world_map_widget.dart';
 import '../../widgets/educational/antenna_pattern_widget.dart';
 import '../../widgets/educational/link_budget_widget.dart';
+import '../../widgets/educational/gps_warfare_widget.dart';
+import '../../widgets/educational/df_triangulation_widget.dart';
 
 /// หน้าจอแสดงเนื้อหาบทเรียน
 class LessonScreen extends StatefulWidget {
@@ -77,19 +79,19 @@ class _LessonScreenState extends State<LessonScreen> {
       case 'junior_2_2':
         return _spectrumSimPages();
 
-      // บทที่ 3: ES พื้นฐาน
+      // บทที่ 3: ESM พื้นฐาน
       case 'junior_3_1':
         return _esmBasicsPages();
       case 'junior_3_2':
         return _sigintPages();
 
-      // บทที่ 4: EA พื้นฐาน
+      // บทที่ 4: ECM พื้นฐาน
       case 'junior_4_1':
         return _jammingBasicsPages();
       case 'junior_4_2':
         return _jammingTypesPages();
 
-      // บทที่ 5: EP พื้นฐาน
+      // บทที่ 5: ECCM พื้นฐาน
       case 'junior_5_1':
         return _eccmBasicsPages();
       case 'junior_5_2':
@@ -1838,7 +1840,7 @@ Spectrum Analyzer แสดง:
     ];
   }
 
-  // ==================== บทที่ 3: ES พื้นฐาน ====================
+  // ==================== บทที่ 3: ESM พื้นฐาน ====================
 
   List<LessonPage> _esmBasicsPages() {
     return [
@@ -2523,7 +2525,7 @@ ESM เป็นเครื่องมือในการรวบรวม 
     );
   }
 
-  // ==================== บทที่ 4: EA พื้นฐาน ====================
+  // ==================== บทที่ 4: ECM พื้นฐาน ====================
 
   List<LessonPage> _jammingBasicsPages() {
     return [
@@ -2931,7 +2933,7 @@ J/S Ratio (Jamming-to-Signal)
     );
   }
 
-  // ==================== บทที่ 5: EP พื้นฐาน ====================
+  // ==================== บทที่ 5: ECCM พื้นฐาน ====================
 
   List<LessonPage> _eccmBasicsPages() {
     return [
@@ -3908,8 +3910,13 @@ Direction Finding คือการระบุทิศทางที่ส�
 • Multipath จากภูเขา/อาคาร
 • สัญญาณอ่อน = bearing ไม่แม่น
 • เป้าหมายเคลื่อนที่
+
+👇 ลองใช้ DF Triangulation Simulator ด้านล่าง
 ''',
-        visualWidget: _buildTriangulationPracticeWidget(),
+        visualWidget: const SizedBox(
+          height: 750,
+          child: DFTriangulationWidget(),
+        ),
       ),
     ];
   }
@@ -4419,8 +4426,14 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
 • Time error
 • Receiver warning
 • Cross-check ล้มเหลว
+
+👆 ลองใช้ GPS Warfare Simulator ด้านล่าง
+เพื่อเห็นผลกระทบของ Jamming และ Spoofing
 ''',
-        visualWidget: _buildGPSThreatsWidget(),
+        visualWidget: const SizedBox(
+          height: 650,
+          child: GPSWarfareWidget(),
+        ),
       ),
     ];
   }
@@ -4699,62 +4712,6 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
         painter: _SimpleTriangulationPainter(),
       ),
     ).animate().fadeIn();
-  }
-
-  Widget _buildTriangulationPracticeWidget() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.esColor.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildStationIndicator('A', 45),
-              _buildStationIndicator('B', 315),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.3),
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.red, width: 2),
-            ),
-            child: const Icon(Icons.location_on, color: Colors.red),
-          ).animate(onPlay: (c) => c.repeat(reverse: true))
-              .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 1.seconds),
-          const SizedBox(height: 8),
-          Text('Target Location', style: AppTextStyles.labelMedium.copyWith(color: Colors.red)),
-        ],
-      ),
-    ).animate().fadeIn();
-  }
-
-  Widget _buildStationIndicator(String label, double bearing) {
-    return Column(
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppColors.esColor.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(label, style: AppTextStyles.titleMedium.copyWith(color: AppColors.esColor)),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text('${bearing.toInt()}°', style: AppTextStyles.labelSmall),
-      ],
-    );
   }
 
   Widget _buildEOBWidget() {
@@ -5243,48 +5200,6 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
         border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Text(label, style: AppTextStyles.labelSmall.copyWith(color: color)),
-    );
-  }
-
-  Widget _buildGPSThreatsWidget() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.gpsColor.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.satellite_alt, size: 48, color: AppColors.gpsColor),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildThreatBox('Jamming', 'No Signal', Colors.red),
-              _buildThreatBox('Spoofing', 'Wrong Pos', Colors.orange),
-            ],
-          ),
-        ],
-      ),
-    ).animate().fadeIn();
-  }
-
-  Widget _buildThreatBox(String title, String effect, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-      ),
-      child: Column(
-        children: [
-          Text(title, style: AppTextStyles.labelMedium.copyWith(color: color)),
-          const SizedBox(height: 4),
-          Text(effect, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textMuted)),
-        ],
-      ),
     );
   }
 
