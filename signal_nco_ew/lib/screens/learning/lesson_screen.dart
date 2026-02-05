@@ -274,7 +274,11 @@ SIGINT แบ่งเป็น 2 ประเภทหลัก:
 • ยุค EW สมัยใหม่
 • สงครามโดรนในปัจจุบัน
 ''',
-        visualWidget: const EWWorldMapWidget(),
+        // EWWorldMapWidget needs height constraint as it uses Expanded internally
+        visualWidget: const SizedBox(
+          height: 450,
+          child: EWWorldMapWidget(),
+        ),
       ),
     ];
   }
@@ -5758,13 +5762,38 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.2),
+            color.withValues(alpha: 0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 32),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 28),
+          )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.1, 1.1),
+                duration: 1500.ms,
+              ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -5772,8 +5801,12 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
               children: [
                 Text(
                   '$band ($range)',
-                  style: AppTextStyles.labelLarge.copyWith(color: color),
+                  style: AppTextStyles.labelLarge.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   use,
                   style: AppTextStyles.bodySmall.copyWith(
@@ -5783,23 +5816,73 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
               ],
             ),
           ),
+          Icon(Icons.signal_cellular_alt, color: color.withValues(alpha: 0.5), size: 20),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.1, end: 0);
   }
 
   Widget _buildSpectrumAnalyzerWidget() {
     return Container(
-      height: 120,
+      height: 140,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.esColor.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.esColor.withValues(alpha: 0.2),
+            blurRadius: 12,
+            spreadRadius: 2,
+          ),
+        ],
       ),
-      child: CustomPaint(
-        painter: _SpectrumPainter(),
-        size: const Size(double.infinity, 120),
+      child: Stack(
+        children: [
+          // Grid overlay
+          CustomPaint(
+            painter: _SpectrumPainter(),
+            size: const Size(double.infinity, 140),
+          ),
+          // Scan line effect
+          Positioned.fill(
+            child: Container()
+                .animate(onPlay: (c) => c.repeat())
+                .shimmer(
+                  duration: 2000.ms,
+                  color: AppColors.esColor.withValues(alpha: 0.3),
+                ),
+          ),
+          // Label
+          Positioned(
+            top: 8,
+            left: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.esColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.show_chart, color: AppColors.esColor, size: 12),
+                  const SizedBox(width: 4),
+                  Text(
+                    'SPECTRUM',
+                    style: AppTextStyles.labelSmall.copyWith(
+                      color: AppColors.esColor,
+                      fontSize: 10,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-    );
+    ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.95, 0.95));
   }
 
   // ignore: unused_element
@@ -5885,59 +5968,126 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.eaColor.withOpacity(0.1),
+        gradient: LinearGradient(
+          colors: [
+            AppColors.eaColor.withValues(alpha: 0.15),
+            AppColors.eaColor.withValues(alpha: 0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.eaColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildJammingIcon('สัญญาณ', Icons.wifi, Colors.green),
-              Icon(Icons.add, color: AppColors.textSecondary),
-              _buildJammingIcon('รบกวน', Icons.waves, AppColors.eaColor),
-              Icon(Icons.arrow_forward, color: AppColors.textSecondary),
-              _buildJammingIcon('ไม่ได้ยิน', Icons.wifi_off, Colors.grey),
+              _buildJammingIcon('สัญญาณ', Icons.wifi, Colors.green)
+                  .animate(delay: 0.ms).fadeIn().scale(),
+              Icon(Icons.add, color: AppColors.textSecondary)
+                  .animate(delay: 200.ms).fadeIn(),
+              _buildJammingIcon('รบกวน', Icons.waves, AppColors.eaColor)
+                  .animate(delay: 400.ms)
+                  .fadeIn()
+                  .scale()
+                  .then()
+                  .shake(hz: 3, rotation: 0.05),
+              Icon(Icons.arrow_forward, color: AppColors.textSecondary)
+                  .animate(delay: 600.ms).fadeIn(),
+              _buildJammingIcon('ไม่ได้ยิน', Icons.wifi_off, Colors.grey)
+                  .animate(delay: 800.ms).fadeIn().scale(),
             ],
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 300.ms);
   }
 
   Widget _buildJammingIcon(String label, IconData icon, Color color) {
     return Column(
       children: [
-        Icon(icon, color: color, size: 32),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.3),
+                blurRadius: 8,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Icon(icon, color: color, size: 28),
+        ),
+        const SizedBox(height: 6),
         Text(
           label,
-          style: AppTextStyles.bodySmall.copyWith(color: color),
+          style: AppTextStyles.bodySmall.copyWith(
+            color: color,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildWhenToJamWidget() {
-    return Column(
-      children: [
-        _buildJamUseCase('ตัดการสื่อสาร', Icons.phone_disabled),
-        _buildJamUseCase('ป้องกันจากเรดาร์', Icons.shield),
-        _buildJamUseCase('ป้องกันจากจรวด', Icons.rocket_launch),
-      ],
-    );
-  }
-
-  Widget _buildJamUseCase(String text, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.eaColor.withValues(alpha: 0.2)),
+      ),
+      child: Column(
         children: [
-          Icon(icon, color: AppColors.eaColor, size: 24),
-          const SizedBox(width: 8),
-          Text(text, style: AppTextStyles.bodyMedium),
+          _buildJamUseCase('ตัดการสื่อสาร', Icons.phone_disabled, 0),
+          _buildJamUseCase('ป้องกันจากเรดาร์', Icons.shield, 1),
+          _buildJamUseCase('ป้องกันจากจรวด', Icons.rocket_launch, 2),
         ],
       ),
-    );
+    ).animate().fadeIn();
+  }
+
+  Widget _buildJamUseCase(String text, IconData icon, int index) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.eaColor.withValues(alpha: 0.1),
+            Colors.transparent,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.eaColor.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppColors.eaColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: AppTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const Spacer(),
+          Icon(Icons.check_circle, color: AppColors.eaColor.withValues(alpha: 0.5), size: 18),
+        ],
+      ),
+    ).animate(delay: Duration(milliseconds: 150 * index))
+        .fadeIn()
+        .slideX(begin: 0.1, end: 0);
   }
 
   Widget _buildJammingComparisonWidget() {
@@ -5948,37 +6098,64 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.epColor.withOpacity(0.1),
+        gradient: LinearGradient(
+          colors: [
+            AppColors.epColor.withValues(alpha: 0.15),
+            AppColors.epColor.withValues(alpha: 0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.epColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildECCMStep('ECM', 'ข้าศึกรบกวน', AppColors.eaColor),
-          Icon(Icons.arrow_forward, color: AppColors.textSecondary),
-          _buildECCMStep('ECCM', 'เราป้องกัน', AppColors.epColor),
-          Icon(Icons.arrow_forward, color: AppColors.textSecondary),
-          _buildECCMStep('✓', 'สื่อสารได้', Colors.green),
+          _buildECCMStep('ECM', 'ข้าศึกรบกวน', AppColors.eaColor, 0),
+          Icon(Icons.arrow_forward, color: AppColors.textSecondary)
+              .animate(delay: 300.ms).fadeIn(),
+          _buildECCMStep('ECCM', 'เราป้องกัน', AppColors.epColor, 1),
+          Icon(Icons.arrow_forward, color: AppColors.textSecondary)
+              .animate(delay: 600.ms).fadeIn(),
+          _buildECCMStep('✓', 'สื่อสารได้', Colors.green, 2),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 300.ms);
   }
 
-  Widget _buildECCMStep(String title, String desc, Color color) {
+  Widget _buildECCMStep(String title, String desc, Color color, int index) {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            gradient: RadialGradient(
+              colors: [
+                color.withValues(alpha: 0.3),
+                color.withValues(alpha: 0.1),
+              ],
+            ),
             shape: BoxShape.circle,
+            border: Border.all(color: color.withValues(alpha: 0.5), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.3),
+                blurRadius: 8,
+                spreadRadius: 1,
+              ),
+            ],
           ),
-          child: Text(
-            title,
-            style: AppTextStyles.labelMedium.copyWith(color: color),
+          child: Center(
+            child: Text(
+              title,
+              style: AppTextStyles.labelMedium.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           desc,
           style: AppTextStyles.bodySmall.copyWith(
@@ -5986,7 +6163,9 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
           ),
         ),
       ],
-    );
+    ).animate(delay: Duration(milliseconds: 200 * index))
+        .fadeIn()
+        .scale(begin: const Offset(0.8, 0.8));
   }
 
   // ignore: unused_element
@@ -6069,36 +6248,69 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
   }
 
   Widget _buildRadioTypesWidget() {
-    return Column(
-      children: [
-        _buildRadioTypeRow('HF', '3-30 MHz', 'ระยะไกล', Colors.blue),
-        _buildRadioTypeRow('VHF', '30-300 MHz', 'ยุทธวิธี', Colors.green),
-        _buildRadioTypeRow('UHF', '300+ MHz', 'อากาศยาน', Colors.orange),
-      ],
-    );
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          _buildRadioTypeRow('HF', '3-30 MHz', 'ระยะไกล', Colors.blue, 0),
+          _buildRadioTypeRow('VHF', '30-300 MHz', 'ยุทธวิธี', Colors.green, 1),
+          _buildRadioTypeRow('UHF', '300+ MHz', 'อากาศยาน', Colors.orange, 2),
+        ],
+      ),
+    ).animate().fadeIn();
   }
 
-  Widget _buildRadioTypeRow(String band, String freq, String usage, Color color) {
+  Widget _buildRadioTypeRow(String band, String freq, String usage, Color color, [int index = 0]) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             width: 50,
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(4),
+              gradient: LinearGradient(
+                colors: [color, color.withValues(alpha: 0.8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.4),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
+              ],
             ),
             child: Text(
               band,
-              style: AppTextStyles.labelMedium.copyWith(color: Colors.white),
+              style: AppTextStyles.labelMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -6107,15 +6319,30 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(freq, style: AppTextStyles.bodyMedium),
-                Text(usage, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  freq,
+                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  usage,
+                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                ),
               ],
             ),
           ),
-          Icon(Icons.radio, color: color),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.radio, color: color, size: 20),
+          ),
         ],
       ),
-    );
+    ).animate(delay: Duration(milliseconds: 150 * index))
+        .fadeIn()
+        .slideX(begin: 0.1, end: 0);
   }
 
   Widget _buildSINCGARSWidget() {
@@ -6171,42 +6398,94 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
   }
 
   Widget _buildRadioSetupWidget() {
-    return Column(
-      children: [
-        _buildSetupStep(1, 'ตรวจแบตเตอรี่', Icons.battery_full),
-        _buildSetupStep(2, 'เชื่อมต่อเสาอากาศ', Icons.settings_input_antenna),
-        _buildSetupStep(3, 'ตั้งค่าความถี่', Icons.tune),
-        _buildSetupStep(4, 'ทดสอบ Radio Check', Icons.check_circle),
-      ],
-    );
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.radioColor.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        children: [
+          _buildSetupStep(1, 'ตรวจแบตเตอรี่', Icons.battery_full, Colors.green),
+          _buildSetupStep(2, 'เชื่อมต่อเสาอากาศ', Icons.settings_input_antenna, Colors.blue),
+          _buildSetupStep(3, 'ตั้งค่าความถี่', Icons.tune, Colors.orange),
+          _buildSetupStep(4, 'ทดสอบ Radio Check', Icons.check_circle, AppColors.radioColor),
+        ],
+      ),
+    ).animate().fadeIn();
   }
 
-  Widget _buildSetupStep(int step, String text, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+  Widget _buildSetupStep(int step, String text, IconData icon, [Color? color]) {
+    final stepColor = color ?? AppColors.primary;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            stepColor.withValues(alpha: 0.1),
+            Colors.transparent,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: stepColor.withValues(alpha: 0.2)),
+      ),
       child: Row(
         children: [
           Container(
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              gradient: RadialGradient(
+                colors: [
+                  stepColor,
+                  stepColor.withValues(alpha: 0.8),
+                ],
+              ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: stepColor.withValues(alpha: 0.4),
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                ),
+              ],
             ),
             child: Center(
               child: Text(
                 '$step',
-                style: AppTextStyles.labelMedium.copyWith(color: Colors.white),
+                style: AppTextStyles.labelMedium.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
           const SizedBox(width: 12),
-          Icon(icon, color: AppColors.primary, size: 24),
-          const SizedBox(width: 8),
-          Text(text, style: AppTextStyles.bodyMedium),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: stepColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, color: stepColor, size: 20),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Icon(Icons.chevron_right, color: stepColor.withValues(alpha: 0.5), size: 18),
         ],
       ),
-    ).animate(delay: Duration(milliseconds: 100 * step)).fadeIn().slideX(begin: 0.2);
+    ).animate(delay: Duration(milliseconds: 100 * step))
+        .fadeIn()
+        .slideX(begin: 0.15, end: 0);
   }
 
   Widget _buildCOMSECOverviewWidget() {
