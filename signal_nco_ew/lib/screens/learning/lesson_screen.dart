@@ -4405,39 +4405,16 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
       LessonPage(
         title: 'GPS Jamming vs Spoofing',
         content: '''
-🛰️ ภัยคุกคามต่อ GPS
+🛰️ ลองใช้ GPS Warfare Simulator ด้านล่าง!
 
-📡 GPS Jamming:
-• ส่งสัญญาณรบกวนทับ GPS
-• ผลลัพธ์: ไม่มีสัญญาณ GPS
-• ตรวจจับง่าย
-• ราคาถูก
+📡 Jamming = รบกวนสัญญาณ → GPS หาย
+🎭 Spoofing = ส่งสัญญาณปลอม → ตำแหน่งผิด
 
-🎭 GPS Spoofing:
-• ส่งสัญญาณ GPS ปลอม
-• ผลลัพธ์: ตำแหน่งผิด
-• ตรวจจับยาก
-• ซับซ้อน, แพง
-
-⚠️ ผลกระทบ:
-• Navigation ผิดพลาด
-• Timing ผิดพลาด
-• Weapon guidance
-• ระบบ Drone
-
-🔍 สัญญาณเตือน:
-• Position jump
-• Time error
-• Receiver warning
-• Cross-check ล้มเหลว
-
-👆 ลองใช้ GPS Warfare Simulator ด้านล่าง
-เพื่อเห็นผลกระทบของ Jamming และ Spoofing
+👆 กดปุ่ม Normal / Jamming / Spoofing เพื่อดูผล
+🔄 ลากแถบเลื่อนเพื่อปรับความแรง
+🛡️ เปิด Anti-Jam เพื่อดูการป้องกัน
 ''',
-        visualWidget: const SizedBox(
-          height: 650,
-          child: GPSWarfareWidget(),
-        ),
+        visualWidget: const GPSWarfareWidget(),
       ),
     ];
   }
@@ -7107,27 +7084,34 @@ J/S = (Pj + Gj - PLj) - (Pt + Gt - PLt)
                       ).animate().fadeIn().slideX(),
                       const SizedBox(height: 16),
 
-                      // Visual widget
+                      // Content FIRST (above widget) - ensures proper stacking
+                      SizedBox(
+                        width: double.infinity,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            page.content,
+                            style: AppTextStyles.bodyLarge.copyWith(
+                              color: AppColors.textPrimary,
+                              height: 1.6,
+                            ),
+                          ),
+                        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Visual widget BELOW content
                       if (page.visualWidget != null) ...[
-                        page.visualWidget!,
+                        SizedBox(
+                          width: double.infinity,
+                          child: page.visualWidget!,
+                        ),
                         const SizedBox(height: 16),
                       ],
-
-                      // Content
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          page.content,
-                          style: AppTextStyles.bodyLarge.copyWith(
-                            color: AppColors.textPrimary,
-                            height: 1.6,
-                          ),
-                        ),
-                      ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
 
                       const SizedBox(height: 100), // Space for button
                     ],
