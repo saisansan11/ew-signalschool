@@ -1,11 +1,8 @@
-name: Deploy Signal NCO EW to GitHub Pages
+name: Deploy All Apps to GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'signal_nco_ew/**'
-      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -20,9 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: signal_nco_ew
     steps:
       - uses: actions/checkout@v4
 
@@ -35,14 +29,69 @@ jobs:
       - name: Check Flutter version
         run: flutter --version
 
-      - name: Get dependencies
+      # Build Main App (EW_SIM)
+      - name: Get dependencies (Main App)
+        run: flutter pub get --verbose
+
+      - name: Build Main App
+        run: flutter build web --release --base-href "/ew-signalschool/"
+
+      # Build Signal NCO EW App
+      - name: Get dependencies (Signal NCO EW)
+        working-directory: signal_nco_ew
         run: flutter pub get
 
-      - name: Analyze code
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
+      - name: Build Signal NCO EW
+        working-directory: signal_nco_ew
+        run: flutter build web --release --base-href "/ew-signalschool/signal-nco-ew/"
 
-      - name: Build web
-        run: flutter build web --release --base-href "/ew-signalschool/"
+      # Combine outputs
+      - name: Prepare combined output
+        run: |
+          mkdir -p combined_output
+          cp -r build/web/* combined_output/
+          mkdir -p combined_output/signal-nco-ew
+          cp -r signal_nco_ew/build/web/* combined_output/signal-nco-ew/
+
+          # Create index page listing both apps
+          cat > combined_output/apps.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Signal School Apps</title>
+            <style>
+              body { font-family: sans-serif; padding: 40px; background: #1a1a2e; color: white; }
+              h1 { color: #00d4ff; }
+              .apps { display: flex; gap: 20px; margin-top: 30px; }
+              .app-card {
+                background: #16213e;
+                padding: 30px;
+                border-radius: 12px;
+                text-decoration: none;
+                color: white;
+                transition: transform 0.2s;
+              }
+              .app-card:hover { transform: scale(1.05); background: #1f3460; }
+              .app-card h2 { margin: 0 0 10px 0; color: #00d4ff; }
+              .app-card p { margin: 0; opacity: 0.8; }
+            </style>
+          </head>
+          <body>
+            <h1>🎖️ Signal School Applications</h1>
+            <div class="apps">
+              <a href="./" class="app-card">
+                <h2>📡 EW Simulator</h2>
+                <p>Electronic Warfare Training</p>
+              </a>
+              <a href="./signal-nco-ew/" class="app-card">
+                <h2>🎓 Signal NCO EW</h2>
+                <p>NCO Training with Gamification</p>
+              </a>
+            </div>
+          </body>
+          </html>
+          EOF
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -50,7 +99,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'signal_nco_ew/build/web'
+          path: 'combined_output'
 
   deploy:
     environment:
