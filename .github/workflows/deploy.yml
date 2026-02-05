@@ -1,8 +1,11 @@
-name: Deploy to GitHub Pages
+name: Deploy Signal NCO EW to GitHub Pages
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'signal_nco_ew/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -17,6 +20,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: signal_nco_ew
     steps:
       - uses: actions/checkout@v4
 
@@ -30,10 +36,13 @@ jobs:
         run: flutter --version
 
       - name: Get dependencies
-        run: flutter pub get --verbose
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
 
       - name: Build web
-        run: flutter build web --release --base-href "/ew-signalschool/" --verbose
+        run: flutter build web --release --base-href "/ew-signalschool/"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -41,7 +50,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/web'
+          path: 'signal_nco_ew/build/web'
 
   deploy:
     environment:
