@@ -169,6 +169,11 @@ class ProgressService {
     };
   }
 
+  /// Get current login streak
+  static int getLoginStreak() {
+    return _prefs?.getInt(_streakKey) ?? 0;
+  }
+
   /// Add study time in minutes
   static Future<void> addStudyTime(int minutes) async {
     if (_prefs == null) await init();

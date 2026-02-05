@@ -6,6 +6,7 @@ import 'services/progress_service.dart';
 import 'services/auth_service.dart';
 import 'services/theme_provider.dart';
 import 'services/bookmark_service.dart';
+import 'services/notes_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ void main() async {
   await AuthService.init();
   await themeProvider.init();
   await bookmarkService.init();
+  await notesService.init();
 
   // Update login streak
   await ProgressService.updateLoginStreak();

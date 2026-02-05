@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'lessons/lesson_basics.dart';
 import 'services/progress_service.dart';
+import 'screens/tools/global_search_screen.dart';
 
 // ==========================================
 // 1. DATA MODEL (โครงสร้างข้อมูล)
@@ -230,6 +231,18 @@ class KnowledgeBasePage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'ค้นหา',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),

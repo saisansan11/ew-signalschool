@@ -18,6 +18,12 @@ import 'quick_reference_screen.dart';
 import '../game/drone_id_training_screen.dart';
 import '../game/daily_challenge_screen.dart';
 import '../learning/practice_mode_screen.dart';
+import 'study_timer_screen.dart';
+import 'global_search_screen.dart';
+import '../study/ew_study_hub_screen.dart';
+import '../study/ew_glossary_screen.dart';
+import '../study/ew_scenarios_screen.dart';
+import '../study/ew_quick_review_screen.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -52,12 +58,28 @@ class ToolsScreen extends StatelessWidget {
               ],
             ),
             centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                tooltip: 'ค้นหา',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
+                  );
+                },
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Featured: Study Hub
+                _buildStudyHubSection(context, isDark),
+                const SizedBox(height: 24),
+
                 // Featured: UAV Database
                 _buildFeaturedSection(context, isDark),
                 const SizedBox(height: 24),
@@ -84,6 +106,107 @@ class ToolsScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildStudyHubSection(BuildContext context, bool isDark) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EWStudyHubScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isDark
+              ? [AppColors.primary, AppColors.primary.withAlpha(180)]
+              : [AppColorsLight.primary, AppColorsLight.primary.withAlpha(200)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withAlpha(60),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(30),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.school,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(30),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.auto_awesome, color: Colors.white, size: 12),
+                        SizedBox(width: 4),
+                        Text(
+                          'เตรียมสอบ',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'ศูนย์การเรียนรู้ EW',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'สรุปเนื้อหา, คำศัพท์, Quiz, สถานการณ์จำลอง',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(220),
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -347,6 +470,36 @@ class ToolsScreen extends StatelessWidget {
   Widget _buildReferenceList(BuildContext context, bool isDark) {
     final references = [
       _RefItem(
+        icon: Icons.summarize,
+        title: 'สรุปก่อนสอบ',
+        subtitle: 'ทบทวนเนื้อหาสำคัญ 5 หมวดหมู่',
+        color: Colors.green,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EWQuickReviewScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.psychology,
+        title: 'สถานการณ์จำลอง',
+        subtitle: 'ฝึกแก้ปัญหา EW ในสถานการณ์จริง',
+        color: Colors.orange,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EWScenariosScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.library_books,
+        title: 'คำศัพท์ EW ใหม่',
+        subtitle: '23+ คำศัพท์พร้อม Quiz ทดสอบ',
+        color: Colors.purple,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EWGlossaryScreen()),
+        ),
+      ),
+      _RefItem(
         icon: Icons.menu_book,
         title: 'Quick Reference',
         subtitle: 'สูตร EW, ความถี่, เทคนิค Jamming',
@@ -404,6 +557,16 @@ class ToolsScreen extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const PracticeModeScreen()),
+        ),
+      ),
+      _RefItem(
+        icon: Icons.timer,
+        title: 'Study Timer',
+        subtitle: 'Pomodoro Technique จับเวลาเรียน',
+        color: Colors.deepOrange,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const StudyTimerScreen()),
         ),
       ),
       _RefItem(

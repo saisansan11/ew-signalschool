@@ -1,3284 +1,3409 @@
----
-name: concise-planning
-description: Use when a user asks for a plan for a coding task, to generate a clear, actionable, and atomic checklist.
----
+# CLAUDE.md - EW_SIM Development Guide
 
-# Concise Planning
+> **Purpose**: This guide helps Claude Code understand the EW_SIM project, apply best practices from available skills, and maintain consistency across development.
 
-## Goal
+## 📱 Project Overview
 
-Turn a user request into a **single, actionable plan** with atomic steps.
+**EW_SIM** is a comprehensive Flutter-based Electronic Warfare (EW) simulation and educational application designed to provide realistic training and visualization capabilities for EW concepts and operations.
 
-## Workflow
+### Core Objectives
+- Deliver educational content covering 8 major EW topics
+- Provide interactive 3D visualization for terrain mapping and signal propagation
+- Simulate realistic EW scenarios for training purposes
+- Create an intuitive, accessible learning platform for EW concepts
 
-### 1. Scan Context
-
-- Read `README.md`, docs, and relevant code files.
-- Identify constraints (language, frameworks, tests).
-
-### 2. Minimal Interaction
-
-- Ask **at most 1–2 questions** and only if truly blocking.
-- Make reasonable assumptions for non-blocking unknowns.
-
-### 3. Generate Plan
-
-Use the following structure:
-
-- **Approach**: 1-3 sentences on what and why.
-- **Scope**: Bullet points for "In" and "Out".
-- **Action Items**: A list of 6-10 atomic, ordered tasks (Verb-first).
-- **Validation**: At least one item for testing.
-
-## Plan Template
-
-```markdown
-# Plan
-
-<High-level approach>
-
-## Scope
-
-- In:
-- Out:
-
-## Action Items
-
-[ ] <Step 1: Discovery>
-[ ] <Step 2: Implementation>
-[ ] <Step 3: Implementation>
-[ ] <Step 4: Validation/Testing>
-[ ] <Step 5: Rollout/Commit>
-
-## Open Questions
-
-- <Question 1 (max 3)>
-```
-
-## Checklist Guidelines
-
-- **Atomic**: Each step should be a single logical unit of work.
-- **Verb-first**: "Add...", "Refactor...", "Verify...".
-- **Concrete**: Name specific files or modules when possible.
-
----
-name: lint-and-validate
-description: "Automatic quality control, linting, and static analysis procedures. Use after every code modification to ensure syntax correctness and project standards. Triggers onKeywords: lint, format, check, validate, types, static analysis."
-allowed-tools: Read, Glob, Grep, Bash
----
-
-# Lint and Validate Skill
-
-> **MANDATORY:** Run appropriate validation tools after EVERY code change. Do not finish a task until the code is error-free.
-
-### Procedures by Ecosystem
-
-#### Node.js / TypeScript
-1. **Lint/Fix:** `npm run lint` or `npx eslint "path" --fix`
-2. **Types:** `npx tsc --noEmit`
-3. **Security:** `npm audit --audit-level=high`
-
-#### Python
-1. **Linter (Ruff):** `ruff check "path" --fix` (Fast & Modern)
-2. **Security (Bandit):** `bandit -r "path" -ll`
-3. **Types (MyPy):** `mypy "path"`
-
-## The Quality Loop
-1. **Write/Edit Code**
-2. **Run Audit:** `npm run lint && npx tsc --noEmit`
-3. **Analyze Report:** Check the "FINAL AUDIT REPORT" section.
-4. **Fix & Repeat:** Submitting code with "FINAL AUDIT" failures is NOT allowed.
-
-## Error Handling
-- If `lint` fails: Fix the style or syntax issues immediately.
-- If `tsc` fails: Correct type mismatches before proceeding.
-- If no tool is configured: Check the project root for `.eslintrc`, `tsconfig.json`, `pyproject.toml` and suggest creating one.
-
----
-**Strict Rule:** No code should be committed or reported as "done" without passing these checks.
+### Target Platforms
+- Android (primary)
+- iOS (secondary)
+- Minimum SDK: Android API 21+ (Android 5.0), iOS 12.0+
 
 ---
 
-## Scripts
+## 🛠️ Available Skills Reference
 
-| Script | Purpose | Command |
-|--------|---------|---------|
-| `scripts/lint_runner.py` | Unified lint check | `python scripts/lint_runner.py <project_path>` |
-| `scripts/type_coverage.py` | Type coverage analysis | `python scripts/type_coverage.py <project_path>` |
+Claude has access to the following skills that should be applied to this project:
 
+### Development Workflow
+- **concise-planning**: Use when planning coding tasks - creates actionable checklists
+- **lint-and-validate**: Mandatory after every code change - ensures code quality
+- **git-pushing**: Handles staging, committing, and pushing with conventional commits
+- **kaizen**: Continuous improvement philosophy - small, frequent improvements
 
----
-name: git-pushing
-description: Stage, commit, and push git changes with conventional commit messages. Use when user wants to commit and push changes, mentions pushing to remote, or asks to save and push their work. Also activates when user says "push changes", "commit and push", "push this", "push to github", or similar git workflow requests.
----
+### Mobile App Development
+- **flutter-architecture**: App structure, state management, navigation patterns
+- **mobile-performance**: Optimization for battery, memory, and smooth 60fps
+- **offline-first**: Local storage, sync strategies, network resilience
+- **app-security**: Secure storage, encryption, authentication best practices
+- **cross-platform**: Platform-specific features (Android/iOS differences)
 
-# Git Push Workflow
+### Educational & Learning Design
+- **instructional-design**: Learning objectives, scaffolding, knowledge retention
+- **gamification**: Engagement mechanics, progress tracking, achievement systems
+- **microlearning**: Bite-sized lessons, spaced repetition, learning paths
+- **assessment-design**: Quiz creation, knowledge checks, adaptive difficulty
+- **accessibility-learning**: Universal design for learning (UDL), diverse learners
 
-Stage all changes, create a conventional commit, and push to the remote branch.
+### Frontend & Design
+- **frontend-design**: Distinctive, production-grade UI (principles apply to Flutter)
+- **react-patterns**: Modern patterns (reference for state management concepts)
+- **tailwind-patterns**: CSS utilities (reference for styling approach)
+- **ui-ux-pro-max**: Comprehensive UI/UX guidelines (cross-platform applicable)
+- **3d-web-experience**: 3D integration patterns (applicable to Cesium integration)
 
-## When to Use
+### Optimization & Testing
+- **form-cro**: Form optimization principles (applicable to EW input forms)
+- **canvas-design**: Visual art creation (could inspire UI mockups)
 
-Automatically activate when the user:
-
-- Explicitly asks to push changes ("push this", "commit and push")
-- Mentions saving work to remote ("save to github", "push to remote")
-- Completes a feature and wants to share it
-- Says phrases like "let's push this up" or "commit these changes"
-
-## Workflow
-
-**ALWAYS use the script** - do NOT use manual git commands:
-
-```bash
-bash skills/git-pushing/scripts/smart_commit.sh
-```
-
-With custom message:
-
-```bash
-bash skills/git-pushing/scripts/smart_commit.sh "feat: add feature"
-```
-
-Script handles: staging, conventional commit message, Claude footer, push with -u flag.
+**Key Principle**: Apply Kaizen philosophy throughout development - small improvements, error-proofing, standardized patterns, just-in-time implementation.
 
 ---
-name: kaizen
-description: Guide for continuous improvement, error proofing, and standardization. Use this skill when the user wants to improve code quality, refactor, or discuss process improvements.
+
+## 🎯 Electronic Warfare (EW) Domain Knowledge
+
+### Core EW Disciplines
+
+#### 1. **Spectrum Analysis**
+- **Definition**: The systematic examination and evaluation of electromagnetic spectrum usage
+- **Key Concepts**:
+  - Frequency domain analysis
+  - Signal identification and classification
+  - Spectrum occupancy and congestion
+  - Real-time spectrum monitoring
+- **Visualization Needs**: Real-time spectrum waterfall displays, frequency vs. time plots
+
+#### 2. **Electronic Support Measures (ESM)**
+- **Definition**: Passive detection, identification, and location of electromagnetic emissions
+- **Key Concepts**:
+  - Signal intercept and analysis
+  - Emitter identification
+  - Direction finding (DF)
+  - Electronic Order of Battle (EOB)
+- **Visualization Needs**: Signal bearing displays, emitter location overlays on maps
+
+#### 3. **Electronic Counter Measures (ECM)**
+- **Definition**: Active or passive techniques to deny or degrade enemy use of electromagnetic spectrum
+- **Key Concepts**:
+  - Jamming techniques (noise, deception, barrage)
+  - Chaff and flare deployment
+  - Electronic deception
+  - Power management and burn-through calculations
+- **Visualization Needs**: Jamming coverage zones, effectiveness overlays
+
+#### 4. **Electronic Counter-Counter Measures (ECCM)**
+- **Definition**: Techniques to ensure friendly use of electromagnetic spectrum despite enemy EW
+- **Key Concepts**:
+  - Frequency agility
+  - Spread spectrum techniques
+  - Anti-jam waveforms
+  - Power management
+- **Visualization Needs**: Protected zones, signal resilience indicators
+
+#### 5. **Radio Communications with COMSEC**
+- **Definition**: Secure communication systems and cryptographic protection
+- **Key Concepts**:
+  - Encryption/decryption
+  - Key management (TRANSEC/COMSEC)
+  - Secure voice/data transmission
+  - Low Probability of Intercept (LPI) communications
+- **Visualization Needs**: Secure network topology, encryption status indicators
+
+#### 6. **Radar Technology**
+- **Definition**: Detection and tracking using electromagnetic waves
+- **Key Concepts**:
+  - Pulse-Doppler processing
+  - Synthetic Aperture Radar (SAR)
+  - Radar cross-section (RCS)
+  - Clutter and target discrimination
+- **Visualization Needs**: Radar coverage patterns, target tracks, range rings
+
+#### 7. **Anti-Drone Systems**
+- **Definition**: Detection, identification, and neutralization of unmanned aerial systems
+- **Key Concepts**:
+  - Multi-sensor detection (RF, radar, optical)
+  - Drone signature database
+  - Jamming and spoofing techniques
+  - Kinetic and non-kinetic countermeasures
+- **Visualization Needs**: Drone tracks, sensor coverage, threat zones
+
+#### 8. **GPS Warfare**
+- **Definition**: Denial, disruption, or spoofing of Global Navigation Satellite Systems (GNSS)
+- **Key Concepts**:
+  - GPS jamming techniques
+  - Spoofing and meaconing
+  - Anti-jam GPS receivers
+  - Inertial Navigation System (INS) integration
+- **Visualization Needs**: GPS denial zones, signal strength maps, spoofing detection
+
+### EW Terminology Reference
+
+| Term | Definition | Usage Context |
+|------|------------|---------------|
+| **Emitter** | Any source of electromagnetic radiation | ESM, signal analysis |
+| **Pulse Repetition Frequency (PRF)** | Rate at which radar pulses are transmitted | Radar identification |
+| **Electronic Order of Battle (EOB)** | Database of enemy electronic systems | Tactical planning |
+| **Burn-through Range** | Distance at which radar overcomes jamming | ECM effectiveness |
+| **Link Budget** | Power calculation for signal transmission | Communications planning |
+| **Antenna Gain** | Directional efficiency of antenna | All RF systems |
+| **EIRP** | Effective Isotropic Radiated Power | Transmitter capability |
+| **Sensitivity** | Minimum detectable signal level | Receiver capability |
+| **Doppler Shift** | Frequency change due to relative motion | Moving target detection |
+| **Polarization** | Orientation of electromagnetic wave | Signal characteristics |
+
+### Military Standards & Protocols
+- **NATO STANAG 4193**: EW support measures
+- **MIL-STD-461**: Electromagnetic interference requirements
+- **IEEE 802.11**: Wireless communication standards (for modern context)
+- **ITU-R Radio Regulations**: Frequency allocation and usage
+
+### Authoritative Resources
+- Jane's Radar and Electronic Warfare Systems
+- DoD Electronic Warfare Fundamentals (unclassified portions)
+- IEEE papers on signal processing and electromagnetic theory
+- Open-source intelligence (OSINT) on commercial EW systems
+
 ---
 
-# Kaizen: Continuous Improvement
+## 💡 Development Philosophy (Kaizen-Inspired)
 
-## Overview
+This project follows **Kaizen principles** - continuous improvement through small, deliberate changes:
 
-Small improvements, continuously. Error-proof by design. Follow what works. Build only what's needed.
-
-**Core principle:** Many small improvements beat one big change. Prevent errors at design time, not with fixes.
-
-## When to Use
-
-**Always applied for:**
-
-- Code implementation and refactoring
-- Architecture and design decisions
-- Process and workflow improvements
-- Error handling and validation
-
-**Philosophy:** Quality through incremental progress and prevention, not perfection through massive effort.
-
-## The Four Pillars
-
-### 1. Continuous Improvement (Kaizen)
-
-Small, frequent improvements compound into major gains.
-
-#### Principles
-
-**Incremental over revolutionary:**
-
-- Make smallest viable change that improves quality
-- One improvement at a time
-- Verify each change before next
-- Build momentum through small wins
-
-**Always leave code better:**
-
-- Fix small issues as you encounter them
+### 1. Continuous Improvement
+- Make the smallest viable change that improves quality
 - Refactor while you work (within scope)
-- Update outdated comments
-- Remove dead code when you see it
+- Always leave code better than you found it
+- Iterate: make it work → make it clear → make it efficient
 
-**Iterative refinement:**
-
-- First version: make it work
-- Second pass: make it clear
-- Third pass: make it efficient
-- Don't try all three at once
-
-<Good>
-```typescript
-// Iteration 1: Make it work
-const calculateTotal = (items: Item[]) => {
-  let total = 0;
-  for (let i = 0; i < items.length; i++) {
-    total += items[i].price * items[i].quantity;
-  }
-  return total;
-};
-
-// Iteration 2: Make it clear (refactor)
-const calculateTotal = (items: Item[]): number => {
-return items.reduce((total, item) => {
-return total + (item.price \* item.quantity);
-}, 0);
-};
-
-// Iteration 3: Make it robust (add validation)
-const calculateTotal = (items: Item[]): number => {
-if (!items?.length) return 0;
-
-return items.reduce((total, item) => {
-if (item.price < 0 || item.quantity < 0) {
-throw new Error('Price and quantity must be non-negative');
-}
-return total + (item.price \* item.quantity);
-}, 0);
-};
-
-````
-Each step is complete, tested, and working
-</Good>
-
-<Bad>
-```typescript
-// Trying to do everything at once
-const calculateTotal = (items: Item[]): number => {
-  // Validate, optimize, add features, handle edge cases all together
-  if (!items?.length) return 0;
-  const validItems = items.filter(item => {
-    if (item.price < 0) throw new Error('Negative price');
-    if (item.quantity < 0) throw new Error('Negative quantity');
-    return item.quantity > 0; // Also filtering zero quantities
-  });
-  // Plus caching, plus logging, plus currency conversion...
-  return validItems.reduce(...); // Too many concerns at once
-};
-````
-
-Overwhelming, error-prone, hard to verify
-</Bad>
-
-#### In Practice
-
-**When implementing features:**
-
-1. Start with simplest version that works
-2. Add one improvement (error handling, validation, etc.)
-3. Test and verify
-4. Repeat if time permits
-5. Don't try to make it perfect immediately
-
-**When refactoring:**
-
-- Fix one smell at a time
-- Commit after each improvement
-- Keep tests passing throughout
-- Stop when "good enough" (diminishing returns)
-
-**When reviewing code:**
-
-- Suggest incremental improvements (not rewrites)
-- Prioritize: critical → important → nice-to-have
-- Focus on highest-impact changes first
-- Accept "better than before" even if not perfect
-
-### 2. Poka-Yoke (Error Proofing)
-
-Design systems that prevent errors at compile/design time, not runtime.
-
-#### Principles
-
-**Make errors impossible:**
-
-- Type system catches mistakes
-- Compiler enforces contracts
-- Invalid states unrepresentable
-- Errors caught early (left of production)
-
-**Design for safety:**
-
-- Fail fast and loudly
-- Provide helpful error messages
-- Make correct path obvious
-- Make incorrect path difficult
-
-**Defense in layers:**
-
-1. Type system (compile time)
-2. Validation (runtime, early)
-3. Guards (preconditions)
-4. Error boundaries (graceful degradation)
-
-#### Type System Error Proofing
-
-<Good>
-```typescript
-// Error: string status can be any value
-type OrderBad = {
-  status: string; // Can be "pending", "PENDING", "pnding", anything!
-  total: number;
-};
-
-// Good: Only valid states possible
-type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered';
-type Order = {
-status: OrderStatus;
-total: number;
-};
-
-// Better: States with associated data
-type Order =
-| { status: 'pending'; createdAt: Date }
-| { status: 'processing'; startedAt: Date; estimatedCompletion: Date }
-| { status: 'shipped'; trackingNumber: string; shippedAt: Date }
-| { status: 'delivered'; deliveredAt: Date; signature: string };
-
-// Now impossible to have shipped without trackingNumber
-
-````
-Type system prevents entire classes of errors
-</Good>
-
-<Good>
-```typescript
-// Make invalid states unrepresentable
-type NonEmptyArray<T> = [T, ...T[]];
-
-const firstItem = <T>(items: NonEmptyArray<T>): T => {
-  return items[0]; // Always safe, never undefined!
-};
-
-// Caller must prove array is non-empty
-const items: number[] = [1, 2, 3];
-if (items.length > 0) {
-  firstItem(items as NonEmptyArray<number>); // Safe
-}
-````
-
-Function signature guarantees safety
-</Good>
-
-#### Validation Error Proofing
-
-<Good>
-```typescript
-// Error: Validation after use
-const processPayment = (amount: number) => {
-  const fee = amount * 0.03; // Used before validation!
-  if (amount <= 0) throw new Error('Invalid amount');
-  // ...
-};
-
-// Good: Validate immediately
-const processPayment = (amount: number) => {
-if (amount <= 0) {
-throw new Error('Payment amount must be positive');
-}
-if (amount > 10000) {
-throw new Error('Payment exceeds maximum allowed');
-}
-
-const fee = amount \* 0.03;
-// ... now safe to use
-};
-
-// Better: Validation at boundary with branded type
-type PositiveNumber = number & { readonly \_\_brand: 'PositiveNumber' };
-
-const validatePositive = (n: number): PositiveNumber => {
-if (n <= 0) throw new Error('Must be positive');
-return n as PositiveNumber;
-};
-
-const processPayment = (amount: PositiveNumber) => {
-// amount is guaranteed positive, no need to check
-const fee = amount \* 0.03;
-};
-
-// Validate at system boundary
-const handlePaymentRequest = (req: Request) => {
-const amount = validatePositive(req.body.amount); // Validate once
-processPayment(amount); // Use everywhere safely
-};
-
-````
-Validate once at boundary, safe everywhere else
-</Good>
-
-#### Guards and Preconditions
-
-<Good>
-```typescript
-// Early returns prevent deeply nested code
-const processUser = (user: User | null) => {
-  if (!user) {
-    logger.error('User not found');
-    return;
-  }
-
-  if (!user.email) {
-    logger.error('User email missing');
-    return;
-  }
-
-  if (!user.isActive) {
-    logger.info('User inactive, skipping');
-    return;
-  }
-
-  // Main logic here, guaranteed user is valid and active
-  sendEmail(user.email, 'Welcome!');
-};
-````
-
-Guards make assumptions explicit and enforced
-</Good>
-
-#### Configuration Error Proofing
-
-<Good>
-```typescript
-// Error: Optional config with unsafe defaults
-type ConfigBad = {
-  apiKey?: string;
-  timeout?: number;
-};
-
-const client = new APIClient({ timeout: 5000 }); // apiKey missing!
-
-// Good: Required config, fails early
-type Config = {
-apiKey: string;
-timeout: number;
-};
-
-const loadConfig = (): Config => {
-const apiKey = process.env.API_KEY;
-if (!apiKey) {
-throw new Error('API_KEY environment variable required');
-}
-
-return {
-apiKey,
-timeout: 5000,
-};
-};
-
-// App fails at startup if config invalid, not during request
-const config = loadConfig();
-const client = new APIClient(config);
-
-````
-Fail at startup, not in production
-</Good>
-
-#### In Practice
-
-**When designing APIs:**
-- Use types to constrain inputs
-- Make invalid states unrepresentable
-- Return Result<T, E> instead of throwing
-- Document preconditions in types
-
-**When handling errors:**
-- Validate at system boundaries
-
-- Use guards for preconditions
-- Fail fast with clear messages
-- Log context for debugging
-
-**When configuring:**
-- Required over optional with defaults
-- Validate all config at startup
-- Fail deployment if config invalid
-- Don't allow partial configurations
+### 2. Error Proofing (Poka-Yoke)
+- Design systems that prevent errors at compile/design time
+- Use type system to make invalid states unrepresentable
+- Validate at boundaries, use everywhere safely
+- Fail fast with clear error messages
 
 ### 3. Standardized Work
-Follow established patterns. Document what works. Make good practices easy to follow.
-
-#### Principles
-
-**Consistency over cleverness:**
 - Follow existing codebase patterns
-- Don't reinvent solved problems
-- New pattern only if significantly better
-- Team agreement on new patterns
-
-**Documentation lives with code:**
-- README for setup and architecture
-- CLAUDE.md for AI coding conventions
-- Comments for "why", not "what"
-- Examples for complex patterns
-
-**Automate standards:**
-- Linters enforce style
-- Type checks enforce contracts
-- Tests verify behavior
-- CI/CD enforces quality gates
-
-#### Following Patterns
-
-<Good>
-```typescript
-// Existing codebase pattern for API clients
-class UserAPIClient {
-  async getUser(id: string): Promise<User> {
-    return this.fetch(`/users/${id}`);
-  }
-}
-
-// New code follows the same pattern
-class OrderAPIClient {
-  async getOrder(id: string): Promise<Order> {
-    return this.fetch(`/orders/${id}`);
-  }
-}
-````
-
-Consistency makes codebase predictable
-</Good>
-
-<Bad>
-```typescript
-// Existing pattern uses classes
-class UserAPIClient { /* ... */ }
-
-// New code introduces different pattern without discussion
-const getOrder = async (id: string): Promise<Order> => {
-// Breaking consistency "because I prefer functions"
-};
-
-````
-Inconsistency creates confusion
-</Bad>
-
-#### Error Handling Patterns
-
-<Good>
-```typescript
-// Project standard: Result type for recoverable errors
-type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
-
-// All services follow this pattern
-const fetchUser = async (id: string): Promise<Result<User, Error>> => {
-  try {
-    const user = await db.users.findById(id);
-    if (!user) {
-      return { ok: false, error: new Error('User not found') };
-    }
-    return { ok: true, value: user };
-  } catch (err) {
-    return { ok: false, error: err as Error };
-  }
-};
-
-// Callers use consistent pattern
-const result = await fetchUser('123');
-if (!result.ok) {
-  logger.error('Failed to fetch user', result.error);
-  return;
-}
-const user = result.value; // Type-safe!
-````
-
-Standard pattern across codebase
-</Good>
-
-#### Documentation Standards
-
-<Good>
-```typescript
-/**
- * Retries an async operation with exponential backoff.
- *
- * Why: Network requests fail temporarily; retrying improves reliability
- * When to use: External API calls, database operations
- * When not to use: User input validation, internal function calls
- *
- * @example
- * const result = await retry(
- *   () => fetch('https://api.example.com/data'),
- *   { maxAttempts: 3, baseDelay: 1000 }
- * );
- */
-const retry = async <T>(
-  operation: () => Promise<T>,
-  options: RetryOptions
-): Promise<T> => {
-  // Implementation...
-};
-```
-Documents why, when, and how
-</Good>
-
-#### In Practice
-
-**Before adding new patterns:**
-
-- Search codebase for similar problems solved
-- Check CLAUDE.md for project conventions
-- Discuss with team if breaking from pattern
-- Update docs when introducing new pattern
-
-**When writing code:**
-
-- Match existing file structure
-- Use same naming conventions
-- Follow same error handling approach
-- Import from same locations
-
-**When reviewing:**
-
-- Check consistency with existing code
-- Point to examples in codebase
-- Suggest aligning with standards
-- Update CLAUDE.md if new standard emerges
+- Document what works (in this CLAUDE.md)
+- Use linters to enforce style
+- Automate quality gates
 
 ### 4. Just-In-Time (JIT)
-
-Build what's needed now. No more, no less. Avoid premature optimization and over-engineering.
-
-#### Principles
-
-**YAGNI (You Aren't Gonna Need It):**
-
-- Implement only current requirements
-- No "just in case" features
-- No "we might need this later" code
-- Delete speculation
-
-**Simplest thing that works:**
-
-- Start with straightforward solution
-- Add complexity only when needed
-- Refactor when requirements change
-- Don't anticipate future needs
-
-**Optimize when measured:**
-
+- Build what's needed now, no more
 - No premature optimization
-- Profile before optimizing
-- Measure impact of changes
-- Accept "good enough" performance
+- Add complexity only when measured need exists
+- YAGNI (You Aren't Gonna Need It)
 
-#### YAGNI in Action
+**Workflow Integration**:
+1. **Plan** with `concise-planning` skill
+2. **Implement** following architecture below
+3. **Validate** with `lint-and-validate` skill
+4. **Commit** using `git-pushing` skill
 
-<Good>
-```typescript
-// Current requirement: Log errors to console
-const logError = (error: Error) => {
-  console.error(error.message);
-};
+---
+
+## 🏗️ Flutter Architecture & Development Guidelines
+
+### Project Structure
+
 ```
-Simple, meets current need
-</Good>
+lib/
+├── main.dart
+├── core/
+│   ├── constants/          # App-wide constants
+│   ├── theme/             # Theme configuration
+│   ├── utils/             # Utility functions
+│   └── services/          # Core services (navigation, etc.)
+├── features/
+│   ├── spectrum_analysis/
+│   │   ├── data/          # Data models and repositories
+│   │   ├── domain/        # Business logic
+│   │   └── presentation/  # UI components
+│   ├── esm/
+│   ├── ecm/
+│   ├── eccm/
+│   ├── radio_comsec/
+│   ├── radar/
+│   ├── anti_drone/
+│   ├── gps_warfare/
+│   └── visualization_3d/  # Cesium/3D globe integration
+├── shared/
+│   ├── widgets/           # Reusable widgets
+│   ├── models/            # Shared data models
+│   └── extensions/        # Dart extensions
+└── config/
+    ├── routes/            # Route configuration
+    └── dependency_injection/
+```
 
-<Bad>
-```typescript
-// Over-engineered for "future needs"
-interface LogTransport {
-  write(level: LogLevel, message: string, meta?: LogMetadata): Promise<void>;
+### State Management
+
+**Approach**: **Provider + ChangeNotifier**
+
+**Rationale**:
+- Simple and efficient for educational app
+- Native Flutter solution with minimal overhead
+- Easy to test and debug
+- Suitable for moderate complexity
+
+**Alternative Consideration**: Riverpod for more complex state scenarios
+
+**State Organization**:
+```dart
+// Example state structure
+class SpectrumAnalysisState extends ChangeNotifier {
+  FrequencyData? _currentData;
+  bool _isScanning = false;
+  List<SignalPeak> _detectedSignals = [];
+  
+  // Getters
+  FrequencyData? get currentData => _currentData;
+  bool get isScanning => _isScanning;
+  List<SignalPeak> get detectedSignals => _detectedSignals;
+  
+  // Methods
+  Future<void> startScan() async { /* ... */ }
+  void updateFrequencyData(FrequencyData data) { /* ... */ }
 }
+```
 
-class ConsoleTransport implements LogTransport { /_... _/ }
-class FileTransport implements LogTransport { /_ ... _/ }
-class RemoteTransport implements LogTransport { /_ ..._/ }
+### Code Style & Conventions
 
-class Logger {
-private transports: LogTransport[] = [];
-private queue: LogEntry[] = [];
-private rateLimiter: RateLimiter;
-private formatter: LogFormatter;
+#### Naming Conventions
+- **Classes**: PascalCase (`RadarSystem`, `SignalProcessor`)
+- **Files**: snake_case (`radar_system.dart`, `signal_processor.dart`)
+- **Variables/Functions**: camelCase (`frequencyRange`, `calculatePower()`)
+- **Constants**: SCREAMING_SNAKE_CASE (`MAX_FREQUENCY`, `DEFAULT_GAIN`)
+- **Private members**: prefix with underscore (`_internalState`)
 
-// 200 lines of code for "maybe we'll need it"
+#### Documentation
+```dart
+/// Calculates effective radiated power based on transmitter and antenna.
+///
+/// Uses the formula: ERP = P_tx × G_antenna
+///
+/// Parameters:
+///   - [transmitterPower]: Power output in watts
+///   - [antennaGain]: Antenna gain in dBi
+///
+/// Returns: Effective radiated power in watts
+double calculateERP(double transmitterPower, double antennaGain) {
+  // Implementation
 }
+```
 
-const logError = (error: Error) => {
-Logger.getInstance().log('error', error.message);
-};
+#### File Organization
+1. Imports (Dart SDK, Flutter, packages, relative)
+2. Constants
+3. Main class/widget
+4. Private helper classes/functions
+5. Extensions (if any)
 
-````
-Building for imaginary future requirements
-</Bad>
-
-**When to add complexity:**
-- Current requirement demands it
-- Pain points identified through use
-- Measured performance issues
-- Multiple use cases emerged
-
-<Good>
-```typescript
-// Start simple
-const formatCurrency = (amount: number): string => {
-  return `$${amount.toFixed(2)}`;
-};
-
-// Requirement evolves: support multiple currencies
-const formatCurrency = (amount: number, currency: string): string => {
-  const symbols = { USD: '$', EUR: '€', GBP: '£' };
-  return `${symbols[currency]}${amount.toFixed(2)}`;
-};
-
-// Requirement evolves: support localization
-const formatCurrency = (amount: number, locale: string): string => {
-  return new Intl.NumberFormat(locale, {\n    style: 'currency',
-    currency: locale === 'en-US' ? 'USD' : 'EUR',
-  }).format(amount);
-};
-````
-
-Complexity added only when needed
-</Good>
-
-#### Premature Abstraction
-
-<Bad>
-```typescript
-// One use case, but building generic framework
-abstract class BaseCRUDService<T> {
-  abstract getAll(): Promise<T[]>;
-  abstract getById(id: string): Promise<T>;
-  abstract create(data: Partial<T>): Promise<T>;
-  abstract update(id: string, data: Partial<T>): Promise<T>;
-  abstract delete(id: string): Promise<void>;
+#### Widget Structure
+```dart
+class SpectrumDisplayWidget extends StatelessWidget {
+  // 1. Final fields
+  final FrequencyData data;
+  final VoidCallback? onTap;
+  
+  // 2. Constructor
+  const SpectrumDisplayWidget({
+    Key? key,
+    required this.data,
+    this.onTap,
+  }) : super(key: key);
+  
+  // 3. Build method
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // Widget tree
+    );
+  }
+  
+  // 4. Private helper methods
+  Widget _buildFrequencyAxis() { /* ... */ }
 }
+```
 
-class GenericRepository<T> { /_300 lines _/ }
-class QueryBuilder<T> { /_ 200 lines_/ }
-// ... building entire ORM for single table
-
-````
-Massive abstraction for uncertain future
-</Bad>
-
-<Good>
-```typescript
-// Simple functions for current needs
-const getUsers = async (): Promise<User[]> => {
-  return db.query('SELECT * FROM users');
-};
-
-const getUserById = async (id: string): Promise<User | null> => {
-  return db.query('SELECT * FROM users WHERE id = $1', [id]);
-};
-
-// When pattern emerges across multiple entities, then abstract
-````
-
-Abstract only when pattern proven across 3+ cases
-</Good>
+### Flutter Best Practices for EW_SIM
 
 #### Performance Optimization
-
-<Good>
-```typescript
-// Current: Simple approach
-const filterActiveUsers = (users: User[]): User[] => {
-  return users.filter(user => user.isActive);
-};
-
-// Benchmark shows: 50ms for 1000 users (acceptable)
-// ✓ Ship it, no optimization needed
-
-// Later: After profiling shows this is bottleneck
-// Then optimize with indexed lookup or caching
-
-````
-Optimize based on measurement, not assumptions
-</Good>
-
-<Bad>
-```typescript
-// Premature optimization
-const filterActiveUsers = (users: User[]): User[] => {
-  // "This might be slow, so let's cache and index"
-  const cache = new WeakMap();
-  const indexed = buildBTreeIndex(users, 'isActive');
-  // 100 lines of optimization code
-  // Adds complexity, harder to maintain
-  // No evidence it was needed
-};\
-````
-
-Complex solution for unmeasured problem
-</Bad>
-
-#### In Practice
-
-**When implementing:**
-
-- Solve the immediate problem
-- Use straightforward approach
-- Resist "what if" thinking
-- Delete speculative code
-
-**When optimizing:**
-
-- Profile first, optimize second
-- Measure before and after
-- Document why optimization needed
-- Keep simple version in tests
-
-**When abstracting:**
-
-- Wait for 3+ similar cases (Rule of Three)
-- Make abstraction as simple as possible
-- Prefer duplication over wrong abstraction
-- Refactor when pattern clear
-
-## Integration with Commands
-
-The Kaizen skill guides how you work. The commands provide structured analysis:
-
-- **`/why`**: Root cause analysis (5 Whys)
-- **`/cause-and-effect`**: Multi-factor analysis (Fishbone)
-- **`/plan-do-check-act`**: Iterative improvement cycles
-- **`/analyse-problem`**: Comprehensive documentation (A3)
-- **`/analyse`**: Smart method selection (Gemba/VSM/Muda)
-
-Use commands for structured problem-solving. Apply skill for day-to-day development.
-
-## Red Flags
-
-**Violating Continuous Improvement:**
-
-- "I'll refactor it later" (never happens)
-- Leaving code worse than you found it
-- Big bang rewrites instead of incremental
-
-**Violating Poka-Yoke:**
-
-- "Users should just be careful"
-- Validation after use instead of before
-- Optional config with no validation
-
-**Violating Standardized Work:**
-
-- "I prefer to do it my way"
-- Not checking existing patterns
-- Ignoring project conventions
-
-**Violating Just-In-Time:**
-
-- "We might need this someday"
-- Building frameworks before using them
-- Optimizing without measuring
-
-## Remember
-
-**Kaizen is about:**
-
-- Small improvements continuously
-- Preventing errors by design
-- Following proven patterns
-- Building only what's needed
-
-**Not about:**
-
-- Perfection on first try
-- Massive refactoring projects
-- Clever abstractions
-- Premature optimization
-
-**Mindset:** Good enough today, better tomorrow. Repeat.
-
----
-name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with intentional aesthetics, high craft, and non-generic visual identity. Use when building or styling web UIs, components, pages, dashboards, or frontend applications.
-license: Complete terms in LICENSE.txt
----
-
-# Frontend Design (Distinctive, Production-Grade)
-
-You are a **frontend designer-engineer**, not a layout generator.
-
-Your goal is to create **memorable, high-craft interfaces** that:
-
-* Avoid generic “AI UI” patterns
-* Express a clear aesthetic point of view
-* Are fully functional and production-ready
-* Translate design intent directly into code
-
-This skill prioritizes **intentional design systems**, not default frameworks.
-
----
-
-## 1. Core Design Mandate
-
-Every output must satisfy **all four**:
-
-1. **Intentional Aesthetic Direction**
-   A named, explicit design stance (e.g. *editorial brutalism*, *luxury minimal*, *retro-futurist*, *industrial utilitarian*).
-
-2. **Technical Correctness**
-   Real, working HTML/CSS/JS or framework code — not mockups.
-
-3. **Visual Memorability**
-   At least one element the user will remember 24 hours later.
-
-4. **Cohesive Restraint**
-   No random decoration. Every flourish must serve the aesthetic thesis.
-
-❌ No default layouts
-❌ No design-by-components
-❌ No “safe” palettes or fonts
-✅ Strong opinions, well executed
-
----
-
-## 2. Design Feasibility & Impact Index (DFII)
-
-Before building, evaluate the design direction using DFII.
-
-### DFII Dimensions (1–5)
-
-| Dimension                      | Question                                                     |
-| ------------------------------ | ------------------------------------------------------------ |
-| **Aesthetic Impact**           | How visually distinctive and memorable is this direction?    |
-| **Context Fit**                | Does this aesthetic suit the product, audience, and purpose? |
-| **Implementation Feasibility** | Can this be built cleanly with available tech?               |
-| **Performance Safety**         | Will it remain fast and accessible?                          |
-| **Consistency Risk**           | Can this be maintained across screens/components?            |
-
-### Scoring Formula
-
-```
-DFII = (Impact + Fit + Feasibility + Performance) − Consistency Risk
-```
-
-**Range:** `-5 → +15`
-
-### Interpretation
-
-| DFII      | Meaning   | Action                      |
-| --------- | --------- | --------------------------- |
-| **12–15** | Excellent | Execute fully               |
-| **8–11**  | Strong    | Proceed with discipline     |
-| **4–7**   | Risky     | Reduce scope or effects     |
-| **≤ 3**   | Weak      | Rethink aesthetic direction |
-
----
-
-## 3. Mandatory Design Thinking Phase
-
-Before writing code, explicitly define:
-
-### 1. Purpose
-
-* What action should this interface enable?
-* Is it persuasive, functional, exploratory, or expressive?
-
-### 2. Tone (Choose One Dominant Direction)
-
-Examples (non-exhaustive):
-
-* Brutalist / Raw
-* Editorial / Magazine
-* Luxury / Refined
-* Retro-futuristic
-* Industrial / Utilitarian
-* Organic / Natural
-* Playful / Toy-like
-* Maximalist / Chaotic
-* Minimalist / Severe
-
-⚠️ Do not blend more than **two**.
-
-### 3. Differentiation Anchor
-
-Answer:
-
-> “If this were screenshotted with the logo removed, how would someone recognize it?”
-
-This anchor must be visible in the final UI.
-
----
-
-## 4. Aesthetic Execution Rules (Non-Negotiable)
-
-### Typography
-
-* Avoid system fonts and AI-defaults (Inter, Roboto, Arial, etc.)
-* Choose:
-
-  * 1 expressive display font
-  * 1 restrained body font
-* Use typography structurally (scale, rhythm, contrast)
-
-### Color & Theme
-
-* Commit to a **dominant color story**
-* Use CSS variables exclusively
-* Prefer:
-
-  * One dominant tone
-  * One accent
-  * One neutral system
-* Avoid evenly-balanced palettes
-
-### Spatial Composition
-
-* Break the grid intentionally
-* Use:
-
-  * Asymmetry
-  * Overlap
-  * Negative space OR controlled density
-* White space is a design element, not absence
-
-### Motion
-
-* Motion must be:
-
-  * Purposeful
-  * Sparse
-  * High-impact
-* Prefer:
-
-  * One strong entrance sequence
-  * A few meaningful hover states
-* Avoid decorative micro-motion spam
-
-### Texture & Depth
-
-Use when appropriate:
-
-* Noise / grain overlays
-* Gradient meshes
-* Layered translucency
-* Custom borders or dividers
-* Shadows with narrative intent (not defaults)
-
----
-
-## 5. Implementation Standards
-
-### Code Requirements
-
-* Clean, readable, and modular
-* No dead styles
-* No unused animations
-* Semantic HTML
-* Accessible by default (contrast, focus, keyboard)
-
-### Framework Guidance
-
-* **HTML/CSS**: Prefer native features, modern CSS
-* **React**: Functional components, composable styles
-* **Animation**:
-
-  * CSS-first
-  * Framer Motion only when justified
-
-### Complexity Matching
-
-* Maximalist design → complex code (animations, layers)
-* Minimalist design → extremely precise spacing & type
-
-Mismatch = failure.
-
----
-
-## 6. Required Output Structure
-
-When generating frontend work:
-
-### 1. Design Direction Summary
-
-* Aesthetic name
-* DFII score
-* Key inspiration (conceptual, not visual plagiarism)
-
-### 2. Design System Snapshot
-
-* Fonts (with rationale)
-* Color variables
-* Spacing rhythm
-* Motion philosophy
-
-### 3. Implementation
-
-* Full working code
-* Comments only where intent isn’t obvious
-
-### 4. Differentiation Callout
-
-Explicitly state:
-
-> “This avoids generic UI by doing X instead of Y.”
-
----
-
-## 7. Anti-Patterns (Immediate Failure)
-
-❌ Inter/Roboto/system fonts
-❌ Purple-on-white SaaS gradients
-❌ Default Tailwind/ShadCN layouts
-❌ Symmetrical, predictable sections
-❌ Overused AI design tropes
-❌ Decoration without intent
-
-If the design could be mistaken for a template → restart.
-
----
-
-## 8. Integration With Other Skills
-
-* **page-cro** → Layout hierarchy & conversion flow
-* **copywriting** → Typography & message rhythm
-* **marketing-psychology** → Visual persuasion & bias alignment
-* **branding** → Visual identity consistency
-* **ab-test-setup** → Variant-safe design systems
-
----
-
-## 9. Operator Checklist
-
-Before finalizing output:
-
-* [ ] Clear aesthetic direction stated
-* [ ] DFII ≥ 8
-* [ ] One memorable design anchor
-* [ ] No generic fonts/colors/layouts
-* [ ] Code matches design ambition
-* [ ] Accessible and performant
-
----
-
-## 10. Questions to Ask (If Needed)
-
-1. Who is this for, emotionally?
-2. Should this feel trustworthy, exciting, calm, or provocative?
-3. Is memorability or clarity more important?
-4. Will this scale to other pages/components?
-5. What should users *feel* in the first 3 seconds?
-
----
-
----
-name: react-patterns
-description: Modern React patterns and principles. Hooks, composition, performance, TypeScript best practices.
-allowed-tools: Read, Write, Edit, Glob, Grep
----
-
-# React Patterns
-
-> Principles for building production-ready React applications.
-
----
-
-## 1. Component Design Principles
-
-### Component Types
-
-| Type | Use | State |
-|------|-----|-------|
-| **Server** | Data fetching, static | None |
-| **Client** | Interactivity | useState, effects |
-| **Presentational** | UI display | Props only |
-| **Container** | Logic/state | Heavy state |
-
-### Design Rules
-
-- One responsibility per component
-- Props down, events up
-- Composition over inheritance
-- Prefer small, focused components
-
----
-
-## 2. Hook Patterns
-
-### When to Extract Hooks
-
-| Pattern | Extract When |
-|---------|-------------|
-| **useLocalStorage** | Same storage logic needed |
-| **useDebounce** | Multiple debounced values |
-| **useFetch** | Repeated fetch patterns |
-| **useForm** | Complex form state |
-
-### Hook Rules
-
-- Hooks at top level only
-- Same order every render
-- Custom hooks start with "use"
-- Clean up effects on unmount
-
----
-
-## 3. State Management Selection
-
-| Complexity | Solution |
-|------------|----------|
-| Simple | useState, useReducer |
-| Shared local | Context |
-| Server state | React Query, SWR |
-| Complex global | Zustand, Redux Toolkit |
-
-### State Placement
-
-| Scope | Where |
-|-------|-------|
-| Single component | useState |
-| Parent-child | Lift state up |
-| Subtree | Context |
-| App-wide | Global store |
-
----
-
-## 4. React 19 Patterns
-
-### New Hooks
-
-| Hook | Purpose |
-|------|---------|
-| **useActionState** | Form submission state |
-| **useOptimistic** | Optimistic UI updates |
-| **use** | Read resources in render |
-
-### Compiler Benefits
-
-- Automatic memoization
-- Less manual useMemo/useCallback
-- Focus on pure components
-
----
-
-## 5. Composition Patterns
-
-### Compound Components
-
-- Parent provides context
-- Children consume context
-- Flexible slot-based composition
-- Example: Tabs, Accordion, Dropdown
-
-### Render Props vs Hooks
-
-| Use Case | Prefer |
-|----------|--------|
-| Reusable logic | Custom hook |
-| Render flexibility | Render props |
-| Cross-cutting | Higher-order component |
-
----
-
-## 6. Performance Principles
-
-### When to Optimize
-
-| Signal | Action |
-|--------|--------|
-| Slow renders | Profile first |
-| Large lists | Virtualize |
-| Expensive calc | useMemo |
-| Stable callbacks | useCallback |
-
-### Optimization Order
-
-1. Check if actually slow
-2. Profile with DevTools
-3. Identify bottleneck
-4. Apply targeted fix
-
----
-
-## 7. Error Handling
-
-### Error Boundary Usage
-
-| Scope | Placement |
-|-------|-----------|
-| App-wide | Root level |
-| Feature | Route/feature level |
-| Component | Around risky component |
-
-### Error Recovery
-
-- Show fallback UI
-- Log error
-- Offer retry option
-- Preserve user data
-
----
-
-## 8. TypeScript Patterns
-
-### Props Typing
-
-| Pattern | Use |
-|---------|-----|
-| Interface | Component props |
-| Type | Unions, complex |
-| Generic | Reusable components |
-
-### Common Types
-
-| Need | Type |
-|------|------|
-| Children | ReactNode |
-| Event handler | MouseEventHandler |
-| Ref | RefObject<Element> |
-
----
-
-## 9. Testing Principles
-
-| Level | Focus |
-|-------|-------|
-| Unit | Pure functions, hooks |
-| Integration | Component behavior |
-| E2E | User flows |
-
-### Test Priorities
-
-- User-visible behavior
-- Edge cases
-- Error states
-- Accessibility
-
----
-
-## 10. Anti-Patterns
-
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Prop drilling deep | Use context |
-| Giant components | Split smaller |
-| useEffect for everything | Server components |
-| Premature optimization | Profile first |
-| Index as key | Stable unique ID |
-
----
-
-> **Remember:** React is about composition. Build small, combine thoughtfully.
-
----
-name: tailwind-patterns
-description: Tailwind CSS v4 principles. CSS-first configuration, container queries, modern patterns, design token architecture.
-allowed-tools: Read, Write, Edit, Glob, Grep
----
-
-# Tailwind CSS Patterns (v4 - 2025)
-
-> Modern utility-first CSS with CSS-native configuration.
-
----
-
-## 1. Tailwind v4 Architecture
-
-### What Changed from v3
-
-| v3 (Legacy) | v4 (Current) |
-|-------------|--------------|
-| `tailwind.config.js` | CSS-based `@theme` directive |
-| PostCSS plugin | Oxide engine (10x faster) |
-| JIT mode | Native, always-on |
-| Plugin system | CSS-native features |
-| `@apply` directive | Still works, discouraged |
-
-### v4 Core Concepts
-
-| Concept | Description |
-|---------|-------------|
-| **CSS-first** | Configuration in CSS, not JavaScript |
-| **Oxide Engine** | Rust-based compiler, much faster |
-| **Native Nesting** | CSS nesting without PostCSS |
-| **CSS Variables** | All tokens exposed as `--*` vars |
-
----
-
-## 2. CSS-Based Configuration
-
-### Theme Definition
-
-```
-@theme {
-  /* Colors - use semantic names */
-  --color-primary: oklch(0.7 0.15 250);
-  --color-surface: oklch(0.98 0 0);
-  --color-surface-dark: oklch(0.15 0 0);
+1. **Use `const` constructors** wherever possible
+2. **Avoid rebuilds**: Use `Provider.of<T>(context, listen: false)` when not listening
+3. **Lazy loading**: Load 3D models and heavy assets on demand
+4. **Image caching**: Use `CachedNetworkImage` for educational content images
+5. **List optimization**: Use `ListView.builder()` for long lists
+
+#### 3D Visualization Specific
+```dart
+// Efficient 3D model loading
+class ModelLoader {
+  final Map<String, Model3D> _cache = {};
   
-  /* Spacing scale */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 2rem;
-  
-  /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  Future<Model3D> loadModel(String path) async {
+    if (_cache.containsKey(path)) {
+      return _cache[path]!;
+    }
+    
+    final model = await _loadFromAsset(path);
+    _cache[path] = model;
+    return model;
+  }
 }
 ```
 
-### When to Extend vs Override
-
-| Action | Use When |
-|--------|----------|
-| **Extend** | Adding new values alongside defaults |
-| **Override** | Replacing default scale entirely |
-| **Semantic tokens** | Project-specific naming (primary, surface) |
-
----
-
-## 3. Container Queries (v4 Native)
-
-### Breakpoint vs Container
-
-| Type | Responds To |
-|------|-------------|
-| **Breakpoint** (`md:`) | Viewport width |
-| **Container** (`@container`) | Parent element width |
-
-### Container Query Usage
-
-| Pattern | Classes |
-|---------|---------|
-| Define container | `@container` on parent |
-| Container breakpoint | `@sm:`, `@md:`, `@lg:` on children |
-| Named containers | `@container/card` for specificity |
-
-### When to Use
-
-| Scenario | Use |
-|----------|-----|
-| Page-level layouts | Viewport breakpoints |
-| Component-level responsive | Container queries |
-| Reusable components | Container queries (context-independent) |
-
----
-
-## 4. Responsive Design
-
-### Breakpoint System
-
-| Prefix | Min Width | Target |
-|--------|-----------|--------|
-| (none) | 0px | Mobile-first base |
-| `sm:` | 640px | Large phone / small tablet |
-| `md:` | 768px | Tablet |
-| `lg:` | 1024px | Laptop |
-| `xl:` | 1280px | Desktop |
-| `2xl:` | 1536px | Large desktop |
-
-### Mobile-First Principle
-
-1. Write mobile styles first (no prefix)
-2. Add larger screen overrides with prefixes
-3. Example: `w-full md:w-1/2 lg:w-1/3`
-
----
-
-## 5. Dark Mode
-
-### Configuration Strategies
-
-| Method | Behavior | Use When |
-|--------|----------|----------|
-| `class` | `.dark` class toggles | Manual theme switcher |
-| `media` | Follows system preference | No user control |
-| `selector` | Custom selector (v4) | Complex theming |
-
-### Dark Mode Pattern
-
-| Element | Light | Dark |
-|---------|-------|------|
-| Background | `bg-white` | `dark:bg-zinc-900` |
-| Text | `text-zinc-900` | `dark:text-zinc-100` |
-| Borders | `border-zinc-200` | `dark:border-zinc-700` |
-
----
-
-## 6. Modern Layout Patterns
-
-### Flexbox Patterns
-
-| Pattern | Classes |
-|---------|---------|
-| Center (both axes) | `flex items-center justify-center` |
-| Vertical stack | `flex flex-col gap-4` |
-| Horizontal row | `flex gap-4` |
-| Space between | `flex justify-between items-center` |
-| Wrap grid | `flex flex-wrap gap-4` |
-
-### Grid Patterns
-
-| Pattern | Classes |
-|---------|---------|
-| Auto-fit responsive | `grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))]` |
-| Asymmetric (Bento) | `grid grid-cols-3 grid-rows-2` with spans |
-| Sidebar layout | `grid grid-cols-[auto_1fr]` |
-
-> **Note:** Prefer asymmetric/Bento layouts over symmetric 3-column grids.
-
----
-
-## 7. Modern Color System
-
-### OKLCH vs RGB/HSL
-
-| Format | Advantage |
-|--------|-----------|
-| **OKLCH** | Perceptually uniform, better for design |
-| **HSL** | Intuitive hue/saturation |
-| **RGB** | Legacy compatibility |
-
-### Color Token Architecture
-
-| Layer | Example | Purpose |
-|-------|---------|---------|
-| **Primitive** | `--blue-500` | Raw color values |
-| **Semantic** | `--color-primary` | Purpose-based naming |
-| **Component** | `--button-bg` | Component-specific |
-
----
-
-## 8. Typography System
-
-### Font Stack Pattern
-
-| Type | Recommended |
-|------|-------------|
-| Sans | `'Inter', 'SF Pro', system-ui, sans-serif` |
-| Mono | `'JetBrains Mono', 'Fira Code', monospace` |
-| Display | `'Outfit', 'Poppins', sans-serif` |
-
-### Type Scale
-
-| Class | Size | Use |
-|-------|------|-----|
-| `text-xs` | 0.75rem | Labels, captions |
-| `text-sm` | 0.875rem | Secondary text |
-| `text-base` | 1rem | Body text |
-| `text-lg` | 1.125rem | Lead text |
-| `text-xl`+ | 1.25rem+ | Headings |
-
----
-
-## 9. Animation & Transitions
-
-### Built-in Animations
-
-| Class | Effect |
-|-------|--------|
-| `animate-spin` | Continuous rotation |
-| `animate-ping` | Attention pulse |
-| `animate-pulse` | Subtle opacity pulse |
-| `animate-bounce` | Bouncing effect |
-
-### Transition Patterns
-
-| Pattern | Classes |
-|---------|---------|
-| All properties | `transition-all duration-200` |
-| Specific | `transition-colors duration-150` |
-| With easing | `ease-out` or `ease-in-out` |
-| Hover effect | `hover:scale-105 transition-transform` |
-
----
-
-## 10. Component Extraction
-
-### When to Extract
-
-| Signal | Action |
-|--------|--------|
-| Same class combo 3+ times | Extract component |
-| Complex state variants | Extract component |
-| Design system element | Extract + document |
-
-### Extraction Methods
-
-| Method | Use When |
-|--------|----------|
-| **React/Vue component** | Dynamic, JS needed |
-| **@apply in CSS** | Static, no JS needed |
-| **Design tokens** | Reusable values |
-
----
-
-## 11. Anti-Patterns
-
-| Don't | Do |
-|-------|-----|
-| Arbitrary values everywhere | Use design system scale |
-| `!important` | Fix specificity properly |
-| Inline `style=` | Use utilities |
-| Duplicate long class lists | Extract component |
-| Mix v3 config with v4 | Migrate fully to CSS-first |
-| Use `@apply` heavily | Prefer components |
-
----
-
-## 12. Performance Principles
-
-| Principle | Implementation |
-|-----------|----------------|
-| **Purge unused** | Automatic in v4 |
-| **Avoid dynamism** | No template string classes |
-| **Use Oxide** | Default in v4, 10x faster |
-| **Cache builds** | CI/CD caching |
-
----
-
-> **Remember:** Tailwind v4 is CSS-first. Embrace CSS variables, container queries, and native features. The config file is now optional.
-
----
-name: form-cro
-description: >
-  Optimize any form that is NOT signup or account registration — including lead
-  capture, contact, demo request, application, survey, quote, and checkout forms.
-  Use when the goal is to increase form completion rate, reduce friction, or
-  improve lead quality without breaking compliance or downstream workflows.
----
-
-# Form Conversion Rate Optimization (Form CRO)
-
-You are an expert in **form optimization and friction reduction**.
-Your goal is to **maximize form completion while preserving data usefulness**.
-
-You do **not** blindly reduce fields.
-You do **not** optimize forms in isolation from their business purpose.
-You do **not** assume more data equals better leads.
-
----
-
-## Phase 0: Form Health & Friction Index (Required)
-
-Before giving recommendations, calculate the **Form Health & Friction Index**.
-
-### Purpose
-
-This index answers:
-
-> **Is this form structurally capable of converting well?**
-
-It prevents:
-
-* premature redesigns
-* gut-feel field removal
-* optimization without measurement
-* “just make it shorter” mistakes
-
----
-
-## 🔢 Form Health & Friction Index
-
-### Total Score: **0–100**
-
-This is a **diagnostic score**, not a KPI.
-
----
-
-### Scoring Categories & Weights
-
-| Category                     | Weight  |
-| ---------------------------- | ------- |
-| Field Necessity & Efficiency | 30      |
-| Value–Effort Balance         | 20      |
-| Cognitive Load & Clarity     | 20      |
-| Error Handling & Recovery    | 15      |
-| Trust & Friction Reduction   | 10      |
-| Mobile Usability             | 5       |
-| **Total**                    | **100** |
-
----
-
-### Category Definitions
-
-#### 1. Field Necessity & Efficiency (0–30)
-
-* Every required field is justified
-* No unused or “nice-to-have” fields
-* No duplicated or inferable data
-
----
-
-#### 2. Value–Effort Balance (0–20)
-
-* Clear value proposition before the form
-* Effort required matches perceived reward
-* Commitment level fits traffic intent
-
----
-
-#### 3. Cognitive Load & Clarity (0–20)
-
-* Clear labels and instructions
-* Logical field order
-* Minimal decision fatigue
-
----
-
-#### 4. Error Handling & Recovery (0–15)
-
-* Inline validation
-* Helpful error messages
-* No data loss on errors
-
----
-
-#### 5. Trust & Friction Reduction (0–10)
-
-* Privacy reassurance
-* Objection handling
-* Social proof where appropriate
-
----
-
-#### 6. Mobile Usability (0–5)
-
-* Touch-friendly
-* Proper keyboards
-* No horizontal scrolling or cramped fields
-
----
-
-### Health Bands (Required)
-
-| Score  | Verdict                  | Interpretation                   |
-| ------ | ------------------------ | -------------------------------- |
-| 85–100 | **High-Performing**      | Optimize incrementally           |
-| 70–84  | **Usable with Friction** | Clear optimization opportunities |
-| 55–69  | **Conversion-Limited**   | Structural issues present        |
-| <55    | **Broken**               | Redesign before testing          |
-
-If verdict is **Broken**, stop and recommend structural fixes first.
-
----
-
-## Phase 1: Context & Constraints
-
-### 1. Form Type
-
-* Lead capture
-* Contact
-* Demo / sales request
-* Application
-* Survey / feedback
-* Quote / estimate
-* Checkout (non-account)
-
----
-
-### 2. Business Context
-
-* What happens after submission?
-* Which fields are actually used?
-* What qualifies as a “good” submission?
-* Any legal or compliance constraints?
-
----
-
-### 3. Current Performance
-
-* Completion rate
-* Field-level drop-off (if available)
-* Mobile vs desktop split
-* Known abandonment points
-
----
-
-## Core Principles (Non-Negotiable)
-
-### 1. Every Field Has a Cost
-
-Each required field reduces completion.
-
-Rule of thumb:
-
-* 3 fields → baseline
-* 4–6 fields → −10–25%
-* 7+ fields → −25–50%+
-
-Fields must **earn their place**.
-
----
-
-### 2. Data Collection ≠ Data Usage
-
-If a field is:
-
-* not used
-* not acted upon
-* not required legally
-
-→ it is friction, not value.
-
----
-
-### 3. Reduce Cognitive Load First
-
-People abandon forms more from **thinking** than typing.
-
----
-
-## Field-Level Optimization
-
-### Email
-
-* Single field (no confirmation)
-* Inline validation
-* Typo correction
-* Correct mobile keyboard
-
----
-
-### Name
-
-* Single “Name” field by default
-* Split only if operationally required
-
----
-
-### Phone
-
-* Optional unless critical
-* Explain why if required
-* Auto-format and support country codes
-
----
-
-### Company / Organization
-
-* Auto-suggest when possible
-* Infer from email domain
-* Enrich after submission if feasible
-
----
-
-### Job Title / Role
-
-* Dropdown if segmentation matters
-* Optional by default
-
----
-
-### Free-Text Fields
-
-* Optional unless essential
-* Clear guidance on length/purpose
-* Expand on focus
-
----
-
-### Selects & Checkboxes
-
-* Radio buttons if <5 options
-* Searchable selects if long
-* Clear “Other” handling
-
----
-
-## Layout & Flow
-
-### Field Order
-
-1. Easiest first (email, name)
-2. Commitment-building fields
-3. Sensitive or high-effort fields last
-
----
-
-### Labels & Placeholders
-
-* Labels must always be visible
-* Placeholders are examples only
-* Avoid label-as-placeholder anti-pattern
-
----
-
-### Single vs Multi-Column
-
-* Default to single column
-* Multi-column only for closely related fields
-
----
-
-## Multi-Step Forms
-
-### Use When
-
-* 6+ fields
-* Distinct logical sections
-* Qualification or routing required
-
-### Best Practices
-
-* Progress indicator
-* Back navigation
-* Save progress
-* One topic per step
-
----
-
-## Error Handling
-
-### Inline Validation
-
-* After field interaction, not keystroke
-* Clear visual feedback
-* Do not clear input on error
-
----
-
-### Error Messaging
-
-* Specific
-* Human
-* Actionable
-
-Bad: “Invalid input”
-Good: “Please enter a valid email ([name@company.com](mailto:name@company.com))”
-
----
-
-## Submit Button Optimization
-
-### Copy
-
-Avoid: Submit, Send
-Prefer: Action + Outcome
-
-Examples:
-
-* “Get My Quote”
-* “Request Demo”
-* “Download the Guide”
-
----
-
-### States
-
-* Disabled + loading on submit
-* Clear success message
-* Next-step expectations
-
----
-
-## Trust & Friction Reduction
-
-* Privacy reassurance near submit
-* Expected response time
-* Testimonials (when appropriate)
-* Security badges only if relevant
-
----
-
-## Mobile Optimization (Mandatory)
-
-* ≥44px touch targets
-* Correct keyboard types
-* Autofill support
-* Single column
-* Sticky submit button (where helpful)
-
----
-
-## Measurement (Required)
-
-### Key Metrics
-
-* Form view → start
-* Start → completion
-* Field-level drop-off
-* Error rate by field
-* Time to complete
-* Device split
-
-### Track:
-
-* First field focus
-* Field completion
-* Validation errors
-* Submit attempts
-* Successful submissions
-
----
-
-## Output Format
-
-### Form Health Summary
-
-* Form Health & Friction Index score
-* Primary bottlenecks
-* Structural vs tactical issues
-
----
-
-### Form Audit
-
-For each issue:
-
-* **Issue**
-* **Impact**
-* **Fix**
-* **Priority**
-
----
-
-### Recommended Form Design
-
-* Required fields (with justification)
-* Optional fields
-* Field order
-* Copy (labels, help text, CTA)
-* Error messages
-* Layout notes
-
----
-
-### Test Hypotheses
-
-Clearly stated A/B test ideas with expected outcome
-
----
-
-## Experiment Boundaries
-
-Do **not** test:
-
-* legal requirements
-* core qualification fields without alignment
-* multiple variables at once
-
----
-
-## Questions to Ask (If Needed)
-
-1. What is the current completion rate?
-2. Which fields are actually used?
-3. Do you have field-level analytics?
-4. What happens after submission?
-5. Are there compliance constraints?
-6. Mobile vs desktop traffic split?
-
----
-
-## Related Skills
-
-* **signup-flow-cro** – Account creation forms
-* **popup-cro** – Forms in modals
-* **page-cro** – Page-level optimization
-* **analytics-tracking** – Measuring form performance
-* **ab-test-setup** – Testing form changes
-
----
-
----
-name: seo-audit
-description: >
-  Diagnose and audit SEO issues affecting crawlability, indexation, rankings,
-  and organic performance. Use when the user asks for an SEO audit, technical SEO
-  review, ranking diagnosis, on-page SEO review, meta tag audit, or SEO health check.
-  This skill identifies issues and prioritizes actions but does not execute changes.
-  For large-scale page creation, use programmatic-seo. For structured data, use
-  schema-markup.
----
-
-# SEO Audit
-
-You are an **SEO diagnostic specialist**.
-Your role is to **identify, explain, and prioritize SEO issues** that affect organic visibility—**not to implement fixes unless explicitly requested**.
-
-Your output must be **evidence-based, scoped, and actionable**.
-
----
-
-## Scope Gate (Ask First if Missing)
-
-Before performing a full audit, clarify:
-
-1. **Business Context**
-
-   * Site type (SaaS, e-commerce, blog, local, marketplace, etc.)
-   * Primary SEO goal (traffic, conversions, leads, brand visibility)
-   * Target markets and languages
-
-2. **SEO Focus**
-
-   * Full site audit or specific sections/pages?
-   * Technical SEO, on-page, content, or all?
-   * Desktop, mobile, or both?
-
-3. **Data Access**
-
-   * Google Search Console access?
-   * Analytics access?
-   * Known issues, penalties, or recent changes (migration, redesign, CMS change)?
-
-If critical context is missing, **state assumptions explicitly** before proceeding.
-
----
-
-## Audit Framework (Priority Order)
-
-1. **Crawlability & Indexation** – Can search engines access and index the site?
-2. **Technical Foundations** – Is the site fast, stable, and accessible?
-3. **On-Page Optimization** – Is each page clearly optimized for its intent?
-4. **Content Quality & E-E-A-T** – Does the content deserve to rank?
-5. **Authority & Signals** – Does the site demonstrate trust and relevance?
-
----
-
-## Technical SEO Audit
-
-### Crawlability
-
-**Robots.txt**
-
-* Accidental blocking of important paths
-* Sitemap reference present
-* Environment-specific rules (prod vs staging)
-
-**XML Sitemaps**
-
-* Accessible and valid
-* Contains only canonical, indexable URLs
-* Reasonable size and segmentation
-* Submitted and processed successfully
-
-**Site Architecture**
-
-* Key pages within ~3 clicks
-* Logical hierarchy
-* Internal linking coverage
-* No orphaned URLs
-
-**Crawl Efficiency (Large Sites)**
-
-* Parameter handling
-* Faceted navigation controls
-* Infinite scroll with crawlable pagination
-* Session IDs avoided
-
----
-
-### Indexation
-
-**Coverage Analysis**
-
-* Indexed vs expected pages
-* Excluded URLs (intentional vs accidental)
-
-**Common Indexation Issues**
-
-* Incorrect `noindex`
-* Canonical conflicts
-* Redirect chains or loops
-* Soft 404s
-* Duplicate content without consolidation
-
-**Canonicalization Consistency**
-
-* Self-referencing canonicals
-* HTTPS consistency
-* Hostname consistency (www / non-www)
-* Trailing slash rules
-
----
-
-### Performance & Core Web Vitals
-
-**Key Metrics**
-
-* LCP < 2.5s
-* INP < 200ms
-* CLS < 0.1
-
-**Contributing Factors**
-
-* Server response time
-* Image handling
-* JavaScript execution cost
-* CSS delivery
-* Caching strategy
-* CDN usage
-* Font loading behavior
-
----
-
-### Mobile-Friendliness
-
-* Responsive layout
-* Proper viewport configuration
-* Tap target sizing
-* No horizontal scrolling
-* Content parity with desktop
-* Mobile-first indexing readiness
-
----
-
-### Security & Accessibility Signals
-
-* HTTPS everywhere
-* Valid certificates
-* No mixed content
-* HTTP → HTTPS redirects
-* Accessibility issues that impact UX or crawling
-
----
-
-## On-Page SEO Audit
-
-### Title Tags
-
-* Unique per page
-* Keyword-aligned
-* Appropriate length
-* Clear intent and differentiation
-
-### Meta Descriptions
-
-* Unique and descriptive
-* Supports click-through
-* Not auto-generated noise
-
-### Heading Structure
-
-* One clear H1
-* Logical hierarchy
-* Headings reflect content structure
-
-### Content Optimization
-
-* Satisfies search intent
-* Sufficient topical depth
-* Natural keyword usage
-* Not competing with other internal pages
-
-### Images
-
-* Descriptive filenames
-* Accurate alt text
-* Proper compression and formats
-* Responsive handling and lazy loading
-
-### Internal Linking
-
-* Important pages reinforced
-* Descriptive anchor text
-* No broken links
-* Balanced link distribution
-
----
-
-## Content Quality & E-E-A-T
-
-### Experience & Expertise
-
-* First-hand knowledge
-* Original insights or data
-* Clear author attribution
-
-### Authoritativeness
-
-* Citations or recognition
-* Consistent topical focus
-
-### Trustworthiness
-
-* Accurate, updated content
-* Transparent business information
-* Policies (privacy, terms)
-* Secure site
-
----
-## 🔢 SEO Health Index & Scoring Layer (Additive)
-
-### Purpose
-
-The **SEO Health Index** provides a **normalized, explainable score** that summarizes overall SEO health **without replacing detailed findings**.
-
-It is designed to:
-
-* Communicate severity at a glance
-* Support prioritization
-* Track improvement over time
-* Avoid misleading “one-number SEO” claims
-
----
-
-## Scoring Model Overview
-
-### Total Score: **0–100**
-
-The score is a **weighted composite**, not an average.
-
-| Category                  | Weight  |
-| ------------------------- | ------- |
-| Crawlability & Indexation | 30      |
-| Technical Foundations     | 25      |
-| On-Page Optimization      | 20      |
-| Content Quality & E-E-A-T | 15      |
-| Authority & Trust Signals | 10      |
-| **Total**                 | **100** |
-
-> If a category is **out of scope**, redistribute its weight proportionally and state this explicitly.
-
----
-
-## Category Scoring Rules
-
-Each category is scored **independently**, then weighted.
-
-### Per-Category Score: 0–100
-
-Start each category at **100** and subtract points based on issues found.
-
-#### Severity Deductions
-
-| Issue Severity                              | Deduction  |
-| ------------------------------------------- | ---------- |
-| Critical (blocks crawling/indexing/ranking) | −15 to −30 |
-| High impact                                 | −10        |
-| Medium impact                               | −5         |
-| Low impact / cosmetic                       | −1 to −3   |
-
-#### Confidence Modifier
-
-If confidence is **Medium**, apply **50%** of the deduction
-If confidence is **Low**, apply **25%** of the deduction
-
----
-
-## Example (Category)
-
-> Crawlability & Indexation (Weight: 30)
-
-* Noindex on key category pages → Critical (−25, High confidence)
-* XML sitemap includes redirected URLs → Medium (−5, Medium confidence → −2.5)
-* Missing sitemap reference in robots.txt → Low (−2)
-
-**Raw score:** 100 − 29.5 = **70.5**
-**Weighted contribution:** 70.5 × 0.30 = **21.15**
-
----
-
-## Overall SEO Health Index
-
-### Calculation
-
-```
-SEO Health Index =
-Σ (Category Score × Category Weight)
+#### Error Handling
+```dart
+// Consistent error handling pattern
+try {
+  final result = await riskyOperation();
+  return Right(result);
+} on NetworkException catch (e) {
+  return Left(NetworkFailure(e.message));
+} on CacheException catch (e) {
+  return Left(CacheFailure(e.message));
+} catch (e) {
+  return Left(UnknownFailure(e.toString()));
+}
 ```
 
-Rounded to nearest whole number.
+#### Dependency Injection
+```dart
+// Using GetIt for service location
+final getIt = GetIt.instance;
+
+void setupDependencies() {
+  // Singletons
+  getIt.registerSingleton<NavigationService>(NavigationService());
+  getIt.registerSingleton<ThemeService>(ThemeService());
+  
+  // Factories
+  getIt.registerFactory<RadarSimulation>(() => RadarSimulation());
+  
+  // Lazy singletons
+  getIt.registerLazySingleton<DatabaseService>(
+    () => DatabaseService(),
+  );
+}
+```
 
 ---
 
-## Health Bands (Required)
+## 🌐 3D Visualization with Cesium
 
-Always classify the final score into a band:
+### Integration Strategy
 
-| Score Range | Health Status | Interpretation                                  |
-| ----------- | ------------- | ----------------------------------------------- |
-| 90–100      | Excellent     | Strong SEO foundation, minor optimizations only |
-| 75–89       | Good          | Solid performance with clear improvement areas  |
-| 60–74       | Fair          | Meaningful issues limiting growth               |
-| 40–59       | Poor          | Serious SEO constraints                         |
-| <40         | Critical      | SEO is fundamentally broken                     |
+**Primary Approach**: WebView-based Cesium integration
+
+**Rationale**:
+- Cesium provides Google Earth-like capabilities
+- Mature library with extensive documentation
+- Supports terrain visualization, 3D models, and real-time data
+- Cross-platform compatibility
+
+### Technical Implementation
+
+#### WebView Setup
+```dart
+import 'package:webview_flutter/webview_flutter.dart';
+
+class CesiumGlobeWidget extends StatefulWidget {
+  @override
+  _CesiumGlobeWidgetState createState() => _CesiumGlobeWidgetState();
+}
+
+class _CesiumGlobeWidgetState extends State<CesiumGlobeWidget> {
+  late WebViewController _controller;
+  
+  @override
+  Widget build(BuildContext context) {
+    return WebView(
+      initialUrl: 'assets/cesium/index.html',
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (controller) {
+        _controller = controller;
+      },
+      javascriptChannels: {
+        JavascriptChannel(
+          name: 'FlutterBridge',
+          onMessageReceived: (JavascriptMessage message) {
+            _handleCesiumMessage(message.message);
+          },
+        ),
+      },
+    );
+  }
+  
+  void _handleCesiumMessage(String message) {
+    // Process messages from Cesium
+  }
+}
+```
+
+#### Cesium HTML Template
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    #cesiumContainer { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: Cesium.createWorldTerrain()
+    });
+    
+    // Communication with Flutter
+    function sendToFlutter(message) {
+      FlutterBridge.postMessage(JSON.stringify(message));
+    }
+    
+    // Add signal propagation visualization
+    function addSignalCoverage(lat, lon, radius, color) {
+      viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(lon, lat),
+        ellipse: {
+          semiMinorAxis: radius,
+          semiMajorAxis: radius,
+          material: Cesium.Color.fromCssColorString(color).withAlpha(0.3),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString(color)
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+```
+
+#### Flutter-Cesium Communication
+```dart
+class CesiumBridge {
+  final WebViewController controller;
+  
+  CesiumBridge(this.controller);
+  
+  // Add radar coverage zone
+  Future<void> addRadarCoverage({
+    required double latitude,
+    required double longitude,
+    required double radius,
+    required Color color,
+  }) async {
+    final colorHex = '#${color.value.toRadixString(16).substring(2)}';
+    await controller.runJavascript(
+      'addSignalCoverage($latitude, $longitude, $radius, "$colorHex")'
+    );
+  }
+  
+  // Add emitter marker
+  Future<void> addEmitter({
+    required double latitude,
+    required double longitude,
+    required String label,
+    required EmitterType type,
+  }) async {
+    await controller.runJavascript('''
+      viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees($longitude, $latitude),
+        point: { pixelSize: 10, color: Cesium.Color.RED },
+        label: { text: "$label", font: "14px sans-serif" }
+      });
+    ''');
+  }
+}
+```
+
+### 3D Model Integration
+
+#### Model Format Support
+- **Primary**: glTF/GLB (optimized for web, widely supported)
+- **Secondary**: COLLADA (DAE) for complex military models
+- **Fallback**: Basic geometric primitives for simple shapes
+
+#### Model Loading Strategy
+```dart
+class Model3DLoader {
+  final AssetBundle assetBundle;
+  
+  Future<String> loadGLTFModel(String assetPath) async {
+    final data = await assetBundle.load(assetPath);
+    final base64 = base64Encode(data.buffer.asUint8List());
+    return 'data:model/gltf-binary;base64,$base64';
+  }
+}
+```
+
+#### Performance Constraints
+- **Maximum polygon count per model**: 50,000 triangles
+- **Texture resolution**: Max 2048x2048 pixels
+- **Number of simultaneous models**: Max 20 on screen
+- **LOD (Level of Detail)**: Use 3 LOD levels for complex models
+- **Frame rate target**: Minimum 30 FPS on mid-range devices
+
+### Terrain Visualization
+
+#### Data Sources
+- **Global terrain**: Cesium World Terrain (online)
+- **Custom terrain**: Support for custom DEM (Digital Elevation Model) data
+- **Fallback**: WGS84 ellipsoid for offline mode
+
+#### Signal Propagation Overlay
+```javascript
+// Add radio signal propagation heatmap
+function addPropagationMap(centerLat, centerLon, frequency, power) {
+  const propagationData = calculatePropagation(centerLat, centerLon, frequency, power);
+  
+  const rectangles = [];
+  for (let lat = -90; lat < 90; lat += 1) {
+    for (let lon = -180; lon < 180; lon += 1) {
+      const signalStrength = propagationData[lat][lon];
+      const color = getColorForStrength(signalStrength);
+      
+      rectangles.push({
+        coordinates: Cesium.Rectangle.fromDegrees(lon, lat, lon + 1, lat + 1),
+        material: color.withAlpha(0.5)
+      });
+    }
+  }
+  
+  viewer.entities.add({
+    rectangle: {
+      coordinates: rectangles,
+      material: new Cesium.ImageMaterialProperty({
+        image: generateHeatmap(propagationData)
+      })
+    }
+  });
+}
+```
 
 ---
 
-## Output Requirements (Scoring Section)
+## ✅ Quality Control & Validation
 
-Include this **after the Executive Summary**:
+**MANDATORY**: Run validation after EVERY code change. Do not finish a task until code is error-free.
 
-### SEO Health Index
-
-* **Overall Score:** XX / 100
-* **Health Status:** [Excellent / Good / Fair / Poor / Critical]
-
-#### Category Breakdown
-
-| Category                  | Score | Weight | Weighted Contribution |
-| ------------------------- | ----- | ------ | --------------------- |
-| Crawlability & Indexation | XX    | 30     | XX                    |
-| Technical Foundations     | XX    | 25     | XX                    |
-| On-Page Optimization      | XX    | 20     | XX                    |
-| Content Quality & E-E-A-T | XX    | 15     | XX                    |
-| Authority & Trust         | XX    | 10     | XX                    |
-
----
-
-## Interpretation Rules (Mandatory)
-
-* The score **does not replace findings**
-* Improvements must be traceable to **specific issues**
-* A high score with unresolved **Critical issues is invalid** → flag inconsistency
-* Always explain **what limits the score from being higher**
-
----
-
-## Change Tracking (Optional but Recommended)
-
-If a previous audit exists:
-
-* Include **score delta** (+/−)
-* Attribute change to specific fixes
-* Avoid celebrating score increases without validating outcomes
-
----
-
-## Explicit Limitations (Always State)
-
-* Score reflects **SEO readiness**, not guaranteed rankings
-* External factors (competition, algorithm updates) are not scored
-* Authority score is directional, not exhaustive
-
-### Findings Classification (Required · Scoring-Aligned)
-
-For **every identified issue**, provide the following fields.
-These fields are **mandatory** and directly inform the SEO Health Index.
-
-* **Issue**
-  A concise description of what is wrong (one sentence, no solution).
-
-* **Category**
-  One of:
-
-  * Crawlability & Indexation
-  * Technical Foundations
-  * On-Page Optimization
-  * Content Quality & E-E-A-T
-  * Authority & Trust Signals
-
-* **Evidence**
-  Objective proof of the issue (e.g. URLs, reports, headers, crawl data, screenshots, metrics).
-  *Do not rely on intuition or best-practice claims.*
-
-* **Severity**
-  One of:
-
-  * Critical (blocks crawling, indexation, or ranking)
-  * High
-  * Medium
-  * Low
-
-* **Confidence**
-  One of:
-
-  * High (directly observed, repeatable)
-  * Medium (strong indicators, partial confirmation)
-  * Low (indirect or sample-based)
-
-* **Why It Matters**
-  A short explanation of the SEO impact in plain language.
-
-* **Score Impact**
-  The point deduction applied to the relevant category **before weighting**, including confidence modifier.
-
-* **Recommendation**
-  What should be done to resolve the issue.
-  **Do not include implementation steps unless explicitly requested.**
-
----
-
-### Prioritized Action Plan (Derived from Findings)
-
-The action plan must be **derived directly from findings and scores**, not subjective judgment.
-
-Group actions as follows:
-
-1. **Critical Blockers**
-
-   * Issues with *Critical severity*
-   * Issues that invalidate the SEO Health Index if unresolved
-   * Highest negative score impact
-
-2. **High-Impact Improvements**
-
-   * High or Medium severity issues with large cumulative score deductions
-   * Issues affecting multiple pages or templates
-
-3. **Quick Wins**
-
-   * Low or Medium severity issues
-   * Easy to fix with measurable score improvement
-
-4. **Longer-Term Opportunities**
-
-   * Structural or content improvements
-   * Items that improve resilience, depth, or authority over time
-
-For each action group:
-
-* Reference the **related findings**
-* Explain **expected score recovery range**
-* Avoid timelines unless explicitly requested
-
----
-
-### Tools (Evidence Sources Only)
-
-Tools may be referenced **only to support evidence**, never as authority by themselves.
-
-Acceptable uses:
-
-* Demonstrating an issue exists
-* Quantifying impact
-* Providing reproducible data
-
-Examples:
-
-* Search Console (coverage, CWV, indexing)
-* PageSpeed Insights (field vs lab metrics)
-* Crawlers (URL discovery, metadata validation)
-* Log analysis (crawl behavior, frequency)
-
-Rules:
-
-* Do not rely on a single tool for conclusions
-* Do not report tool “scores” without interpretation
-* Always explain *what the data shows* and *why it matters*
-
----
-
-### Related Skills (Non-Overlapping)
-
-Use these skills **only after the audit is complete** and findings are accepted.
-
-* **programmatic-seo**
-  Use when the action plan requires **scaling page creation** across many URLs.
-
-* **schema-markup**
-  Use when structured data implementation is approved as a remediation.
-
-* **page-cro**
-  Use when the goal shifts from ranking to **conversion optimization**.
-
-* **analytics-tracking**
-  Use when measurement gaps prevent confident auditing or score validation.
-
-
----
-name: ui-ux-pro-max
-description: "UI/UX design intelligence. 50 styles, 21 palettes, 50 font pairings, 20 charts, 9 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, mobile app, .html, .tsx, .vue, .svelte. Elements: button, modal, navbar, sidebar, card, table, form, chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, flat design. Topics: color palette, accessibility, animation, layout, typography, font pairing, spacing, hover, shadow, gradient. Integrations: shadcn/ui MCP for component search and examples."
----
-
-# UI/UX Pro Max - Design Intelligence
-
-Comprehensive design guide for web and mobile applications. Contains 50+ styles, 97 color palettes, 57 font pairings, 99 UX guidelines, and 25 chart types across 9 technology stacks. Searchable database with priority-based recommendations.
-
-## When to Apply
-
-Reference these guidelines when:
-- Designing new UI components or pages
-- Choosing color palettes and typography
-- Reviewing code for UX issues
-- Building landing pages or dashboards
-- Implementing accessibility requirements
-
-## Rule Categories by Priority
-
-| Priority | Category | Impact | Domain |
-|----------|----------|--------|--------|
-| 1 | Accessibility | CRITICAL | `ux` |
-| 2 | Touch & Interaction | CRITICAL | `ux` |
-| 3 | Performance | HIGH | `ux` |
-| 4 | Layout & Responsive | HIGH | `ux` |
-| 5 | Typography & Color | MEDIUM | `typography`, `color` |
-| 6 | Animation | MEDIUM | `ux` |
-| 7 | Style Selection | MEDIUM | `style`, `product` |
-| 8 | Charts & Data | LOW | `chart` |
-
-## Quick Reference
-
-### 1. Accessibility (CRITICAL)
-
-- `color-contrast` - Minimum 4.5:1 ratio for normal text
-- `focus-states` - Visible focus rings on interactive elements
-- `alt-text` - Descriptive alt text for meaningful images
-- `aria-labels` - aria-label for icon-only buttons
-- `keyboard-nav` - Tab order matches visual order
-- `form-labels` - Use label with for attribute
-
-### 2. Touch & Interaction (CRITICAL)
-
-- `touch-target-size` - Minimum 44x44px touch targets
-- `hover-vs-tap` - Use click/tap for primary interactions
-- `loading-buttons` - Disable button during async operations
-- `error-feedback` - Clear error messages near problem
-- `cursor-pointer` - Add cursor-pointer to clickable elements
-
-### 3. Performance (HIGH)
-
-- `image-optimization` - Use WebP, srcset, lazy loading
-- `reduced-motion` - Check prefers-reduced-motion
-- `content-jumping` - Reserve space for async content
-
-### 4. Layout & Responsive (HIGH)
-
-- `viewport-meta` - width=device-width initial-scale=1
-- `readable-font-size` - Minimum 16px body text on mobile
-- `horizontal-scroll` - Ensure content fits viewport width
-- `z-index-management` - Define z-index scale (10, 20, 30, 50)
-
-### 5. Typography & Color (MEDIUM)
-
-- `line-height` - Use 1.5-1.75 for body text
-- `line-length` - Limit to 65-75 characters per line
-- `font-pairing` - Match heading/body font personalities
-
-### 6. Animation (MEDIUM)
-
-- `duration-timing` - Use 150-300ms for micro-interactions
-- `transform-performance` - Use transform/opacity, not width/height
-- `loading-states` - Skeleton screens or spinners
-
-### 7. Style Selection (MEDIUM)
-
-- `style-match` - Match style to product type
-- `consistency` - Use same style across all pages
-- `no-emoji-icons` - Use SVG icons, not emojis
-
-### 8. Charts & Data (LOW)
-
-- `chart-type` - Match chart type to data type
-- `color-guidance` - Use accessible color palettes
-- `data-table` - Provide table alternative for accessibility
-
-## How to Use
-
-Search specific domains using the CLI tool below.
-
----
-
-## Prerequisites
-
-Check if Python is installed:
+### Dart/Flutter Validation
 
 ```bash
-python3 --version || python --version
+# Format code
+dart format .
+
+# Analyze code
+flutter analyze
+
+# Run tests
+flutter test
+
+# Check for unused dependencies
+flutter pub outdated
 ```
 
-If Python is not installed, install it based on user's OS:
+### Quality Loop (From lint-and-validate skill)
 
-**macOS:**
-```bash
-brew install python3
+1. **Write/Edit Code**
+2. **Run Audit**: `flutter analyze && dart format --set-exit-if-changed .`
+3. **Analyze Report**: Check for errors, warnings, infos
+4. **Fix & Repeat**: No code should be committed with analysis failures
+
+### Error Handling Pattern
+
+```dart
+// Consistent error handling across app
+try {
+  final result = await riskyOperation();
+  return Right(result);
+} on NetworkException catch (e) {
+  return Left(NetworkFailure(e.message));
+} on CacheException catch (e) {
+  return Left(CacheFailure(e.message));
+} catch (e) {
+  return Left(UnknownFailure(e.toString()));
+}
 ```
 
-**Ubuntu/Debian:**
-```bash
-sudo apt update && sudo apt install python3
-```
-
-**Windows:**
-```powershell
-winget install Python.Python.3.12
-```
+**Strict Rule**: No code should be reported as "done" without passing these checks.
 
 ---
 
-## How to Use This Skill
+## 🎨 UI/UX Design Guidelines
 
-When user requests UI/UX work (design, build, create, implement, review, fix, improve), follow this workflow:
+### Design Principles
 
-### Step 1: Analyze User Requirements
+#### 1. **Clarity Over Decoration**
+- Educational content must be immediately understandable
+- Avoid unnecessary visual clutter
+- Use whitespace effectively
 
-Extract key information from user request:
-- **Product type**: SaaS, e-commerce, portfolio, dashboard, landing page, etc.
-- **Style keywords**: minimal, playful, professional, elegant, dark mode, etc.
-- **Industry**: healthcare, fintech, gaming, education, etc.
-- **Stack**: React, Vue, Next.js, or default to `html-tailwind`
+#### 2. **Progressive Disclosure**
+- Present basic concepts first
+- Allow users to drill down into details
+- Use expandable sections for advanced topics
 
-### Step 2: Generate Design System (REQUIRED)
+#### 3. **Visual Consistency**
+- Maintain consistent color coding across all EW disciplines
+- Use same iconography patterns throughout
+- Keep layout patterns predictable
 
-**Always start with `--design-system`** to get comprehensive recommendations with reasoning:
+#### 4. **Feedback and Confirmation**
+- Provide immediate visual feedback for all interactions
+- Show loading states for 3D content
+- Confirm destructive actions
 
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<product_type> <industry> <keywords>" --design-system [-p "Project Name"]
+### Color Scheme
+
+#### Primary Colors (EW Discipline Mapping)
+```dart
+class EWColors {
+  // Spectrum Analysis - Blue tones
+  static const spectrumPrimary = Color(0xFF2196F3);
+  static const spectrumAccent = Color(0xFF64B5F6);
+  
+  // ESM - Green tones (passive detection)
+  static const esmPrimary = Color(0xFF4CAF50);
+  static const esmAccent = Color(0xFF81C784);
+  
+  // ECM - Red tones (active jamming)
+  static const ecmPrimary = Color(0xFFF44336);
+  static const ecmAccent = Color(0xFFE57373);
+  
+  // ECCM - Orange tones (countermeasures)
+  static const eccmPrimary = Color(0xFFFF9800);
+  static const eccmAccent = Color(0xFFFFB74D);
+  
+  // Radio/COMSEC - Purple tones
+  static const radioComsecPrimary = Color(0xFF9C27B0);
+  static const radioComsecAccent = Color(0xFFBA68C8);
+  
+  // Radar - Cyan tones
+  static const radarPrimary = Color(0xFF00BCD4);
+  static const radarAccent = Color(0xFF4DD0E1);
+  
+  // Anti-Drone - Amber tones
+  static const antiDronePrimary = Color(0xFFFFC107);
+  static const antiDroneAccent = Color(0xFFFFD54F);
+  
+  // GPS Warfare - Teal tones
+  static const gpsPrimary = Color(0xFF009688);
+  static const gpsAccent = Color(0xFF4DB6AC);
+  
+  // Neutral colors
+  static const background = Color(0xFF121212);
+  static const surface = Color(0xFF1E1E1E);
+  static const textPrimary = Color(0xFFFFFFFF);
+  static const textSecondary = Color(0xFFB0B0B0);
+}
 ```
 
-This command:
-1. Searches 5 domains in parallel (product, style, color, landing, typography)
-2. Applies reasoning rules from `ui-reasoning.csv` to select best matches
-3. Returns complete design system: pattern, style, colors, typography, effects
-4. Includes anti-patterns to avoid
-
-**Example:**
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "beauty spa wellness service" --design-system -p "Serenity Spa"
+#### Theme Configuration
+```dart
+ThemeData buildDarkTheme() {
+  return ThemeData(
+    brightness: Brightness.dark,
+    primaryColor: EWColors.spectrumPrimary,
+    scaffoldBackgroundColor: EWColors.background,
+    cardColor: EWColors.surface,
+    
+    // Typography
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: EWColors.textPrimary,
+        fontFamily: 'Roboto',
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        color: EWColors.textPrimary,
+        fontFamily: 'Roboto',
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        color: EWColors.textSecondary,
+        fontFamily: 'Roboto',
+      ),
+    ),
+    
+    // Component themes
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+  );
+}
 ```
 
-### Step 3: Supplement with Detailed Searches (as needed)
+### Iconography
 
-After getting the design system, use domain searches to get additional details:
+**Icon Library**: Material Icons + Custom EW Icons
 
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --domain <domain> [-n <max_results>]
-```
+**Custom Icon Requirements**:
+- SVG format for scalability
+- Consistent stroke width (2px)
+- 24x24dp base size
+- Monochrome with theme color overlay
 
-**When to use detailed searches:**
-
-| Need | Domain | Example |
-|------|--------|---------|
-| More style options | `style` | `--domain style "glassmorphism dark"` |
-| Chart recommendations | `chart` | `--domain chart "real-time dashboard"` |
-| UX best practices | `ux` | `--domain ux "animation accessibility"` |
-| Alternative fonts | `typography` | `--domain typography "elegant luxury"` |
-| Landing structure | `landing` | `--domain landing "hero social-proof"` |
-
-### Step 4: Stack Guidelines (Default: html-tailwind)
-
-Get implementation-specific best practices. If user doesn't specify a stack, **default to `html-tailwind`**.
-
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack html-tailwind
-```
-
-Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `swiftui`, `react-native`, `flutter`, `shadcn`
-
----
-
-## Search Reference
-
-### Available Domains
-
-| Domain | Use For | Example Keywords |
-|--------|---------|------------------|
-| `product` | Product type recommendations | SaaS, e-commerce, portfolio, healthcare, beauty, service |
-| `style` | UI styles, colors, effects | glassmorphism, minimalism, dark mode, brutalism |
-| `typography` | Font pairings, Google Fonts | elegant, playful, professional, modern |
-| `color` | Color palettes by product type | saas, ecommerce, healthcare, beauty, fintech, service |
-| `landing` | Page structure, CTA strategies | hero, hero-centric, testimonial, pricing, social-proof |
-| `chart` | Chart types, library recommendations | trend, comparison, timeline, funnel, pie |
-| `ux` | Best practices, anti-patterns | animation, accessibility, z-index, loading |
-| `react` | React/Next.js performance | waterfall, bundle, suspense, memo, rerender, cache |
-| `web` | Web interface guidelines | aria, focus, keyboard, semantic, virtualize |
-| `prompt` | AI prompts, CSS keywords | (style name) |
-
-### Available Stacks
-
-| Stack | Focus |
-|-------|-------|
-| `html-tailwind` | Tailwind utilities, responsive, a11y (DEFAULT) |
-| `react` | State, hooks, performance, patterns |
-| `nextjs` | SSR, routing, images, API routes |
-| `vue` | Composition API, Pinia, Vue Router |
-| `svelte` | Runes, stores, SvelteKit |
-| `swiftui` | Views, State, Navigation, Animation |
-| `react-native` | Components, Navigation, Lists |
-| `flutter` | Widgets, State, Layout, Theming |
-| `shadcn` | shadcn/ui components, theming, forms, patterns |
-
----
-
-## Example Workflow
-
-**User request:** "Làm landing page cho dịch vụ chăm sóc da chuyên nghiệp"
-
-### Step 1: Analyze Requirements
-- Product type: Beauty/Spa service
-- Style keywords: elegant, professional, soft
-- Industry: Beauty/Wellness
-- Stack: html-tailwind (default)
-
-### Step 2: Generate Design System (REQUIRED)
-
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "beauty spa wellness service elegant" --design-system -p "Serenity Spa"
-```
-
-**Output:** Complete design system with pattern, style, colors, typography, effects, and anti-patterns.
-
-### Step 3: Supplement with Detailed Searches (as needed)
-
-```bash
-# Get UX guidelines for animation and accessibility
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "animation accessibility" --domain ux
-
-# Get alternative typography options if needed
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "elegant luxury serif" --domain typography
-```
-
-### Step 4: Stack Guidelines
-
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "layout responsive form" --stack html-tailwind
-```
-
-**Then:** Synthesize design system + detailed searches and implement the design.
-
----
-
-## Output Formats
-
-The `--design-system` flag supports two output formats:
-
-```bash
-# ASCII box (default) - best for terminal display
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design-system
-
-# Markdown - best for documentation
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design-system -f markdown
-```
-
----
-
-## Tips for Better Results
-
-1. **Be specific with keywords** - "healthcare SaaS dashboard" > "app"
-2. **Search multiple times** - Different keywords reveal different insights
-3. **Combine domains** - Style + Typography + Color = Complete design system
-4. **Always check UX** - Search "animation", "z-index", "accessibility" for common issues
-5. **Use stack flag** - Get implementation-specific best practices
-6. **Iterate** - If first search doesn't match, try different keywords
-
----
-
-## Common Rules for Professional UI
-
-These are frequently overlooked issues that make UI look unprofessional:
-
-### Icons & Visual Elements
-
-| Rule | Do | Don't |
-|------|----|----- |
-| **No emoji icons** | Use SVG icons (Heroicons, Lucide, Simple Icons) | Use emojis like 🎨 🚀 ⚙️ as UI icons |
-| **Stable hover states** | Use color/opacity transitions on hover | Use scale transforms that shift layout |
-| **Correct brand logos** | Research official SVG from Simple Icons | Guess or use incorrect logo paths |
-| **Consistent icon sizing** | Use fixed viewBox (24x24) with w-6 h-6 | Mix different icon sizes randomly |
-
-### Interaction & Cursor
-
-| Rule | Do | Don't |
-|------|----|----- |
-| **Cursor pointer** | Add `cursor-pointer` to all clickable/hoverable cards | Leave default cursor on interactive elements |
-| **Hover feedback** | Provide visual feedback (color, shadow, border) | No indication element is interactive |
-| **Smooth transitions** | Use `transition-colors duration-200` | Instant state changes or too slow (>500ms) |
-
-### Light/Dark Mode Contrast
-
-| Rule | Do | Don't |
-|------|----|----- |
-| **Glass card light mode** | Use `bg-white/80` or higher opacity | Use `bg-white/10` (too transparent) |
-| **Text contrast light** | Use `#0F172A` (slate-900) for text | Use `#94A3B8` (slate-400) for body text |
-| **Muted text light** | Use `#475569` (slate-600) minimum | Use gray-400 or lighter |
-| **Border visibility** | Use `border-gray-200` in light mode | Use `border-white/10` (invisible) |
-
-### Layout & Spacing
-
-| Rule | Do | Don't |
-|------|----|----- |
-| **Floating navbar** | Add `top-4 left-4 right-4` spacing | Stick navbar to `top-0 left-0 right-0` |
-| **Content padding** | Account for fixed navbar height | Let content hide behind fixed elements |
-| **Consistent max-width** | Use same `max-w-6xl` or `max-w-7xl` | Mix different container widths |
-
----
-
-## Pre-Delivery Checklist
-
-Before delivering UI code, verify these items:
-
-### Visual Quality
-- [ ] No emojis used as icons (use SVG instead)
-- [ ] All icons from consistent icon set (Heroicons/Lucide)
-- [ ] Brand logos are correct (verified from Simple Icons)
-- [ ] Hover states don't cause layout shift
-- [ ] Use theme colors directly (bg-primary) not var() wrapper
-
-### Interaction
-- [ ] All clickable elements have `cursor-pointer`
-- [ ] Hover states provide clear visual feedback
-- [ ] Transitions are smooth (150-300ms)
-- [ ] Focus states visible for keyboard navigation
-
-### Light/Dark Mode
-- [ ] Light mode text has sufficient contrast (4.5:1 minimum)
-- [ ] Glass/transparent elements visible in light mode
-- [ ] Borders visible in both modes
-- [ ] Test both modes before delivery
-
-### Layout
-- [ ] Floating elements have proper spacing from edges
-- [ ] No content hidden behind fixed navbars
-- [ ] Responsive at 375px, 768px, 1024px, 1440px
-- [ ] No horizontal scroll on mobile
+**EW-Specific Icons Needed**:
+- Radar dish
+- Radio waves (various patterns)
+- Jammer symbol
+- Drone silhouette
+- GPS satellite
+- Antenna patterns
+- Signal strength indicator
 
 ### Accessibility
-- [ ] All images have alt text
-- [ ] Form inputs have labels
-- [ ] Color is not the only indicator
-- [ ] `prefers-reduced-motion` respected
+
+#### WCAG 2.1 Level AA Compliance
+- **Color contrast ratio**: Minimum 4.5:1 for text
+- **Touch targets**: Minimum 48x48 dp
+- **Text scaling**: Support up to 200% system font size
+- **Screen reader**: Full semantic labeling with `Semantics` widget
+
+```dart
+// Accessibility example
+Semantics(
+  label: 'Radar coverage zone for Site Alpha',
+  hint: 'Shows effective detection range',
+  child: RadarCoverageWidget(site: siteAlpha),
+)
+```
+
+#### Multi-Language Support
+- **Primary**: English
+- **Secondary**: Thai (native language support)
+- **Framework**: Use `flutter_localizations` and `intl` package
+- **Text direction**: LTR (Left-to-Right) for both languages
+
+### Animation Guidelines
+
+#### Performance Targets
+- **Frame rate**: 60 FPS minimum
+- **Animation duration**: 200-400ms for most transitions
+- **Easing curves**: Use `Curves.easeInOut` for natural motion
+
+#### Animation Usage
+```dart
+// Smooth transition for educational content
+class ContentTransition extends StatelessWidget {
+  final Widget child;
+  
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 0.1),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+```
+
+**Avoid**:
+- Excessive animations that distract from content
+- Complex 3D transformations on low-end devices
+- Simultaneous animations (use choreography)
+
+### Responsive Design
+
+#### Breakpoints
+```dart
+class ScreenBreakpoints {
+  static const double mobile = 600;    // Phones
+  static const double tablet = 900;    // Tablets
+  static const double desktop = 1200;  // Large screens
+}
+```
+
+#### Layout Adaptation
+```dart
+class ResponsiveLayout extends StatelessWidget {
+  final Widget mobile;
+  final Widget? tablet;
+  final Widget? desktop;
+  
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= ScreenBreakpoints.desktop && desktop != null) {
+          return desktop!;
+        } else if (constraints.maxWidth >= ScreenBreakpoints.tablet && tablet != null) {
+          return tablet!;
+        }
+        return mobile;
+      },
+    );
+  }
+}
+```
 
 ---
-name: 3d-web-experience
-description: "Expert in building 3D experiences for the web - Three.js, React Three Fiber, Spline, WebGL, and interactive 3D scenes. Covers product configurators, 3D portfolios, immersive websites, and bringing depth to web experiences. Use when: 3D website, three.js, WebGL, react three fiber, 3D experience."
-source: vibeship-spawner-skills (Apache 2.0)
----
 
-# 3D Web Experience
+## 🧪 Testing Strategy
 
-**Role**: 3D Web Experience Architect
+### Testing Pyramid
 
-You bring the third dimension to the web. You know when 3D enhances
-and when it's just showing off. You balance visual impact with
-performance. You make 3D accessible to users who've never touched
-a 3D app. You create moments of wonder without sacrificing usability.
-
-## Capabilities
-
-- Three.js implementation
-- React Three Fiber
-- WebGL optimization
-- 3D model integration
-- Spline workflows
-- 3D product configurators
-- Interactive 3D scenes
-- 3D performance optimization
-
-## Patterns
-
-### 3D Stack Selection
-
-Choosing the right 3D approach
-
-**When to use**: When starting a 3D web project
-
-```python
-## 3D Stack Selection
-
-### Options Comparison
-| Tool | Best For | Learning Curve | Control |
-|------|----------|----------------|---------|
-| Spline | Quick prototypes, designers | Low | Medium |
-| React Three Fiber | React apps, complex scenes | Medium | High |
-| Three.js vanilla | Max control, non-React | High | Maximum |
-| Babylon.js | Games, heavy 3D | High | Maximum |
-
-### Decision Tree
 ```
-Need quick 3D element?
-└── Yes → Spline
-└── No → Continue
-
-Using React?
-└── Yes → React Three Fiber
-└── No → Continue
-
-Need max performance/control?
-└── Yes → Three.js vanilla
-└── No → Spline or R3F
+           ╱╲
+          ╱ E2E╲        End-to-End Tests (10%)
+         ╱──────╲
+        ╱Integration╲    Integration Tests (20%)
+       ╱────────────╲
+      ╱  Unit Tests  ╲   Unit Tests (70%)
+     ╱────────────────╲
 ```
 
-### Spline (Fastest Start)
-```jsx
-import Spline from '@splinetool/react-spline';
+### Unit Testing
 
-export default function Scene() {
-  return (
-    <Spline scene="https://prod.spline.design/xxx/scene.splinecode" />
-  );
-}
-```
+**Coverage Target**: Minimum 80% for business logic
 
-### React Three Fiber
-```jsx
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+**Focus Areas**:
+- Signal processing algorithms
+- EW calculations (power, range, coverage)
+- Data models and serialization
+- State management logic
 
-function Model() {
-  const { scene } = useGLTF('/model.glb');
-  return <primitive object={scene} />;
-}
+```dart
+// Example unit test
+import 'package:flutter_test/flutter_test.dart';
 
-export default function Scene() {
-  return (
-    <Canvas>
-      <ambientLight />
-      <Model />
-      <OrbitControls />
-    </Canvas>
-  );
-}
-```
-```
-
-### 3D Model Pipeline
-
-Getting models web-ready
-
-**When to use**: When preparing 3D assets
-
-```python
-## 3D Model Pipeline
-
-### Format Selection
-| Format | Use Case | Size |
-|--------|----------|------|
-| GLB/GLTF | Standard web 3D | Smallest |
-| FBX | From 3D software | Large |
-| OBJ | Simple meshes | Medium |
-| USDZ | Apple AR | Medium |
-
-### Optimization Pipeline
-```
-1. Model in Blender/etc
-2. Reduce poly count (< 100K for web)
-3. Bake textures (combine materials)
-4. Export as GLB
-5. Compress with gltf-transform
-6. Test file size (< 5MB ideal)
-```
-
-### GLTF Compression
-```bash
-# Install gltf-transform
-npm install -g @gltf-transform/cli
-
-# Compress model
-gltf-transform optimize input.glb output.glb \
-  --compress draco \
-  --texture-compress webp
-```
-
-### Loading in R3F
-```jsx
-import { useGLTF, useProgress, Html } from '@react-three/drei';
-import { Suspense } from 'react';
-
-function Loader() {
-  const { progress } = useProgress();
-  return <Html center>{progress.toFixed(0)}%</Html>;
-}
-
-export default function Scene() {
-  return (
-    <Canvas>
-      <Suspense fallback={<Loader />}>
-        <Model />
-      </Suspense>
-    </Canvas>
-  );
-}
-```
-```
-
-### Scroll-Driven 3D
-
-3D that responds to scroll
-
-**When to use**: When integrating 3D with scroll
-
-```python
-## Scroll-Driven 3D
-
-### R3F + Scroll Controls
-```jsx
-import { ScrollControls, useScroll } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-
-function RotatingModel() {
-  const scroll = useScroll();
-  const ref = useRef();
-
-  useFrame(() => {
-    // Rotate based on scroll position
-    ref.current.rotation.y = scroll.offset * Math.PI * 2;
+void main() {
+  group('RadarCalculations', () {
+    test('should calculate correct detection range', () {
+      // Arrange
+      const transmitPower = 1000.0; // watts
+      const antennaGain = 30.0;      // dBi
+      const frequency = 10e9;         // 10 GHz
+      const targetRCS = 1.0;          // square meters
+      
+      // Act
+      final range = calculateRadarRange(
+        transmitPower: transmitPower,
+        antennaGain: antennaGain,
+        frequency: frequency,
+        targetRCS: targetRCS,
+      );
+      
+      // Assert
+      expect(range, closeTo(45000, 1000)); // ~45 km ± 1 km
+    });
+    
+    test('should handle zero power input gracefully', () {
+      expect(
+        () => calculateRadarRange(
+          transmitPower: 0,
+          antennaGain: 30,
+          frequency: 10e9,
+          targetRCS: 1,
+        ),
+        throwsA(isA<InvalidPowerException>()),
+      );
+    });
   });
-
-  return <mesh ref={ref}>...</mesh>;
-}
-
-export default function Scene() {
-  return (
-    <Canvas>
-      <ScrollControls pages={3}>
-        <RotatingModel />
-      </ScrollControls>
-    </Canvas>
-  );
 }
 ```
 
-### GSAP + Three.js
-```javascript
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+### Widget Testing
 
-gsap.to(camera.position, {
-  scrollTrigger: {
-    trigger: '.section',
-    scrub: true,
-  },
-  z: 5,
-  y: 2,
+**Coverage Target**: All custom widgets and screens
+
+**Focus Areas**:
+- User interactions (taps, gestures)
+- Navigation flows
+- State changes reflected in UI
+- Accessibility features
+
+```dart
+// Example widget test
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  testWidgets('SpectrumAnalyzer displays frequency data', (tester) async {
+    // Arrange
+    final testData = FrequencyData(
+      centerFrequency: 2.4e9,
+      bandwidth: 20e6,
+      peaks: [
+        SignalPeak(frequency: 2.412e9, power: -50),
+        SignalPeak(frequency: 2.437e9, power: -60),
+      ],
+    );
+    
+    // Act
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SpectrumAnalyzer(data: testData),
+      ),
+    );
+    
+    // Assert
+    expect(find.text('2.4 GHz'), findsOneWidget);
+    expect(find.byType(FrequencyPlot), findsOneWidget);
+    
+    // Check accessibility
+    final semantics = tester.getSemantics(find.byType(FrequencyPlot));
+    expect(semantics.label, contains('Spectrum display'));
+  });
+  
+  testWidgets('Tapping on signal peak shows details', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(home: SpectrumAnalyzer(data: testData)),
+    );
+    
+    // Find and tap the first peak
+    await tester.tap(find.byKey(Key('peak_0')));
+    await tester.pumpAndSettle();
+    
+    // Verify detail dialog appears
+    expect(find.byType(SignalDetailDialog), findsOneWidget);
+    expect(find.text('-50 dBm'), findsOneWidget);
+  });
+}
+```
+
+### Integration Testing
+
+**Coverage Target**: Critical user flows
+
+**Focus Areas**:
+- Complete EW scenarios (e.g., detect → analyze → jam)
+- 3D visualization with data updates
+- State persistence across sessions
+- Performance under load
+
+```dart
+// Example integration test
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  
+  testWidgets('Complete ESM scenario flow', (tester) async {
+    // Launch app
+    await tester.pumpWidget(MyApp());
+    await tester.pumpAndSettle();
+    
+    // Navigate to ESM module
+    await tester.tap(find.text('ESM'));
+    await tester.pumpAndSettle();
+    
+    // Start signal scan
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pumpAndSettle(Duration(seconds: 2));
+    
+    // Verify signals detected
+    expect(find.text('Signals Detected'), findsOneWidget);
+    expect(find.byType(SignalListItem), findsWidgets);
+    
+    // Select first signal
+    await tester.tap(find.byType(SignalListItem).first);
+    await tester.pumpAndSettle();
+    
+    // Verify analysis screen appears
+    expect(find.text('Signal Analysis'), findsOneWidget);
+    expect(find.byType(WaveformDisplay), findsOneWidget);
+    
+    // Add to EOB (Electronic Order of Battle)
+    await tester.tap(find.text('Add to EOB'));
+    await tester.pumpAndSettle();
+    
+    // Verify confirmation
+    expect(find.text('Added to EOB'), findsOneWidget);
+  });
+}
+```
+
+### 3D Visualization Testing
+
+**Special Considerations**:
+- WebView testing requires platform-specific setup
+- Mock JavaScript communication for unit tests
+- Visual regression testing for 3D scenes
+
+```dart
+// Mock Cesium bridge for testing
+class MockCesiumBridge extends Mock implements CesiumBridge {
+  final List<Map<String, dynamic>> _commands = [];
+  
+  @override
+  Future<void> addRadarCoverage({
+    required double latitude,
+    required double longitude,
+    required double radius,
+    required Color color,
+  }) async {
+    _commands.add({
+      'type': 'radar_coverage',
+      'lat': latitude,
+      'lon': longitude,
+      'radius': radius,
+      'color': color,
+    });
+  }
+  
+  List<Map<String, dynamic>> get commands => _commands;
+}
+
+// Test
+test('3D scene adds radar coverage correctly', () async {
+  final mockBridge = MockCesiumBridge();
+  final scene3D = Scene3DController(bridge: mockBridge);
+  
+  await scene3D.displayRadarSite(
+    latitude: 13.7563,
+    longitude: 100.5018,
+    range: 50000,
+  );
+  
+  expect(mockBridge.commands.length, 1);
+  expect(mockBridge.commands.first['type'], 'radar_coverage');
+  expect(mockBridge.commands.first['radius'], 50000);
 });
 ```
 
-### Common Scroll Effects
-- Camera movement through scene
-- Model rotation on scroll
-- Reveal/hide elements
-- Color/material changes
-- Exploded view animations
+### Performance Testing
+
+**Key Metrics**:
+- App startup time: < 2 seconds
+- Screen transition time: < 300ms
+- 3D scene initialization: < 3 seconds
+- Memory usage: < 200 MB baseline
+- 60 FPS during animations
+
+```dart
+// Performance benchmark example
+import 'package:flutter/scheduler.dart';
+
+void main() {
+  test('Spectrum analysis performance benchmark', () async {
+    final stopwatch = Stopwatch()..start();
+    final data = generateLargeDataset(points: 10000);
+    
+    final analyzer = SpectrumAnalyzer();
+    final result = await analyzer.process(data);
+    
+    stopwatch.stop();
+    
+    // Should complete in less than 100ms
+    expect(stopwatch.elapsedMilliseconds, lessThan(100));
+  });
+}
 ```
 
-## Anti-Patterns
+### Test Data
 
-### ❌ 3D For 3D's Sake
+**Mock Signal Database**:
+```dart
+class MockSignalDatabase {
+  static final List<Signal> testSignals = [
+    Signal(
+      frequency: 2.4e9,
+      power: -50,
+      modulation: ModulationType.qpsk,
+      bandwidth: 20e6,
+      category: SignalCategory.communication,
+    ),
+    Signal(
+      frequency: 10e9,
+      power: -40,
+      modulation: ModulationType.pulseDoppler,
+      bandwidth: 100e6,
+      category: SignalCategory.radar,
+    ),
+    // Add more test signals...
+  ];
+}
+```
 
-**Why bad**: Slows down the site.
-Confuses users.
-Battery drain on mobile.
-Doesn't help conversion.
+### Edge Cases to Test
 
-**Instead**: 3D should serve a purpose.
-Product visualization = good.
-Random floating shapes = probably not.
-Ask: would an image work?
+1. **Empty States**
+   - No signals detected
+   - No data available for visualization
+   - Offline mode with no cached data
 
-### ❌ Desktop-Only 3D
+2. **Boundary Conditions**
+   - Maximum frequency (300 GHz)
+   - Minimum detectable signal (-120 dBm)
+   - Zero-range scenarios
 
-**Why bad**: Most traffic is mobile.
-Kills battery.
-Crashes on low-end devices.
-Frustrated users.
+3. **Error Scenarios**
+   - Network timeout during data fetch
+   - Invalid 3D model format
+   - WebView crash recovery
+   - GPS unavailable
 
-**Instead**: Test on real mobile devices.
-Reduce quality on mobile.
-Provide static fallback.
-Consider disabling 3D on low-end.
-
-### ❌ No Loading State
-
-**Why bad**: Users think it's broken.
-High bounce rate.
-3D takes time to load.
-Bad first impression.
-
-**Instead**: Loading progress indicator.
-Skeleton/placeholder.
-Load 3D after page is interactive.
-Optimize model size.
-
-## Related Skills
-
-Works well with: `scroll-experience`, `interactive-portfolio`, `frontend`, `landing-page-design`
-
----
-name: canvas-design
-description: Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.
-license: Complete terms in LICENSE.txt
----
-
-These are instructions for creating design philosophies - aesthetic movements that are then EXPRESSED VISUALLY. Output only .md files, .pdf files, and .png files.
-
-Complete this in two steps:
-1. Design Philosophy Creation (.md file)
-2. Express by creating it on a canvas (.pdf file or .png file)
-
-First, undertake this task:
-
-## DESIGN PHILOSOPHY CREATION
-
-To begin, create a VISUAL PHILOSOPHY (not layouts or templates) that will be interpreted through:
-- Form, space, color, composition
-- Images, graphics, shapes, patterns
-- Minimal text as visual accent
-
-### THE CRITICAL UNDERSTANDING
-- What is received: Some subtle input or instructions by the user that should be taken into account, but used as a foundation; it should not constrain creative freedom.
-- What is created: A design philosophy/aesthetic movement.
-- What happens next: Then, the same version receives the philosophy and EXPRESSES IT VISUALLY - creating artifacts that are 90% visual design, 10% essential text.
-
-Consider this approach:
-- Write a manifesto for an art movement
-- The next phase involves making the artwork
-
-The philosophy must emphasize: Visual expression. Spatial communication. Artistic interpretation. Minimal words.
-
-### HOW TO GENERATE A VISUAL PHILOSOPHY
-
-**Name the movement** (1-2 words): "Brutalist Joy" / "Chromatic Silence" / "Metabolist Dreams"
-
-**Articulate the philosophy** (4-6 paragraphs - concise but complete):
-
-To capture the VISUAL essence, express how the philosophy manifests through:
-- Space and form
-- Color and material
-- Scale and rhythm
-- Composition and balance
-- Visual hierarchy
-
-**CRITICAL GUIDELINES:**
-- **Avoid redundancy**: Each design aspect should be mentioned once. Avoid repeating points about color theory, spatial relationships, or typographic principles unless adding new depth.
-- **Emphasize craftsmanship REPEATEDLY**: The philosophy MUST stress multiple times that the final work should appear as though it took countless hours to create, was labored over with care, and comes from someone at the absolute top of their field. This framing is essential - repeat phrases like "meticulously crafted," "the product of deep expertise," "painstaking attention," "master-level execution."
-- **Leave creative space**: Remain specific about the aesthetic direction, but concise enough that the next Claude has room to make interpretive choices also at a extremely high level of craftmanship.
-
-The philosophy must guide the next version to express ideas VISUALLY, not through text. Information lives in design, not paragraphs.
-
-### PHILOSOPHY EXAMPLES
-
-**"Concrete Poetry"**
-Philosophy: Communication through monumental form and bold geometry.
-Visual expression: Massive color blocks, sculptural typography (huge single words, tiny labels), Brutalist spatial divisions, Polish poster energy meets Le Corbusier. Ideas expressed through visual weight and spatial tension, not explanation. Text as rare, powerful gesture - never paragraphs, only essential words integrated into the visual architecture. Every element placed with the precision of a master craftsman.
-
-**"Chromatic Language"**
-Philosophy: Color as the primary information system.
-Visual expression: Geometric precision where color zones create meaning. Typography minimal - small sans-serif labels letting chromatic fields communicate. Think Josef Albers' interaction meets data visualization. Information encoded spatially and chromatically. Words only to anchor what color already shows. The result of painstaking chromatic calibration.
-
-**"Analog Meditation"**
-Philosophy: Quiet visual contemplation through texture and breathing room.
-Visual expression: Paper grain, ink bleeds, vast negative space. Photography and illustration dominate. Typography whispered (small, restrained, serving the visual). Japanese photobook aesthetic. Images breathe across pages. Text appears sparingly - short phrases, never explanatory blocks. Each composition balanced with the care of a meditation practice.
-
-**"Organic Systems"**
-Philosophy: Natural clustering and modular growth patterns.
-Visual expression: Rounded forms, organic arrangements, color from nature through architecture. Information shown through visual diagrams, spatial relationships, iconography. Text only for key labels floating in space. The composition tells the story through expert spatial orchestration.
-
-**"Geometric Silence"**
-Philosophy: Pure order and restraint.
-Visual expression: Grid-based precision, bold photography or stark graphics, dramatic negative space. Typography precise but minimal - small essential text, large quiet zones. Swiss formalism meets Brutalist material honesty. Structure communicates, not words. Every alignment the work of countless refinements.
-
-*These are condensed examples. The actual design philosophy should be 4-6 substantial paragraphs.*
-
-### ESSENTIAL PRINCIPLES
-- **VISUAL PHILOSOPHY**: Create an aesthetic worldview to be expressed through design
-- **MINIMAL TEXT**: Always emphasize that text is sparse, essential-only, integrated as visual element - never lengthy
-- **SPATIAL EXPRESSION**: Ideas communicate through space, form, color, composition - not paragraphs
-- **ARTISTIC FREEDOM**: The next Claude interprets the philosophy visually - provide creative room
-- **PURE DESIGN**: This is about making ART OBJECTS, not documents with decoration
-- **EXPERT CRAFTSMANSHIP**: Repeatedly emphasize the final work must look meticulously crafted, labored over with care, the product of countless hours by someone at the top of their field
-
-**The design philosophy should be 4-6 paragraphs long.** Fill it with poetic design philosophy that brings together the core vision. Avoid repeating the same points. Keep the design philosophy generic without mentioning the intention of the art, as if it can be used wherever. Output the design philosophy as a .md file.
+4. **Concurrent Operations**
+   - Multiple signal scans simultaneously
+   - 3D rendering during state updates
+   - Background calculations while UI interacting
 
 ---
 
-## DEDUCING THE SUBTLE REFERENCE
+## 🔒 Security & Privacy
 
-**CRITICAL STEP**: Before creating the canvas, identify the subtle conceptual thread from the original request.
+### Data Protection
 
-**THE ESSENTIAL PRINCIPLE**:
-The topic is a **subtle, niche reference embedded within the art itself** - not always literal, always sophisticated. Someone familiar with the subject should feel it intuitively, while others simply experience a masterful abstract composition. The design philosophy provides the aesthetic language. The deduced topic provides the soul - the quiet conceptual DNA woven invisibly into form, color, and composition.
+#### Sensitive Information Handling
+- **EW scenarios**: May contain tactical information - local storage only
+- **User progress**: Encrypted with `flutter_secure_storage`
+- **No telemetry**: Educational app should not track user behavior
+- **Offline-first**: Core functionality available without internet
 
-This is **VERY IMPORTANT**: The reference must be refined so it enhances the work's depth without announcing itself. Think like a jazz musician quoting another song - only those who know will catch it, but everyone appreciates the music.
+```dart
+// Secure storage for sensitive data
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class SecureDataService {
+  final _storage = FlutterSecureStorage();
+  
+  Future<void> saveScenario(Scenario scenario) async {
+    final json = jsonEncode(scenario.toJson());
+    await _storage.write(
+      key: 'scenario_${scenario.id}',
+      value: json,
+    );
+  }
+  
+  Future<Scenario?> loadScenario(String id) async {
+    final json = await _storage.read(key: 'scenario_$id');
+    if (json == null) return null;
+    return Scenario.fromJson(jsonDecode(json));
+  }
+}
+```
+
+### Code Security
+
+#### Dependencies Audit
+- Run `flutter pub outdated` monthly
+- Check for known vulnerabilities with `dart pub deps`
+- Pin critical dependencies to specific versions
+
+#### WebView Security
+```dart
+// Secure WebView configuration
+WebView(
+  initialUrl: localAssetUrl, // Only load local assets
+  javascriptMode: JavascriptMode.unrestricted,
+  gestureNavigationEnabled: false,
+  
+  // Prevent unauthorized navigation
+  navigationDelegate: (NavigationRequest request) {
+    if (!request.url.startsWith('file://') && 
+        !request.url.startsWith('data:')) {
+      return NavigationDecision.prevent;
+    }
+    return NavigationDecision.navigate;
+  },
+)
+```
 
 ---
 
-## CANVAS CREATION
+## 📦 Dependencies
 
-With both the philosophy and the conceptual framework established, express it on a canvas. Take a moment to gather thoughts and clear the mind. Use the design philosophy created and the instructions below to craft a masterpiece, embodying all aspects of the philosophy with expert craftsmanship.
+### Core Dependencies
 
-**IMPORTANT**: For any type of content, even if the user requests something for a movie/game/book, the approach should still be sophisticated. Never lose sight of the idea that this should be art, not something that's cartoony or amateur.
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  provider: ^6.1.0
+  
+  # UI Components
+  flutter_svg: ^2.0.0
+  cached_network_image: ^3.3.0
+  
+  # WebView for Cesium
+  webview_flutter: ^4.4.0
+  
+  # Data & Storage
+  sqflite: ^2.3.0
+  path_provider: ^2.1.0
+  flutter_secure_storage: ^9.0.0
+  
+  # Utilities
+  intl: ^0.18.0
+  uuid: ^4.0.0
+  
+  # Dependency Injection
+  get_it: ^7.6.0
+  
+  # Math & Calculations
+  vector_math: ^2.1.4
 
-To create museum or magazine quality work, use the design philosophy as the foundation. Create one single page, highly visual, design-forward PDF or PNG output (unless asked for more pages). Generally use repeating patterns and perfect shapes. Treat the abstract philosophical design as if it were a scientific bible, borrowing the visual language of systematic observation—dense accumulation of marks, repeated elements, or layered patterns that build meaning through patient repetition and reward sustained viewing. Add sparse, clinical typography and systematic reference markers that suggest this could be a diagram from an imaginary discipline, treating the invisible subject with the same reverence typically reserved for documenting observable phenomena. Anchor the piece with simple phrase(s) or details positioned subtly, using a limited color palette that feels intentional and cohesive. Embrace the paradox of using analytical visual language to express ideas about human experience: the result should feel like an artifact that proves something ephemeral can be studied, mapped, and understood through careful attention. This is true art. 
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Testing
+  mockito: ^5.4.0
+  integration_test:
+    sdk: flutter
+  
+  # Code Quality
+  flutter_lints: ^3.0.0
+```
 
-**Text as a contextual element**: Text is always minimal and visual-first, but let context guide whether that means whisper-quiet labels or bold typographic gestures. A punk venue poster might have larger, more aggressive type than a minimalist ceramics studio identity. Most of the time, font should be thin. All use of fonts must be design-forward and prioritize visual communication. Regardless of text scale, nothing falls off the page and nothing overlaps. Every element must be contained within the canvas boundaries with proper margins. Check carefully that all text, graphics, and visual elements have breathing room and clear separation. This is non-negotiable for professional execution. **IMPORTANT: Use different fonts if writing text. Search the `./canvas-fonts` directory. Regardless of approach, sophistication is non-negotiable.**
+### Asset Management
 
-Download and use whatever fonts are needed to make this a reality. Get creative by making the typography actually part of the art itself -- if the art is abstract, bring the font onto the canvas, not typeset digitally.
-
-To push boundaries, follow design instinct/intuition while using the philosophy as a guiding principle. Embrace ultimate design freedom and choice. Push aesthetics and design to the frontier. 
-
-**CRITICAL**: To achieve human-crafted quality (not AI-generated), create work that looks like it took countless hours. Make it appear as though someone at the absolute top of their field labored over every detail with painstaking care. Ensure the composition, spacing, color choices, typography - everything screams expert-level craftsmanship. Double-check that nothing overlaps, formatting is flawless, every detail perfect. Create something that could be shown to people to prove expertise and rank as undeniably impressive.
-
-Output the final result as a single, downloadable .pdf or .png file, alongside the design philosophy used as a .md file.
+```yaml
+flutter:
+  assets:
+    # 3D Models
+    - assets/models/radar/
+    - assets/models/antennas/
+    - assets/models/drones/
+    
+    # Cesium WebView
+    - assets/cesium/
+    
+    # Educational Content
+    - assets/images/diagrams/
+    - assets/images/icons/
+    
+    # Data Files
+    - assets/data/signals.json
+    - assets/data/scenarios.json
+```
 
 ---
 
-## FINAL STEP
+## 🚀 Build & Deployment
 
-**IMPORTANT**: The user ALREADY said "It isn't perfect enough. It must be pristine, a masterpiece if craftsmanship, as if it were about to be displayed in a museum."
+### Development Workflow
 
-**CRITICAL**: To refine the work, avoid adding more graphics; instead refine what has been created and make it extremely crisp, respecting the design philosophy and the principles of minimalism entirely. Rather than adding a fun filter or refactoring a font, consider how to make the existing composition more cohesive with the art. If the instinct is to call a new function or draw a new shape, STOP and instead ask: "How can I make what's already here more of a piece of art?"
+```bash
+# Clean build
+flutter clean
+flutter pub get
 
-Take a second pass. Go back to the code and refine/polish further to make this a philosophically designed masterpiece.
+# Run app (development mode)
+flutter run --debug
 
-## MULTI-PAGE OPTION
+# Run with specific flavor (if using)
+flutter run --flavor development -t lib/main_dev.dart
 
-To create additional pages when requested, create more creative pages along the same lines as the design philosophy but distinctly different as well. Bundle those pages in the same .pdf or many .pngs. Treat the first page as just a single page in a whole coffee table book waiting to be filled. Make the next pages unique twists and memories of the original. Have them almost tell a story in a very tasteful way. Exercise full creative freedom.
+# Run tests
+flutter test
+flutter test integration_test/
+
+# Code generation (if using)
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+### Build Configurations
+
+#### Android Release Build
+```bash
+# Generate release APK
+flutter build apk --release --split-per-abi
+
+# Generate release AAB (for Play Store)
+flutter build appbundle --release
+```
+
+#### iOS Release Build
+```bash
+# Generate release IPA
+flutter build ios --release
+```
+
+### Version Management
+
+**Semantic Versioning**: MAJOR.MINOR.PATCH
+- **MAJOR**: Breaking changes to UI or core features
+- **MINOR**: New EW modules or significant features
+- **PATCH**: Bug fixes and minor improvements
+
+```yaml
+# pubspec.yaml
+version: 1.0.0+1
+# Format: version_name+build_number
+```
+
+---
+
+## 📚 Documentation Requirements
+
+### Code Documentation
+
+Every public API must include:
+1. **Purpose**: What does this class/function do?
+2. **Parameters**: What inputs does it accept?
+3. **Returns**: What does it return?
+4. **Example**: How to use it?
+
+```dart
+/// Calculates Line-of-Sight (LOS) distance between two points considering Earth curvature.
+///
+/// Uses the Haversine formula with terrain elevation adjustments.
+/// Accounts for atmospheric refraction (4/3 Earth radius approximation).
+///
+/// Parameters:
+///   - [point1]: First geographic point with elevation
+///   - [point2]: Second geographic point with elevation
+///   - [frequency]: Operating frequency in Hz (affects refraction)
+///
+/// Returns: LOS distance in meters, or null if obstructed by terrain
+///
+/// Example:
+/// ```dart
+/// final distance = calculateLOS(
+///   GeoPoint(lat: 13.7563, lon: 100.5018, elevation: 100),
+///   GeoPoint(lat: 13.7600, lon: 100.5100, elevation: 50),
+///   frequency: 10e9,
+/// );
+/// print('LOS distance: ${distance}m');
+/// ```
+double? calculateLOS(GeoPoint point1, GeoPoint point2, double frequency) {
+  // Implementation...
+}
+```
+
+### EW Scenario Documentation
+
+Each scenario file should include:
+```json
+{
+  "scenario_id": "esm_basic_001",
+  "title": "Basic ESM Detection Exercise",
+  "description": "Learn to identify and classify common radar emissions",
+  "learning_objectives": [
+    "Distinguish between pulse and CW radars",
+    "Measure PRF and pulse width accurately",
+    "Classify emitter based on signal characteristics"
+  ],
+  "difficulty": "beginner",
+  "estimated_time_minutes": 15,
+  "prerequisite_scenarios": [],
+  "signals": [
+    {
+      "emitter_id": "radar_001",
+      "type": "air_search_radar",
+      "frequency_ghz": 10.0,
+      "prf_hz": 1000,
+      "pulse_width_us": 2.0
+    }
+  ]
+}
+```
+
+---
+
+## 🎓 Learning Resources for Developers
+
+### Recommended Reading
+
+**Flutter Development**:
+- [Flutter Documentation](https://docs.flutter.dev/)
+- "Flutter Complete Reference" by Alberto Miola
+- [Flutter Architecture Samples](https://github.com/brianegan/flutter_architecture_samples)
+
+**Electronic Warfare**:
+- "Introduction to Electronic Warfare" by D. Curtis Schleher
+- "Electronic Warfare and Radar Systems Engineering Handbook" (Naval Air Warfare Center)
+- [IEEE Xplore](https://ieeexplore.ieee.org/) - Search for "electronic warfare"
+
+**3D Visualization**:
+- [Cesium Documentation](https://cesium.com/learn/)
+- [WebGL Fundamentals](https://webglfundamentals.org/)
+
+### Community & Support
+
+- **Flutter Community**: [Discord](https://discord.gg/flutter)
+- **Stack Overflow**: Tag questions with `flutter` and `electronic-warfare`
+- **GitHub Discussions**: Use for feature requests and architectural questions
+
+---
+
+## 🔄 Git Workflow
+
+### Conventional Commits (From git-pushing skill)
+
+**ALWAYS use the smart commit script** - do NOT use manual git commands:
+
+```bash
+# Auto-generate conventional commit message
+bash skills/git-pushing/scripts/smart_commit.sh
+
+# Or with custom message
+bash skills/git-pushing/scripts/smart_commit.sh "feat(esm): add direction finding algorithm"
+```
+
+### Commit Message Format
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types**:
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation only
+- `style`: Code style changes (formatting, no logic change)
+- `refactor`: Code restructuring without changing behavior
+- `test`: Adding or modifying tests
+- `chore`: Build process or auxiliary tools
+- `perf`: Performance improvements
+
+**Scopes** (EW modules):
+- `spectrum`: Spectrum Analysis
+- `esm`: Electronic Support Measures
+- `ecm`: Electronic Counter Measures
+- `eccm`: Electronic Counter-Counter Measures
+- `radio`: Radio Communications with COMSEC
+- `radar`: Radar Technology
+- `anti-drone`: Anti-Drone Systems
+- `gps`: GPS Warfare
+- `3d`: 3D Visualization
+- `core`: Core functionality
+
+**Example**:
+```
+feat(esm): add direction finding algorithm
+
+Implement Watson-Watt DF method for signal bearing estimation.
+Includes unit tests and integration with ESM display widget.
+
+Closes #42
+```
+
+### Branch Strategy
+
+**GitFlow**:
+- `main`: Production-ready code
+- `develop`: Integration branch for features
+- `feature/`: Individual feature development
+- `hotfix/`: Critical bug fixes
+
+---
+
+## 📋 Planning Approach (concise-planning skill)
+
+## 📞 Support & Contact
+
+### For Development Issues
+- Check existing GitHub issues first
+- Provide minimal reproducible example
+- Include Flutter doctor output
+- Specify device/emulator details
+
+### For EW Domain Questions
+- Reference authoritative sources (textbooks, standards)
+- Distinguish between classified and unclassified concepts
+- Use open-source intelligence when possible
+
+---
+
+## 🎯 Roadmap & Future Enhancements
+
+### Phase 1: Core Educational Content (Current)
+- ✅ Basic app structure
+- ✅ Educational content for 8 EW topics
+- 🔄 3D globe with Cesium integration
+
+### Phase 2: Interactive Simulations
+- Signal processing visualizations
+- Real-time spectrum analyzer simulation
+- Interactive jamming scenarios
+
+### Phase 3: Advanced Features
+- Multi-player scenarios (collaborative learning)
+- AR visualization for antenna patterns
+- Export simulation results to PDF
+
+### Phase 4: AI Integration
+- Automatic signal classification
+- Optimal jamming strategy recommendations
+- Adaptive learning path based on performance
+
+---
+
+## 📝 Change Log
+
+### v0.1.0 (Current Development)
+- Initial project structure
+- Basic navigation
+- Placeholder content for EW modules
+- Cesium WebView integration prototype
+
+---
+
+## ⚖️ License & Attribution
+
+This is an educational project. Use responsibly and in accordance with local laws regarding electronic warfare information.
+
+**Educational Use Only**: This application is for training and education purposes. It does not contain classified information and should not be used for actual military operations.
+
+**Third-Party Licenses**:
+- Cesium: Apache License 2.0
+- Flutter: BSD 3-Clause License
+- All dependencies: See respective licenses in `pubspec.lock`
+
+---
+
+## 🙏 Acknowledgments
+
+- Cesium Team for excellent 3D visualization platform
+- Flutter Team for the amazing framework
+- Open-source EW community for educational resources
+
+---
+
+**Last Updated**: 2025-02-01  
+**Document Version**: 1.0.0  
+**Maintained By**: EW_SIM Development Team
+
+When starting a new coding task, use this approach:
+
+### Plan Template
+
+```markdown
+# Plan: [Feature Name]
+
+**Approach**: [1-3 sentences on what and why]
+
+## Scope
+
+**In**:
+- [What will be implemented]
+- [Components affected]
+
+**Out**:
+- [What won't be included]
+- [Future considerations]
+
+## Action Items
+
+- [ ] Step 1: Discovery (scan relevant code)
+- [ ] Step 2: Implementation (create/modify files)
+- [ ] Step 3: Validation (run tests/linters)
+- [ ] Step 4: Rollout (commit with conventional message)
+
+## Open Questions
+
+- [Question 1, if any]
+```
+
+### Checklist Guidelines
+
+- **Atomic**: Each step is a single logical unit
+- **Verb-first**: "Add...", "Refactor...", "Verify..."
+- **Concrete**: Name specific files/modules when possible
+
+**Example Plan**:
+
+```markdown
+# Plan: Add Signal Bearing Display to ESM Module
+
+**Approach**: Create a circular bearing indicator widget that shows detected signal direction using Watson-Watt DF algorithm results.
+
+## Scope
+
+**In**:
+- BearingIndicatorWidget (new widget)
+- Integration with ESMState
+- Unit tests for bearing calculations
+- Widget tests for visual rendering
+
+**Out**:
+- Historical bearing data storage
+- Multi-signal bearing comparison
+- 3D bearing visualization (future)
+
+## Action Items
+
+- [ ] Create lib/features/esm/presentation/widgets/bearing_indicator.dart
+- [ ] Add bearing angle to ESMState model
+- [ ] Implement circular bearing display with CustomPainter
+- [ ] Add unit tests for angle calculations
+- [ ] Add widget test for rendering
+- [ ] Run flutter analyze && flutter test
+- [ ] Commit with "feat(esm): add signal bearing indicator"
+
+## Open Questions
+
+- Should bearing update in real-time or only on user tap?
+```
+
+---
+
+## 🎯 Applying Skills to EW_SIM
+
+### When Working on Mobile Performance
+
+Apply principles from **mobile-performance** skill:
+
+```dart
+// ✅ Optimize ListView for large signal lists
+class SignalListScreen extends StatelessWidget {
+  final List<Signal> signals;  // Could be 1000+ signals
+  
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(  // Not ListView(), uses lazy loading
+      itemCount: signals.length,
+      itemBuilder: (context, index) {
+        return SignalListItem(signal: signals[index]);
+      },
+    );
+  }
+}
+
+// ✅ Cache network images
+CachedNetworkImage(
+  imageUrl: 'https://example.com/antenna.png',
+  memCacheWidth: 400,  // Reduce memory footprint
+  placeholder: (context, url) => CircularProgressIndicator(),
+);
+
+// ✅ Dispose resources properly
+class RadarDisplayWidget extends StatefulWidget {
+  @override
+  _RadarDisplayWidgetState createState() => _RadarDisplayWidgetState();
+}
+
+class _RadarDisplayWidgetState extends State<RadarDisplayWidget> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late StreamSubscription _radarDataSub;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    )..repeat();
+    
+    _radarDataSub = radarStream.listen(_updateDisplay);
+  }
+  
+  @override
+  void dispose() {
+    _controller.dispose();  // Prevent memory leak
+    _radarDataSub.cancel();
+    super.dispose();
+  }
+}
+```
+
+### When Designing Learning Content
+
+Apply principles from **instructional-design** and **microlearning** skills:
+
+```dart
+// ✅ Break complex topics into micro-lessons
+class ESMCourse {
+  final List<MicroLesson> lessons = [
+    // Lesson 1: Introduction (5 min)
+    MicroLesson(
+      title: 'What is ESM?',
+      estimatedTime: Duration(minutes: 5),
+      content: [
+        TextBlock('ESM stands for Electronic Support Measures...'),
+        ImageBlock('assets/esm_overview.png'),
+        QuickQuiz([
+          MultipleChoice('ESM is primarily...', correctIndex: 1),
+        ]),
+      ],
+    ),
+    
+    // Lesson 2: Hands-on Practice (7 min)
+    MicroLesson(
+      title: 'Detecting Your First Signal',
+      estimatedTime: Duration(minutes: 7),
+      content: [
+        TextBlock('Let\'s practice signal detection...'),
+        InteractiveBlock(SignalDetectionSimulator()),  // 5 min practice
+        QuickQuiz([
+          PracticalQuestion('Identify the signal type'),
+        ]),
+      ],
+    ),
+  ];
+  
+  // ✅ Define clear learning objectives (SMART)
+  final List<LearningObjective> objectives = [
+    LearningObjective(
+      description: 'Identify 5 common radar types by PRF pattern within 2 minutes',
+      assessmentType: AssessmentType.timedPractice,
+      bloomLevel: BloomLevel.apply,
+    ),
+  ];
+}
+```
+
+### When Implementing Gamification
+
+Apply principles from **gamification** skill:
+
+```dart
+// ✅ Add achievement system
+class AchievementService {
+  Future<void> checkAchievements(UserProgress progress) async {
+    // First signal detection
+    if (progress.signalsDetected == 1) {
+      await _unlockAchievement(Achievement.firstSignal);
+    }
+    
+    // Complete all ESM scenarios
+    if (progress.completedESMScenarios == progress.totalESMScenarios) {
+      await _unlockAchievement(Achievement.esmMaster);
+    }
+    
+    // Streak system
+    if (progress.currentStreak >= 7) {
+      await _unlockAchievement(Achievement.weekWarrior);
+    }
+  }
+}
+
+// ✅ Progress visualization
+class ProgressCard extends StatelessWidget {
+  final UserProgress progress;
+  
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [
+          // Visual progress bar
+          LinearProgressIndicator(
+            value: progress.completionPercentage,
+          ),
+          Text('${(progress.completionPercentage * 100).toInt()}% Complete'),
+          
+          // Streak indicator
+          Row(
+            children: [
+              Icon(Icons.local_fire_department),
+              Text('${progress.currentStreak} day streak'),
+            ],
+          ),
+          
+          // Next achievement preview
+          Text('Next: Complete 10 scenarios to unlock "ESM Expert"'),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### When Supporting Diverse Learners
+
+Apply principles from **accessibility-learning** skill:
+
+```dart
+// ✅ Multiple means of representation
+class LessonContentViewer extends StatelessWidget {
+  final LessonContent content;
+  final UserPreferences preferences;
+  
+  @override
+  Widget build(BuildContext context) {
+    // Adapt to user's preferred learning style
+    switch (preferences.contentFormat) {
+      case ContentFormat.text:
+        return Text(content.textExplanation);
+        
+      case ContentFormat.video:
+        return VideoPlayer(url: content.videoUrl);
+        
+      case ContentFormat.audio:
+        return AudioPlayer(url: content.audioUrl);
+        
+      case ContentFormat.interactive:
+        return content.interactiveWidget;
+    }
+  }
+}
+
+// ✅ Dyslexia-friendly option
+class AccessibleText extends StatelessWidget {
+  final String text;
+  
+  @override
+  Widget build(BuildContext context) {
+    final isDyslexicMode = context.read<AccessibilitySettings>().dyslexicMode;
+    
+    return Text(
+      text,
+      style: TextStyle(
+        fontFamily: isDyslexicMode ? 'OpenDyslexic' : 'Roboto',
+        fontSize: isDyslexicMode ? 18 : 16,
+        height: isDyslexicMode ? 1.6 : 1.4,
+        letterSpacing: isDyslexicMode ? 0.8 : 0.0,
+      ),
+    );
+  }
+}
+
+// ✅ Screen reader support for complex visualizations
+Semantics(
+  label: '3D radar coverage visualization',
+  hint: 'Shows detection range of 45 kilometers. '
+        'Blue zone represents line-of-sight coverage. '
+        'Terrain affects coverage shape.',
+  value: 'Currently showing Site Alpha radar at coordinates 13.75N, 100.50E',
+  child: Cesium3DWidget(),
+)
+```
+
+### When Implementing Offline Learning
+
+Apply principles from **offline-first** skill:
+
+```dart
+// ✅ Download lessons for offline use
+class OfflineLearningService {
+  Future<void> downloadLesson(Lesson lesson) async {
+    // Download all lesson assets
+    await _downloadVideo(lesson.videoUrl);
+    await _downloadImages(lesson.images);
+    await _downloadInteractiveData(lesson.interactiveContent);
+    
+    // Save to local database
+    final db = await database;
+    await db.insert('lessons', lesson.toMap());
+    
+    // Mark as available offline
+    lesson.isAvailableOffline = true;
+  }
+  
+  // Sync progress when back online
+  Future<void> syncProgress() async {
+    final isOnline = await ConnectivityService().checkConnection();
+    if (!isOnline) return;
+    
+    final unsyncedProgress = await _getUnsyncedProgress();
+    for (final progress in unsyncedProgress) {
+      await _uploadProgress(progress);
+    }
+  }
+}
+
+// ✅ Offline-first quiz
+class OfflineQuiz extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Question>>(
+      future: _loadQuestionsLocally(),  // Load from SQLite, not API
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+        
+        return QuizWidget(
+          questions: snapshot.data!,
+          onComplete: (results) async {
+            // Save results locally
+            await _saveResultsLocally(results);
+            
+            // Sync later when online
+            _queueForSync(results);
+          },
+        );
+      },
+    );
+  }
+}
+```
+
+### When Working on 3D Visualization
+
+Apply principles from **3d-web-experience** skill:
+
+- **Performance first**: Mobile devices have limited GPU power
+- **Progressive loading**: Show low-poly models first, enhance later
+- **Fallback states**: Provide 2D alternative if 3D fails
+- **Touch controls**: Design for mobile interaction (pinch, rotate, pan)
+
+```dart
+// Apply 3D optimization principles
+class CesiumGlobeWidget extends StatefulWidget {
+  @override
+  _CesiumGlobeWidgetState createState() => _CesiumGlobeWidgetState();
+}
+
+class _CesiumGlobeWidgetState extends State<CesiumGlobeWidget> {
+  bool _isLoading = true;
+  bool _useFallback = false;
+  
+  // Progressive loading - start with low-poly terrain
+  Future<void> _initializeCesium() async {
+    try {
+      await _loadLowPolyTerrain();
+      setState(() => _isLoading = false);
+      // Enhance in background
+      _loadHighPolyTerrain();
+    } catch (e) {
+      // Fallback to 2D map
+      setState(() => _useFallback = true);
+    }
+  }
+}
+```
+
+### When Designing Forms (EW Scenario Input)
+
+Apply principles from **form-cro** skill:
+
+- Field order: Easiest first (name, type) → commitment fields last
+- Inline validation after field interaction
+- Clear error messages
+- Mobile-optimized (≥44px touch targets)
+
+```dart
+// Apply form CRO principles
+class ScenarioInputForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      child: Column(
+        children: [
+          // Easiest field first
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Scenario Name'),
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Please enter a scenario name';  // Specific, actionable
+              }
+              return null;
+            },
+          ),
+          
+          // Commitment field later
+          DropdownButtonFormField(
+            items: scenarioTypes,
+            decoration: InputDecoration(labelText: 'Scenario Type'),
+            // ≥44px touch target automatically via Material Design
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### When Building Educational Content UI
+
+Apply principles from **ui-ux-pro-max** skill:
+
+**Accessibility (CRITICAL)**:
+- Color contrast ratio: Minimum 4.5:1
+- Touch targets: Minimum 48x48 dp (Flutter standard)
+- Screen reader support: Use Semantics widget
+- Text scaling: Support up to 200%
+
+```dart
+// Apply UI/UX pro principles
+Semantics(
+  label: 'Radar coverage zone for Site Alpha',
+  hint: 'Shows effective detection range',
+  child: RadarCoverageWidget(site: siteAlpha),
+)
+
+// Color contrast check
+const textColor = Color(0xFF0F172A);  // slate-900
+const backgroundColor = Colors.white;
+// Ratio: 15.52:1 ✓ (exceeds 4.5:1 requirement)
+```
+
+**Typography**:
+- Line height: 1.5-1.75 for body text
+- Line length: 65-75 characters max
+- Minimum font size: 16sp on mobile
+
+---
+
+## 🔍 Pre-Delivery Checklist
+
+Before delivering any code, verify:
+
+### Code Quality
+- [ ] Runs `flutter analyze` with no errors
+- [ ] Runs `dart format .` successfully
+- [ ] All tests pass (`flutter test`)
+- [ ] No TODO comments left unaddressed
+- [ ] Follows existing code patterns
+- [ ] Resources properly disposed (controllers, subscriptions, streams)
+
+### Mobile Performance
+- [ ] ListView uses `.builder()` for long lists
+- [ ] Images are compressed and cached
+- [ ] No expensive operations in `build()` methods
+- [ ] Animations run at 60 FPS
+- [ ] Battery consumption is reasonable
+- [ ] Works smoothly on mid-range devices
+
+### UI/UX Quality
+- [ ] All touch targets ≥ 48x48 dp
+- [ ] Color contrast ≥ 4.5:1 for text
+- [ ] Screen reader labels present (Semantics widget)
+- [ ] Works in both light and dark mode
+- [ ] Responsive on different screen sizes
+- [ ] Font size minimum 16sp on mobile
+- [ ] No horizontal scrolling issues
+
+### Educational Content
+- [ ] Learning objectives clearly defined (SMART format)
+- [ ] Content chunked into 5-10 minute lessons
+- [ ] Multiple content formats available (text, visual, interactive)
+- [ ] Quiz questions aligned with Bloom's taxonomy
+- [ ] Progress tracking implemented
+- [ ] Achievements/gamification elements functional
+
+### Accessibility & Inclusion
+- [ ] Screen reader support for complex visualizations
+- [ ] Multiple means of representation (text, audio, video, interactive)
+- [ ] Dyslexia-friendly typography option available
+- [ ] Keyboard navigation works
+- [ ] Cognitive load reduced (chunking, progressive disclosure)
+- [ ] Supports different learning paces
+
+### Offline Capability
+- [ ] Core lessons available offline
+- [ ] Local database saves progress
+- [ ] Sync works when back online
+- [ ] Handles connectivity changes gracefully
+- [ ] User notified of offline/online status
+
+### Security
+- [ ] Sensitive data uses `flutter_secure_storage`
+- [ ] No hardcoded secrets or API keys
+- [ ] Data encrypted at rest if needed
+- [ ] Proper certificate validation for network calls
+
+### Platform-Specific
+- [ ] Tested on both Android and iOS
+- [ ] Platform-specific UI patterns respected
+- [ ] Safe area handling correct
+- [ ] Status bar/navigation bar handled properly
+
+### Documentation
+- [ ] Public APIs have dartdoc comments
+- [ ] Complex logic explained
+- [ ] README updated if needed
+- [ ] CLAUDE.md updated if patterns changed
+
+### Git
+- [ ] Conventional commit message
+- [ ] Branch strategy followed
+- [ ] No merge conflicts
+- [ ] Linked to issue/task if applicable
+
+---
+
+## 🎓 Learning Resources
+
+### EW Domain Knowledge
+- "Introduction to Electronic Warfare" by D. Curtis Schleher
+- "Electronic Warfare and Radar Systems Engineering Handbook" (Naval Air Warfare Center)
+- IEEE Xplore: Search "electronic warfare"
+- [Jane's Radar and Electronic Warfare Systems](https://www.janes.com/)
+
+### Flutter Development
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Effective Dart](https://dart.dev/guides/language/effective-dart)
+- [Flutter Architecture Samples](https://github.com/brianegan/flutter_architecture_samples)
+- [Provider Documentation](https://pub.dev/packages/provider)
+
+### Mobile Performance
+- [Flutter Performance Best Practices](https://docs.flutter.dev/perf/best-practices)
+- [Flutter Performance Profiling](https://docs.flutter.dev/perf/ui-performance)
+- [Optimizing Flutter Performance](https://medium.com/flutter/flutter-performance-tips-1-5-2a6c82d3f8e7)
+
+### Educational Design
+- "The ABCs of How We Learn" by Daniel L. Schwartz
+- "Make It Stick: The Science of Successful Learning" by Peter C. Brown
+- [Universal Design for Learning (UDL) Guidelines](http://udlguidelines.cast.org/)
+- [Bloom's Taxonomy](https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/)
+- [Spaced Repetition Research](https://www.gwern.net/Spaced-repetition)
+
+### Gamification & Engagement
+- "The Gamification of Learning and Instruction" by Karl M. Kapp
+- [Octalysis Framework](https://yukaichou.com/gamification-examples/octalysis-complete-gamification-framework/)
+- [Duolingo Engineering Blog](https://blog.duolingo.com/) - Great examples of educational gamification
+
+### Accessibility
+- [Flutter Accessibility](https://docs.flutter.dev/development/accessibility-and-localization/accessibility)
+- [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/WCAG21/quickref/)
+- [Material Design Accessibility](https://m3.material.io/foundations/accessible-design/overview)
+
+### 3D & Visualization
+- [Cesium for Unreal](https://cesium.com/learn/) - Concepts apply to WebView integration
+- [Three.js Fundamentals](https://threejs.org/manual/) - 3D concepts
+- [WebGL Fundamentals](https://webglfundamentals.org/) - Understanding 3D rendering
+
+---
+
+## 📞 Support & Quick Reference
+
+### Common Commands
+
+```bash
+# Development
+flutter run --debug
+flutter run --release
+
+# Testing
+flutter test
+flutter test --coverage
+
+# Code Quality
+flutter analyze
+dart format .
+flutter pub outdated
+
+# Build
+flutter build apk --release
+flutter build appbundle --release
+flutter build ios --release
+
+# Git (use smart_commit.sh instead)
+bash skills/git-pushing/scripts/smart_commit.sh
+```
+
+### File Structure Quick Reference
+
+```
+lib/
+├── main.dart
+├── core/
+│   ├── constants/
+│   ├── theme/
+│   ├── utils/
+│   └── services/
+├── features/
+│   ├── spectrum_analysis/
+│   ├── esm/
+│   ├── ecm/
+│   ├── eccm/
+│   ├── radio_comsec/
+│   ├── radar/
+│   ├── anti_drone/
+│   ├── gps_warfare/
+│   └── visualization_3d/
+└── shared/
+    ├── widgets/
+    ├── models/
+    └── extensions/
+```
+
+### Color Scheme Quick Reference
+
+```dart
+// EW Module Colors
+const spectrumPrimary = Color(0xFF2196F3);   // Blue
+const esmPrimary = Color(0xFF4CAF50);        // Green
+const ecmPrimary = Color(0xFFF44336);        // Red
+const eccmPrimary = Color(0xFFFF9800);       // Orange
+const radioComsecPrimary = Color(0xFF9C27B0); // Purple
+const radarPrimary = Color(0xFF00BCD4);      // Cyan
+const antiDronePrimary = Color(0xFFFFC107);  // Amber
+const gpsPrimary = Color(0xFF009688);        // Teal
+```
+
+---
+
+## 🔄 Change Log
+
+### v1.2.0 (Current)
+- Added comprehensive **Mobile App Development** skills:
+  - flutter-architecture (state management, navigation, DI)
+  - mobile-performance (60 FPS, battery, memory optimization)
+  - offline-first (local storage, sync strategies)
+  - app-security (secure storage, encryption)
+  - cross-platform (Android/iOS differences)
+- Added **Educational & Learning Design** skills:
+  - instructional-design (learning objectives, scaffolding)
+  - gamification (achievements, progress tracking, engagement)
+  - microlearning (bite-sized lessons, spaced repetition)
+  - assessment-design (quizzes, adaptive difficulty)
+  - accessibility-learning (UDL, diverse learners)
+- Enhanced Pre-Delivery Checklist with mobile and learning aspects
+- Updated Applying Skills section with practical examples
+- Expanded Learning Resources
+
+### v1.1.0
+- Integrated available skills reference (concise-planning, lint-and-validate, git-pushing, kaizen, etc.)
+- Added Kaizen-inspired development philosophy
+- Enhanced quality control section
+- Added skill application examples
+- Improved pre-delivery checklist
+
+### v1.0.0
+- Initial CLAUDE.md structure
+- EW domain knowledge documentation
+- Flutter architecture guidelines
+- 3D visualization with Cesium
+- UI/UX design guidelines
+- Testing strategy
+
+---
+
+## ⚖️ License & Attribution
+
+This is an educational project. Use responsibly and in accordance with local laws regarding electronic warfare information.
+
+**Educational Use Only**: This application is for training and education purposes. It does not contain classified information and should not be used for actual military operations.
+
+**Third-Party Licenses**:
+- Cesium: Apache License 2.0
+- Flutter: BSD 3-Clause License
+- All dependencies: See respective licenses in `pubspec.lock`
+
+**Skills Reference**:
+- Skills documentation is part of Claude's available capabilities
+- Applied according to project context and requirements
+
+---
+
+**Last Updated**: 2025-02-01  
+**Document Version**: 1.2.0  
+**Maintained By**: EW_SIM Development Team
+
+---
+
+## 📝 Quick Start for Claude Code
+
+When you start working on this project:
+
+1. **Read this file first** - Understand the project structure and philosophy
+2. **Check available skills** - Reference the skills section above for:
+   - Mobile development best practices
+   - Educational design principles
+   - Performance optimization
+   - Accessibility requirements
+3. **Plan your work** - Use concise-planning approach
+4. **Write code** - Follow Flutter architecture guidelines
+5. **Validate** - Run lint-and-validate checks
+6. **Commit** - Use git-pushing with conventional commits
+7. **Iterate** - Apply Kaizen principles for continuous improvement
+
+### Key Considerations for EW_SIM
+
+**Mobile-First Mindset**:
+- Performance matters: 60 FPS, low battery drain
+- Touch targets: Minimum 48x48 dp
+- Test on real devices, not just emulator
+- Offline capability is essential
+
+**Educational Excellence**:
+- Clear learning objectives (SMART format)
+- Microlearning: 5-10 minute lessons
+- Multiple content formats (text, visual, interactive, audio)
+- Progress tracking and motivation (achievements, streaks)
+- Accessible to diverse learners
+
+**EW Domain Accuracy**:
+- Reference authoritative sources
+- Use correct terminology
+- Realistic simulations
+- Educational purpose only (not operational)
+
+Remember: **Small improvements, continuously. Error-proof by design. Follow what works. Build only what's needed.**
+
+---
+
+## 📱 Mobile App Development Skills
+
+### flutter-architecture
+
+**When to apply**: Structuring app, choosing state management, organizing code
+
+#### Core Principles
+
+**Feature-First Architecture**
+```
+lib/
+├── features/          # Each EW topic is a feature
+│   ├── spectrum_analysis/
+│   │   ├── data/      # Data sources, repositories
+│   │   ├── domain/    # Business logic, use cases
+│   │   └── presentation/  # UI, widgets, state
+│   └── esm/
+├── core/              # Shared across features
+└── shared/            # Reusable components
+```
+
+**State Management Decision Tree**
+
+| Complexity | Solution | When to Use |
+|------------|----------|-------------|
+| Simple | setState | Single widget, no sharing |
+| Local | Provider + ChangeNotifier | Feature-level state |
+| Complex | Riverpod | App-wide, many dependencies |
+| Reactive | BLoC | Heavy business logic |
+
+**For EW_SIM**: Use **Provider** for educational content, **ChangeNotifier** for 3D scene state.
+
+#### Navigation Patterns
+
+```dart
+// Declarative routing (recommended)
+GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => HomeScreen(),
+    ),
+    GoRoute(
+      path: '/esm',
+      builder: (context, state) => ESMModule(),
+      routes: [
+        GoRoute(
+          path: 'scenario/:id',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return ScenarioScreen(id: id);
+          },
+        ),
+      ],
+    ),
+  ],
+);
+```
+
+#### Dependency Injection
+
+```dart
+// Use GetIt for service location
+final getIt = GetIt.instance;
+
+void setupDependencies() {
+  // Singletons for services
+  getIt.registerSingleton<SignalDatabase>(SignalDatabase());
+  getIt.registerSingleton<ThemeService>(ThemeService());
+  
+  // Factories for use cases
+  getIt.registerFactory(() => AnalyzeSignalUseCase(
+    repository: getIt<SignalRepository>(),
+  ));
+}
+```
+
+---
+
+### mobile-performance
+
+**When to apply**: App feels sluggish, battery drain, memory issues
+
+#### 60 FPS Rule
+
+Every frame must complete in **16.67ms** (1000ms / 60fps).
+
+**Performance Checklist**:
+- [ ] No expensive operations in build()
+- [ ] Images are compressed and cached
+- [ ] Lists use ListView.builder, not ListView
+- [ ] Animations use AnimatedWidget or ImplicitlyAnimatedWidget
+- [ ] 3D scenes optimize polygon count
+
+#### Build Method Optimization
+
+```dart
+// ❌ Bad - rebuilds entire tree
+class BadWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final data = Provider.of<DataModel>(context); // Rebuilds on any change
+    return Column(
+      children: [
+        ExpensiveWidget(data: data),
+        AnotherWidget(data: data),
+      ],
+    );
+  }
+}
+
+// ✅ Good - selective listening
+class GoodWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Consumer<DataModel>(
+          builder: (context, data, child) => ExpensiveWidget(data: data),
+        ),
+        // This doesn't rebuild when DataModel changes
+        const AnotherWidget(),
+      ],
+    );
+  }
+}
+```
+
+#### Image Optimization
+
+```dart
+// ✅ Best practices
+CachedNetworkImage(
+  imageUrl: 'https://example.com/radar.png',
+  placeholder: (context, url) => CircularProgressIndicator(),
+  memCacheWidth: 800,  // Resize in memory
+  maxWidthDiskCache: 1000,  // Limit disk cache size
+);
+
+// For local assets
+Image.asset(
+  'assets/images/antenna.png',
+  cacheWidth: 400,  // Don't load full resolution
+);
+```
+
+#### Memory Management
+
+```dart
+// ✅ Dispose controllers and listeners
+class MyWidget extends StatefulWidget {
+  @override
+  _MyWidgetState createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
+  late AnimationController _controller;
+  late StreamSubscription _subscription;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+    _subscription = stream.listen((_) {});
+  }
+  
+  @override
+  void dispose() {
+    _controller.dispose();
+    _subscription.cancel();
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) => Container();
+}
+```
+
+#### Battery Optimization
+
+```dart
+// Reduce wake locks and background processing
+class SignalScanner {
+  Timer? _scanTimer;
+  
+  void startScanning() {
+    // Use longer intervals to save battery
+    _scanTimer = Timer.periodic(
+      Duration(seconds: 5),  // Not every 100ms
+      (_) => _scan(),
+    );
+  }
+  
+  void stopScanning() {
+    _scanTimer?.cancel();
+  }
+  
+  // Stop scanning when app is in background
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      stopScanning();
+    } else if (state == AppLifecycleState.resumed) {
+      startScanning();
+    }
+  }
+}
+```
+
+---
+
+### offline-first
+
+**When to apply**: App must work without internet, sync data later
+
+#### Local Database Strategy
+
+```dart
+// Use sqflite for structured data
+class SignalDatabase {
+  static Database? _database;
+  
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDB();
+    return _database!;
+  }
+  
+  Future<Database> _initDB() async {
+    final path = join(await getDatabasesPath(), 'ew_sim.db');
+    
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE signals(
+            id TEXT PRIMARY KEY,
+            frequency REAL,
+            power REAL,
+            timestamp INTEGER,
+            synced INTEGER DEFAULT 0
+          )
+        ''');
+      },
+    );
+  }
+  
+  // Save locally first, sync later
+  Future<void> saveSignal(Signal signal) async {
+    final db = await database;
+    await db.insert('signals', signal.toMap());
+    // Queue for sync when online
+    _queueForSync(signal.id);
+  }
+}
+```
+
+#### Connectivity Monitoring
+
+```dart
+import 'package:connectivity_plus/connectivity_plus.dart';
+
+class ConnectivityService {
+  final _connectivity = Connectivity();
+  
+  Stream<bool> get isOnline => _connectivity.onConnectivityChanged.map(
+    (result) => result != ConnectivityResult.none,
+  );
+  
+  Future<bool> checkConnection() async {
+    final result = await _connectivity.checkConnectivity();
+    return result != ConnectivityResult.none;
+  }
+}
+```
+
+#### Sync Strategy
+
+```dart
+class SyncService {
+  Future<void> syncWhenOnline() async {
+    final isOnline = await ConnectivityService().checkConnection();
+    if (!isOnline) return;
+    
+    // Get all unsynced records
+    final unsyncedSignals = await _getUnsyncedSignals();
+    
+    for (final signal in unsyncedSignals) {
+      try {
+        await _uploadSignal(signal);
+        await _markAsSynced(signal.id);
+      } catch (e) {
+        // Keep in queue, retry later
+        print('Sync failed: $e');
+      }
+    }
+  }
+}
+```
+
+---
+
+### app-security
+
+**When to apply**: Handling sensitive data, user authentication, secure storage
+
+#### Secure Storage
+
+```dart
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class SecureStorageService {
+  final _storage = FlutterSecureStorage();
+  
+  // Store sensitive EW scenario data
+  Future<void> saveScenario(String id, Scenario scenario) async {
+    await _storage.write(
+      key: 'scenario_$id',
+      value: jsonEncode(scenario.toJson()),
+    );
+  }
+  
+  Future<Scenario?> loadScenario(String id) async {
+    final json = await _storage.read(key: 'scenario_$id');
+    if (json == null) return null;
+    return Scenario.fromJson(jsonDecode(json));
+  }
+  
+  // Clear all data on logout
+  Future<void> clearAll() async {
+    await _storage.deleteAll();
+  }
+}
+```
+
+#### Certificate Pinning (for API calls)
+
+```dart
+import 'package:dio/dio.dart';
+
+class SecureApiClient {
+  late Dio _dio;
+  
+  SecureApiClient() {
+    _dio = Dio(BaseOptions(
+      baseUrl: 'https://api.ewsim.com',
+      connectTimeout: Duration(seconds: 5),
+    ));
+    
+    // Add certificate pinning
+    (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = 
+      (client) {
+        client.badCertificateCallback = 
+          (X509Certificate cert, String host, int port) {
+            // Verify certificate fingerprint
+            return cert.sha1.toString() == 'YOUR_CERT_SHA1';
+          };
+        return client;
+      };
+  }
+}
+```
+
+#### Data Encryption at Rest
+
+```dart
+import 'package:encrypt/encrypt.dart';
+
+class EncryptionService {
+  final _key = Key.fromSecureRandom(32);
+  final _iv = IV.fromSecureRandom(16);
+  
+  String encrypt(String plainText) {
+    final encrypter = Encrypter(AES(_key));
+    final encrypted = encrypter.encrypt(plainText, iv: _iv);
+    return encrypted.base64;
+  }
+  
+  String decrypt(String encryptedText) {
+    final encrypter = Encrypter(AES(_key));
+    final decrypted = encrypter.decrypt64(encryptedText, iv: _iv);
+    return decrypted;
+  }
+}
+```
+
+---
+
+### cross-platform
+
+**When to apply**: Handling Android/iOS differences, platform-specific features
+
+#### Platform Detection
+
+```dart
+import 'dart:io';
+
+class PlatformHelper {
+  static bool get isAndroid => Platform.isAndroid;
+  static bool get isIOS => Platform.isIOS;
+  
+  static Widget platformWidget({
+    required Widget android,
+    required Widget ios,
+  }) {
+    return isAndroid ? android : ios;
+  }
+}
+```
+
+#### Platform-Specific UI
+
+```dart
+// Navigation bar differences
+class AdaptiveBottomNav extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    if (Platform.isIOS) {
+      return CupertinoTabBar(
+        items: _buildTabItems(),
+      );
+    }
+    
+    return BottomNavigationBar(
+      items: _buildTabItems(),
+    );
+  }
+}
+
+// Loading indicators
+Widget adaptiveLoading() {
+  if (Platform.isIOS) {
+    return CupertinoActivityIndicator();
+  }
+  return CircularProgressIndicator();
+}
+```
+
+#### Safe Area Handling
+
+```dart
+// Different notch/status bar handling
+class SafeScaffold extends StatelessWidget {
+  final Widget child;
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        // iOS needs more padding for notch
+        minimum: Platform.isIOS 
+          ? EdgeInsets.only(top: 20)
+          : EdgeInsets.zero,
+        child: child,
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 🎓 Educational & Learning Design Skills
+
+### instructional-design
+
+**When to apply**: Designing learning modules, creating educational content flow
+
+#### Learning Objectives (SMART Framework)
+
+Every EW topic module should have clear objectives:
+
+**Format**: "After completing this module, learners will be able to..."
+
+**Example - ESM Module**:
+```dart
+class ESMModule {
+  final List<LearningObjective> objectives = [
+    LearningObjective(
+      // Specific, Measurable, Achievable, Relevant, Time-bound
+      description: 'Identify 5 common radar emission types by their PRF patterns',
+      assessmentType: AssessmentType.practice,
+      estimatedTime: Duration(minutes: 15),
+    ),
+    LearningObjective(
+      description: 'Calculate bearing angle using Watson-Watt DF method',
+      assessmentType: AssessmentType.quiz,
+      estimatedTime: Duration(minutes: 10),
+    ),
+  ];
+}
+```
+
+#### Scaffolding Strategy
+
+Progressive complexity: Simple → Intermediate → Advanced
+
+```dart
+enum DifficultyLevel {
+  beginner,    // Guided practice, hints available
+  intermediate, // Less guidance, optional hints
+  advanced,    // Minimal guidance, realistic constraints
+}
+
+class Scenario {
+  final DifficultyLevel difficulty;
+  final List<Hint> hints;
+  final bool showStepByStep;
+  
+  // Beginner: Step-by-step tutorial
+  // Intermediate: Scenario with guidelines
+  // Advanced: Open-ended challenge
+}
+```
+
+#### Knowledge Retention Techniques
+
+```dart
+class LearningModule {
+  // Spaced Repetition
+  DateTime? lastReviewed;
+  int reviewCount = 0;
+  
+  Duration getNextReviewInterval() {
+    // Fibonacci spacing: 1 day, 2 days, 3 days, 5 days, 8 days...
+    final intervals = [1, 2, 3, 5, 8, 13, 21];
+    final index = min(reviewCount, intervals.length - 1);
+    return Duration(days: intervals[index]);
+  }
+  
+  // Retrieval Practice
+  Future<void> showQuickRecall() async {
+    // Random quiz from previously learned content
+    final question = await _getRandomQuestion();
+    await _showQuizDialog(question);
+  }
+  
+  // Interleaving
+  List<Topic> getInterleavedTopics() {
+    // Mix ESM + ECM + Radar rather than all ESM then all ECM
+    return [
+      Topic.esm,
+      Topic.ecm,
+      Topic.esm,
+      Topic.radar,
+      Topic.ecm,
+    ];
+  }
+}
+```
+
+---
+
+### gamification
+
+**When to apply**: Increasing engagement, motivation, completion rates
+
+#### Achievement System
+
+```dart
+class Achievement {
+  final String id;
+  final String title;
+  final String description;
+  final String icon;
+  final int points;
+  final AchievementTier tier;
+  
+  // Examples for EW_SIM:
+  static final firstSignalDetection = Achievement(
+    id: 'first_signal',
+    title: 'Signal Hunter',
+    description: 'Detect your first radar emission',
+    icon: '🎯',
+    points: 10,
+    tier: AchievementTier.bronze,
+  );
+  
+  static final masterESM = Achievement(
+    id: 'master_esm',
+    title: 'ESM Master',
+    description: 'Complete all ESM scenarios with >80% accuracy',
+    icon: '🏆',
+    points: 100,
+    tier: AchievementTier.gold,
+  );
+}
+
+enum AchievementTier { bronze, silver, gold, platinum }
+```
+
+#### Progress Tracking
+
+```dart
+class ProgressTracker {
+  int totalScenarios = 50;
+  int completedScenarios = 0;
+  
+  // Visual progress
+  double get progressPercentage => completedScenarios / totalScenarios;
+  
+  // Streak system (daily engagement)
+  int currentStreak = 0;
+  DateTime? lastActiveDate;
+  
+  void checkStreak() {
+    final today = DateTime.now();
+    final yesterday = today.subtract(Duration(days: 1));
+    
+    if (lastActiveDate?.day == yesterday.day) {
+      currentStreak++;
+    } else if (lastActiveDate?.day != today.day) {
+      currentStreak = 1;
+    }
+    
+    lastActiveDate = today;
+  }
+  
+  // Leaderboard (optional, for competitive learners)
+  int totalPoints = 0;
+  int rank = 0;
+}
+```
+
+#### Challenge System
+
+```dart
+class Challenge {
+  final String title;
+  final String description;
+  final Duration timeLimit;
+  final int targetScore;
+  final List<Constraint> constraints;
+  
+  // Example: "Detect 10 signals in 5 minutes using only passive sensors"
+  static final speedChallenge = Challenge(
+    title: 'Speed Detection',
+    description: 'Identify 10 different radar types in under 5 minutes',
+    timeLimit: Duration(minutes: 5),
+    targetScore: 10,
+    constraints: [
+      Constraint.passiveSensorsOnly,
+      Constraint.noHints,
+    ],
+  );
+}
+
+enum Constraint {
+  passiveSensorsOnly,
+  noHints,
+  limitedTime,
+  highAccuracyRequired,
+}
+```
+
+---
+
+### microlearning
+
+**When to apply**: Breaking down complex EW concepts into digestible chunks
+
+#### Lesson Structure (5-10 minutes each)
+
+```dart
+class MicroLesson {
+  final String title;
+  final Duration estimatedTime;
+  final List<ContentBlock> content;
+  final Quiz? quiz;
+  
+  // Example: "Understanding PRF"
+  static final prfLesson = MicroLesson(
+    title: 'Pulse Repetition Frequency (PRF)',
+    estimatedTime: Duration(minutes: 7),
+    content: [
+      TextBlock('PRF is the rate at which radar pulses are transmitted...'),
+      ImageBlock('assets/diagrams/prf_illustration.png'),
+      InteractiveBlock(PRFSimulator()),  // 2-min interactive
+      VideoBlock('assets/videos/prf_examples.mp4', duration: Duration(minutes: 2)),
+    ],
+    quiz: Quiz(questions: [
+      MultipleChoice('What does high PRF indicate?', options: [...]),
+    ]),
+  );
+}
+
+// Content types
+abstract class ContentBlock {
+  Duration get estimatedTime;
+}
+
+class TextBlock extends ContentBlock {
+  final String text;
+  @override
+  Duration get estimatedTime => Duration(seconds: text.split(' ').length ~/ 3);
+}
+
+class InteractiveBlock extends ContentBlock {
+  final Widget widget;
+  @override
+  Duration get estimatedTime => Duration(minutes: 2);
+}
+```
+
+#### Spaced Repetition Algorithm
+
+```dart
+class SpacedRepetitionService {
+  // SM-2 Algorithm (SuperMemo)
+  double calculateEaseFactor(int quality) {
+    // quality: 0-5 (0=total blackout, 5=perfect recall)
+    return max(1.3, currentEF + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+  }
+  
+  Duration getNextReviewInterval({
+    required int repetitions,
+    required double easeFactor,
+    required int quality,
+  }) {
+    if (quality < 3) {
+      // Reset interval if recall is poor
+      return Duration(days: 1);
+    }
+    
+    if (repetitions == 0) return Duration(days: 1);
+    if (repetitions == 1) return Duration(days: 6);
+    
+    final interval = (repetitions - 1) * easeFactor;
+    return Duration(days: interval.ceil());
+  }
+}
+```
+
+#### Learning Path
+
+```dart
+class LearningPath {
+  final String name;
+  final List<MicroLesson> lessons;
+  final Map<int, List<int>> prerequisites;  // lesson index -> required lesson indices
+  
+  // Adaptive path based on performance
+  List<MicroLesson> getNextLessons(UserProgress progress) {
+    final completed = progress.completedLessonIds;
+    
+    return lessons.where((lesson) {
+      final index = lessons.indexOf(lesson);
+      final prereqs = prerequisites[index] ?? [];
+      
+      // Can access if all prerequisites completed
+      return prereqs.every((prereq) => completed.contains(lessons[prereq].id));
+    }).toList();
+  }
+  
+  // Example path: Spectrum → ESM → ECM → ECCM
+  static final basicEWPath = LearningPath(
+    name: 'Basic Electronic Warfare',
+    lessons: [
+      MicroLesson.spectrumIntro,
+      MicroLesson.spectrumAnalysis,
+      MicroLesson.esmIntro,
+      MicroLesson.esmPractice,
+      MicroLesson.ecmIntro,
+      // ...
+    ],
+    prerequisites: {
+      2: [0, 1],  // ESM intro requires spectrum lessons
+      4: [2, 3],  // ECM intro requires ESM lessons
+    },
+  );
+}
+```
+
+---
+
+### assessment-design
+
+**When to apply**: Creating quizzes, knowledge checks, evaluating understanding
+
+#### Question Types
+
+```dart
+abstract class Question {
+  String get question;
+  String get explanation;
+  int get points;
+  
+  bool evaluate(dynamic answer);
+}
+
+// Multiple Choice
+class MultipleChoiceQuestion extends Question {
+  @override
+  final String question;
+  final List<String> options;
+  final int correctIndex;
+  @override
+  final String explanation;
+  @override
+  final int points;
+  
+  @override
+  bool evaluate(dynamic answer) {
+    return answer == correctIndex;
+  }
+}
+
+// Numeric Range (for calculations)
+class NumericQuestion extends Question {
+  @override
+  final String question;
+  final double correctValue;
+  final double tolerance;  // ±5% acceptable
+  final String unit;
+  @override
+  final String explanation;
+  @override
+  final int points;
+  
+  @override
+  bool evaluate(dynamic answer) {
+    if (answer is! double) return false;
+    final diff = (answer - correctValue).abs();
+    return diff <= (correctValue * tolerance);
+  }
+}
+
+// Practical Task
+class PracticalQuestion extends Question {
+  @override
+  final String question;
+  final Widget simulator;  // Interactive scenario
+  final bool Function(SimulationResult) validator;
+  @override
+  final String explanation;
+  @override
+  final int points;
+  
+  @override
+  bool evaluate(dynamic answer) {
+    if (answer is! SimulationResult) return false;
+    return validator(answer);
+  }
+}
+```
+
+#### Adaptive Difficulty
+
+```dart
+class AdaptiveQuiz {
+  List<Question> questionPool;
+  DifficultyLevel currentDifficulty = DifficultyLevel.intermediate;
+  
+  Question getNextQuestion(int consecutiveCorrect, int consecutiveWrong) {
+    // Increase difficulty after 3 correct
+    if (consecutiveCorrect >= 3) {
+      currentDifficulty = DifficultyLevel.advanced;
+    }
+    
+    // Decrease difficulty after 2 wrong
+    if (consecutiveWrong >= 2) {
+      currentDifficulty = DifficultyLevel.beginner;
+    }
+    
+    // Select question matching current difficulty
+    final filtered = questionPool.where(
+      (q) => q.difficulty == currentDifficulty,
+    ).toList();
+    
+    return filtered[Random().nextInt(filtered.length)];
+  }
+}
+```
+
+#### Bloom's Taxonomy Alignment
+
+```dart
+enum BloomLevel {
+  remember,    // Recall facts (PRF definition)
+  understand,  // Explain concepts (Why high PRF matters)
+  apply,       // Use in new situation (Calculate range)
+  analyze,     // Break down (Identify signal type from waveform)
+  evaluate,    // Judge decisions (Best jamming strategy?)
+  create,      // Design solution (Plan ESM coverage)
+}
+
+class Question {
+  final BloomLevel cognitiveLevel;
+  
+  // Distribute questions across levels
+  static List<Question> balancedQuiz() {
+    return [
+      // 30% Remember/Understand
+      Question(level: BloomLevel.remember),
+      Question(level: BloomLevel.understand),
+      // 40% Apply/Analyze
+      Question(level: BloomLevel.apply),
+      Question(level: BloomLevel.analyze),
+      // 30% Evaluate/Create
+      Question(level: BloomLevel.evaluate),
+      Question(level: BloomLevel.create),
+    ];
+  }
+}
+```
+
+---
+
+### accessibility-learning
+
+**When to apply**: Supporting diverse learners, inclusive education
+
+#### Universal Design for Learning (UDL)
+
+**Multiple Means of Representation**:
+```dart
+class LessonContent {
+  // Same content, multiple formats
+  String? textExplanation;
+  String? audioNarrationUrl;
+  String? videoUrl;
+  String? diagramUrl;
+  Widget? interactiveSimulation;
+  
+  // User preference
+  ContentFormat preferredFormat = ContentFormat.text;
+  
+  Widget build(BuildContext context) {
+    switch (preferredFormat) {
+      case ContentFormat.text:
+        return Text(textExplanation!);
+      case ContentFormat.audio:
+        return AudioPlayer(url: audioNarrationUrl!);
+      case ContentFormat.video:
+        return VideoPlayer(url: videoUrl!);
+      case ContentFormat.visual:
+        return Image.network(diagramUrl!);
+      case ContentFormat.interactive:
+        return interactiveSimulation!;
+    }
+  }
+}
+```
+
+**Multiple Means of Engagement**:
+```dart
+class LearningPreferences {
+  // Learning style preferences
+  bool prefersGamefied = false;
+  bool prefersCompetitive = false;
+  bool prefersCollaborative = false;
+  
+  // Pace
+  LearningPace pace = LearningPace.selfPaced;
+  
+  // Support level
+  SupportLevel supportLevel = SupportLevel.moderate;
+}
+
+enum SupportLevel {
+  minimal,    // Hints hidden by default
+  moderate,   // Hints available on request
+  high,       // Step-by-step guidance
+}
+```
+
+**Multiple Means of Expression**:
+```dart
+class Assessment {
+  // Learner chooses how to demonstrate understanding
+  List<AssessmentType> allowedTypes = [
+    AssessmentType.multipleChoice,
+    AssessmentType.practicalDemo,
+    AssessmentType.writtenExplanation,
+    AssessmentType.verbalExplanation,  // Voice recording
+  ];
+  
+  // All count toward the same learning objective
+}
+```
+
+#### Screen Reader Support
+
+```dart
+// Semantic descriptions for 3D visualizations
+Semantics(
+  label: 'Radar coverage visualization',
+  hint: 'Interactive 3D globe showing radar detection range. '
+        'Blue zone indicates Line-of-Sight coverage extending 45 kilometers. '
+        'Terrain elevation affects coverage pattern.',
+  child: CesiumGlobeWidget(),
+)
+
+// Complex diagrams
+Semantics(
+  label: 'Spectrum analyzer waterfall display',
+  value: 'Showing frequency range 2.4 to 2.5 GHz. '
+         'Strong signal detected at 2.437 GHz with power level -45 dBm. '
+         'Moderate signal at 2.412 GHz with power level -62 dBm.',
+  child: SpectrumWaterfallWidget(),
+)
+```
+
+#### Cognitive Load Reduction
+
+```dart
+class CognitiveLoadOptimizer {
+  // Chunking information
+  static List<String> chunkText(String longText, {int maxChunkWords = 50}) {
+    final words = longText.split(' ');
+    final chunks = <String>[];
+    
+    for (var i = 0; i < words.length; i += maxChunkWords) {
+      final chunk = words.sublist(
+        i,
+        min(i + maxChunkWords, words.length),
+      ).join(' ');
+      chunks.add(chunk);
+    }
+    
+    return chunks;
+  }
+  
+  // Progressive disclosure
+  static Widget buildExpandableContent({
+    required String summary,
+    required Widget details,
+  }) {
+    return ExpansionTile(
+      title: Text(summary),
+      children: [details],
+    );
+  }
+  
+  // Visual hierarchy
+  static TextStyle getStyleForImportance(Importance level) {
+    switch (level) {
+      case Importance.critical:
+        return TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+      case Importance.important:
+        return TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
+      case Importance.supporting:
+        return TextStyle(fontSize: 14, color: Colors.grey[600]);
+    }
+  }
+}
+```
+
+#### Dyslexia-Friendly Typography
+
+```dart
+class AccessibleTypography {
+  static TextStyle dyslexiaFriendly = TextStyle(
+    fontFamily: 'OpenDyslexic',  // Specialized font
+    fontSize: 16,
+    height: 1.5,  // Increased line spacing
+    letterSpacing: 0.5,  // Increased letter spacing
+  );
+  
+  // Color overlays for readability
+  static Color tintColor = Colors.yellow.withOpacity(0.1);
+  
+  // Avoid justified text (uneven spacing)
+  static TextAlign alignment = TextAlign.left;
+}
+```
 

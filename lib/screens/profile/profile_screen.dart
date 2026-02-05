@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app/constants.dart';
 import '../../services/auth_service.dart';
 import '../../services/bookmark_service.dart';
+import '../../services/notes_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/theme_provider.dart';
 import 'settings_screen.dart';
@@ -10,7 +11,9 @@ import 'achievements_screen.dart';
 import 'statistics_screen.dart';
 import 'certificates_screen.dart';
 import 'study_goals_screen.dart';
+import 'analytics_screen.dart';
 import 'bookmarks_screen.dart';
+import 'notes_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -795,6 +798,16 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           _buildDivider(),
           _buildMenuItem(
+            Icons.analytics,
+            'Learning Analytics',
+            'วิเคราะห์ผลการเรียนและ Insights',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AnalyticsScreen()),
+            ),
+          ),
+          _buildDivider(),
+          _buildMenuItem(
             Icons.flag,
             'เป้าหมายการเรียน',
             'ตั้งเป้าหมายประจำสัปดาห์',
@@ -811,6 +824,16 @@ class _ProfileScreenState extends State<ProfileScreen>
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const BookmarksScreen()),
+            ),
+          ),
+          _buildDivider(),
+          _buildMenuItem(
+            Icons.note_alt,
+            'Notes',
+            'บันทึกโน้ตจากบทเรียน ${notesService.totalCount > 0 ? "(${notesService.totalCount})" : ""}',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotesScreen()),
             ),
           ),
           _buildDivider(),

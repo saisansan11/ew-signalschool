@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/constants.dart';
 
 // ==========================================
 // TACTICAL EW SIMULATOR
 // ระดับยุทธวิธี: Anti-Drone, SIGINT, Coordinated Ops
+// พร้อมระบบ Tutorial สำหรับผู้เล่นใหม่
 // ==========================================
 
 class TacticalSimulator extends StatefulWidget {
@@ -23,6 +25,11 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
   late AnimationController _pulseController;
   late AnimationController _scanController;
 
+  // === Tutorial State ===
+  bool _showTutorial = false;
+  int _tutorialStep = 0;
+  static const String _tutorialKey = 'tactical_sim_tutorial_completed';
+
   // === Mission State ===
   String _currentMission = 'anti_drone';
   bool _missionStarted = false;
@@ -31,6 +38,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
   double _missionProgress = 0.0;
   int _score = 0;
   int _startTime = 0;
+  int _dronesDestroyed = 0;
 
   // === EW System State ===
   bool _jammingActive = false;
@@ -60,6 +68,64 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
   final Offset _protectedArea = const Offset(50, 50);
   double _protectionRadius = 20.0;
 
+  // === Tutorial Steps ===
+  final List<TutorialStep> _tutorialSteps = [
+    TutorialStep(
+      title: 'ยินดีต้อนรับ!',
+      description: 'ยินดีต้อนรับสู่ภารกิจ Anti-Drone\n\nเป้าหมาย: ป้องกันพื้นที่จากโดรนข้าศึก โดยใช้เครื่องรบกวนสัญญาณ (Jammer)',
+      icon: Icons.flight,
+      highlightArea: TutorialHighlight.none,
+    ),
+    TutorialStep(
+      title: 'หน้าจอเรดาร์',
+      description: 'นี่คือหน้าจอเรดาร์แสดงพื้นที่รอบตัว\n\n🟢 วงกลมสีเขียว = พื้นที่ป้องกัน\n🔴 จุดสีแดง = โดรนข้าศึก\n📡 ไอคอนตรงกลาง = ตำแหน่ง Jammer',
+      icon: Icons.radar,
+      highlightArea: TutorialHighlight.radar,
+    ),
+    TutorialStep(
+      title: 'ปุ่ม SCAN',
+      description: 'กด "เริ่ม SCAN" เพื่อตรวจจับสัญญาณโดรน\n\nการ Scan จะช่วยให้เห็นความถี่ของโดรนที่เข้ามา',
+      icon: Icons.sensors,
+      highlightArea: TutorialHighlight.scanButton,
+    ),
+    TutorialStep(
+      title: 'ปรับความถี่',
+      description: 'ปรับความถี่ให้ตรงกับโดรน\n\nโดรนใช้ความถี่ 2.4 - 5.8 GHz\n\nเมื่อความถี่ตรงกัน การรบกวนจะมีประสิทธิภาพสูงสุด',
+      icon: Icons.tune,
+      highlightArea: TutorialHighlight.frequencySlider,
+    ),
+    TutorialStep(
+      title: 'เปิด Jamming',
+      description: 'กด "เริ่ม JAM" เพื่อส่งสัญญาณรบกวน\n\n⚠️ ระวัง: การ Jam ใช้พลังงานและทำให้เครื่องร้อน\n\nเมื่อโดรนถูก Jam จะแสดง "JAMMED" และหยุดเคลื่อนที่',
+      icon: Icons.flash_on,
+      highlightArea: TutorialHighlight.jamButton,
+    ),
+    TutorialStep(
+      title: 'โหมด Jamming',
+      description: 'เลือกโหมดการรบกวน:\n\n• Spot: รบกวนความถี่เดียว (ประหยัดพลังงาน)\n• Barrage: รบกวนแบบกว้าง (ครอบคลุมมาก)',
+      icon: Icons.settings,
+      highlightArea: TutorialHighlight.modeSelector,
+    ),
+    TutorialStep(
+      title: 'สายอากาศ',
+      description: 'เลือกประเภทสายอากาศ:\n\n• Omni: รอบทิศทาง (ครอบคลุมทุกทิศ)\n• Dir: ทิศทางเดียว (ระยะไกลกว่า)',
+      icon: Icons.cell_tower,
+      highlightArea: TutorialHighlight.antennaSelector,
+    ),
+    TutorialStep(
+      title: 'สถานะระบบ',
+      description: '🔋 แบตเตอรี่: ต้องมีพลังงานถึงจะ Jam ได้\n🌡️ อุณหภูมิ: ถ้าร้อนเกินไปต้องพักให้เย็น\n⭐ คะแนน: ทำลายโดรนเพื่อรับคะแนน',
+      icon: Icons.battery_charging_full,
+      highlightArea: TutorialHighlight.statusBar,
+    ),
+    TutorialStep(
+      title: 'พร้อมแล้ว!',
+      description: 'คุณพร้อมเริ่มภารกิจแล้ว!\n\nเป้าหมาย: ทำลายโดรน 5 ลำ\nอย่าให้โดรนเข้าถึงพื้นที่ป้องกัน\n\nกด "เริ่มภารกิจ" เพื่อเริ่มเลย!',
+      icon: Icons.rocket_launch,
+      highlightArea: TutorialHighlight.startButton,
+    ),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +146,48 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
       duration: const Duration(seconds: 2),
     )..repeat();
 
+    _checkTutorialStatus();
     _initializeMission();
+  }
+
+  Future<void> _checkTutorialStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final completed = prefs.getBool(_tutorialKey) ?? false;
+    if (!completed && mounted) {
+      setState(() {
+        _showTutorial = true;
+        _tutorialStep = 0;
+      });
+    }
+    // Tutorial already completed - no action needed
+  }
+
+  Future<void> _completeTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_tutorialKey, true);
+    if (mounted) {
+      setState(() {
+        _showTutorial = false;
+      });
+    }
+  }
+
+  void _nextTutorialStep() {
+    if (_tutorialStep < _tutorialSteps.length - 1) {
+      setState(() => _tutorialStep++);
+    } else {
+      _completeTutorial();
+    }
+  }
+
+  void _previousTutorialStep() {
+    if (_tutorialStep > 0) {
+      setState(() => _tutorialStep--);
+    }
+  }
+
+  void _skipTutorial() {
+    _completeTutorial();
   }
 
   void _initializeMission() {
@@ -120,9 +227,13 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
     if (_currentMission == 'anti_drone' ||
         _currentMission == 'convoy_protection') {
       _droneSpawnTimer = Timer.periodic(
-        const Duration(seconds: 3),
+        const Duration(seconds: 4),
         (_) => _spawnDrone(),
       );
+      // Spawn first drone immediately
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted && _missionStarted) _spawnDrone();
+      });
     }
 
     if (_currentMission == 'sigint') {
@@ -183,12 +294,17 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
       50 + sin(angle) * dist,
     );
 
+    // Vary drone frequencies in common bands
+    List<double> commonFreqs = [2400, 2437, 2462, 5180, 5240, 5745, 5805];
+    double droneFreq = commonFreqs[_rng.nextInt(commonFreqs.length)] +
+        (_rng.nextDouble() - 0.5) * 20;
+
     Drone newDrone = Drone(
       id: DateTime.now().millisecondsSinceEpoch,
       position: spawnPos,
       targetPos: _protectedArea,
-      frequency: 2400 + _rng.nextInt(100).toDouble(),
-      speed: 0.3 + _rng.nextDouble() * 0.2,
+      frequency: droneFreq,
+      speed: 0.25 + _rng.nextDouble() * 0.15,
       type: _rng.nextBool() ? DroneType.fpv : DroneType.reconnaissance,
     );
 
@@ -212,7 +328,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
       ));
     });
 
-    _addLog('🔴 ตรวจพบโดรน! ทิศ ${((atan2(spawnPos.dy - _jammerPos.dy, spawnPos.dx - _jammerPos.dx) * 180 / pi + 360) % 360).toStringAsFixed(0)}°');
+    _addLog('🔴 ตรวจพบโดรน! ${newDrone.frequency.toStringAsFixed(0)} MHz ทิศ ${((atan2(spawnPos.dy - _jammerPos.dy, spawnPos.dx - _jammerPos.dx) * 180 / pi + 360) % 360).toStringAsFixed(0)}°');
   }
 
   void _updateDrones() {
@@ -229,8 +345,9 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
           // 3 seconds of jamming
           toRemove.add(drone);
           _score += 100;
-          _missionProgress += 0.2;
-          _addLog('✅ โดรนถูกทำลาย! +100 คะแนน');
+          _dronesDestroyed++;
+          _missionProgress = (_dronesDestroyed / 5.0).clamp(0.0, 1.0);
+          _addLog('✅ โดรนถูกทำลาย! +100 คะแนน ($_dronesDestroyed/5)');
         }
       } else {
         drone.jammedDuration = max(0, drone.jammedDuration - 1);
@@ -277,7 +394,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
 
     // Check frequency match
     double freqDiff = (_jammerFreq - drone.frequency).abs();
-    double bandwidth = _jammingMode == 'spot' ? 20.0 : 100.0;
+    double bandwidth = _jammingMode == 'spot' ? 40.0 : 200.0;
     if (freqDiff > bandwidth / 2) return false;
 
     // Check distance
@@ -296,6 +413,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
           360) %
           360;
       double azDiff = (droneAz - targetAz).abs();
+      if (azDiff > 180) azDiff = 360 - azDiff;
       if (azDiff > 30) return false; // 60° beamwidth
       effectiveRange *= 2.0; // Directional bonus
     }
@@ -305,7 +423,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
 
   double _calculateEffectiveRange() {
     // Simplified J/S calculation
-    return sqrt(_jammerPower) * 3; // Rough approximation
+    return sqrt(_jammerPower) * 4; // Rough approximation
   }
 
   double _calculateSignalStrength(Offset pos) {
@@ -371,38 +489,73 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
     int batteryBonus = (_batteryLevel * 2).toInt();
     int finalScore = _score + timeBonus + batteryBonus;
 
+    String rank = finalScore >= 600 ? 'S' : (finalScore >= 450 ? 'A' : (finalScore >= 300 ? 'B' : (finalScore >= 150 ? 'C' : 'D')));
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
-        title: Text(
-          success ? '✅ ภารกิจสำเร็จ!' : '❌ ภารกิจล้มเหลว',
-          style: TextStyle(
-            color: success ? AppColors.success : AppColors.danger,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          children: [
+            Icon(
+              success ? Icons.military_tech : Icons.sentiment_dissatisfied,
+              color: success ? Colors.amber : AppColors.danger,
+              size: 32,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                success ? 'ภารกิจสำเร็จ!' : 'ภารกิจล้มเหลว',
+                style: TextStyle(
+                  color: success ? AppColors.success : AppColors.danger,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '$finalScore',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: success ? AppColors.success : AppColors.danger,
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: success
+                    ? [Colors.amber.withAlpha(30), Colors.amber.withAlpha(10)]
+                    : [AppColors.danger.withAlpha(30), AppColors.danger.withAlpha(10)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    '$finalScore',
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: success ? Colors.amber : AppColors.danger,
+                    ),
+                  ),
+                  Text(
+                    'Rank: $rank',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: success ? Colors.amber : AppColors.textMuted,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'คะแนนรวม',
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
+            const SizedBox(height: 16),
             const Divider(color: AppColors.border),
             _scoreRow('คะแนนพื้นฐาน', _score),
             _scoreRow('โบนัสเวลา', timeBonus),
             _scoreRow('โบนัสแบตเตอรี่', batteryBonus),
+            const Divider(color: AppColors.border),
+            _scoreRow('โดรนที่ทำลาย', _dronesDestroyed, showPlus: false),
           ],
         ),
         actions: [
@@ -428,7 +581,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
     );
   }
 
-  Widget _scoreRow(String label, int value) {
+  Widget _scoreRow(String label, int value, {bool showPlus = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -436,9 +589,9 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
         children: [
           Text(label, style: const TextStyle(color: AppColors.textSecondary)),
           Text(
-            '+$value',
-            style: const TextStyle(
-              color: AppColors.success,
+            showPlus ? '+$value' : '$value',
+            style: TextStyle(
+              color: showPlus ? AppColors.success : AppColors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -454,6 +607,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
       _missionFailed = false;
       _missionProgress = 0.0;
       _score = 0;
+      _dronesDestroyed = 0;
       _jammingActive = false;
       _scanningActive = false;
       _batteryLevel = 100.0;
@@ -492,38 +646,200 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
-            onPressed: _showHelp,
+            onPressed: () {
+              setState(() {
+                _showTutorial = true;
+                _tutorialStep = 0;
+              });
+            },
+            tooltip: 'วิธีเล่น',
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Status bar
-          _buildStatusBar(),
+          // Main game content
+          Column(
+            children: [
+              // Status bar
+              _buildStatusBar(),
 
-          // Main content
-          Expanded(
-            child: Row(
-              children: [
-                // Radar/Map view
-                Expanded(
-                  flex: 2,
-                  child: _buildRadarView(),
+              // Main content
+              Expanded(
+                child: Row(
+                  children: [
+                    // Radar/Map view
+                    Expanded(
+                      flex: 2,
+                      child: _buildRadarView(),
+                    ),
+                    // Control panel
+                    SizedBox(
+                      width: 200,
+                      child: _buildControlPanel(),
+                    ),
+                  ],
                 ),
-                // Control panel
-                SizedBox(
-                  width: 200,
-                  child: _buildControlPanel(),
-                ),
-              ],
-            ),
+              ),
+
+              // Event log
+              _buildEventLog(),
+            ],
           ),
 
-          // Event log
-          _buildEventLog(),
+          // Tutorial overlay
+          if (_showTutorial) _buildTutorialOverlay(),
         ],
       ),
     );
+  }
+
+  Widget _buildTutorialOverlay() {
+    final step = _tutorialSteps[_tutorialStep];
+
+    return Container(
+      color: Colors.black.withAlpha(200),
+      child: Stack(
+        children: [
+          // Highlight area
+          if (step.highlightArea != TutorialHighlight.none)
+            _buildHighlightArea(step.highlightArea),
+
+          // Tutorial card
+          Center(
+            child: Container(
+              margin: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(24),
+              constraints: const BoxConstraints(maxWidth: 400),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.primary, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withAlpha(50),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Progress dots
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(_tutorialSteps.length, (i) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        width: i == _tutorialStep ? 20 : 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: i == _tutorialStep
+                            ? AppColors.primary
+                            : (i < _tutorialStep ? AppColors.success : AppColors.surfaceLight),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Icon
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withAlpha(30),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      step.icon,
+                      color: AppColors.primary,
+                      size: 48,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Title
+                  Text(
+                    step.title,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Description
+                  Text(
+                    step.description,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 15,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Buttons
+                  Row(
+                    children: [
+                      if (_tutorialStep > 0)
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _previousTutorialStep,
+                            icon: const Icon(Icons.arrow_back),
+                            label: const Text('ย้อนกลับ'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.textSecondary,
+                              side: const BorderSide(color: AppColors.border),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                      if (_tutorialStep > 0) const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: _nextTutorialStep,
+                          icon: Icon(_tutorialStep == _tutorialSteps.length - 1
+                            ? Icons.check
+                            : Icons.arrow_forward),
+                          label: Text(_tutorialStep == _tutorialSteps.length - 1
+                            ? 'เริ่มเลย!'
+                            : 'ถัดไป'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: _skipTutorial,
+                    child: const Text(
+                      'ข้ามบทเรียน',
+                      style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighlightArea(TutorialHighlight highlight) {
+    // Return an empty container as the highlight is just for reference
+    // The actual highlight would require more complex implementation
+    return const SizedBox.shrink();
   }
 
   String _getMissionTitle() {
@@ -553,9 +869,9 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'ความคืบหน้า',
-                      style: TextStyle(
+                    Text(
+                      'ความคืบหน้า ($_dronesDestroyed/5)',
+                      style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 12,
                       ),
@@ -732,17 +1048,56 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
           // Start button overlay
           if (!_missionStarted)
             Center(
-              child: ElevatedButton.icon(
-                onPressed: _startMission,
-                icon: const Icon(Icons.play_arrow),
-                label: const Text('เริ่มภารกิจ'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(180),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.flight,
+                          color: AppColors.danger,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'ภารกิจ: Anti-Drone',
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'ทำลายโดรน 5 ลำ',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: _startMission,
+                          icon: const Icon(Icons.play_arrow),
+                          label: const Text('เริ่มภารกิจ'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
         ],
@@ -766,18 +1121,58 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                drone.type == DroneType.fpv ? Icons.flight : Icons.visibility,
-                color: drone.isJammed ? Colors.grey : Colors.redAccent,
-                size: 24,
+              // Frequency label
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(180),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '${drone.frequency.toStringAsFixed(0)} MHz',
+                  style: TextStyle(
+                    color: drone.isJammed ? Colors.greenAccent : Colors.redAccent,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 2),
+              // Drone icon with pulse effect when jammed
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: drone.isJammed
+                    ? Colors.greenAccent.withAlpha(30)
+                    : Colors.redAccent.withAlpha(30),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: drone.isJammed ? Colors.greenAccent : Colors.redAccent,
+                    width: 2,
+                  ),
+                ),
+                child: Icon(
+                  drone.type == DroneType.fpv ? Icons.flight : Icons.visibility,
+                  color: drone.isJammed ? Colors.grey : Colors.redAccent,
+                  size: 20,
+                ),
               ),
               if (drone.isJammed)
-                const Text(
-                  'JAMMED',
-                  style: TextStyle(
+                Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                  decoration: BoxDecoration(
                     color: Colors.greenAccent,
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'JAMMED ${((drone.jammedDuration / 30) * 100).toInt()}%',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 8,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
             ],
@@ -879,7 +1274,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
               enabled: !_isOverheated && _batteryLevel > 0 && _missionStarted,
               onPressed: () {
                 setState(() => _jammingActive = !_jammingActive);
-                _addLog(_jammingActive ? '🔴 เริ่มรบกวน' : '🟢 หยุดรบกวน');
+                _addLog(_jammingActive ? '🔴 เริ่มรบกวน ${_jammerFreq.toStringAsFixed(0)} MHz' : '🟢 หยุดรบกวน');
               },
             ),
 
@@ -908,7 +1303,7 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
               _jammerFreq.toStringAsFixed(0),
               style: const TextStyle(
                 color: AppColors.primary,
-                fontSize: 18,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -920,6 +1315,16 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
               activeColor: AppColors.primary,
               onChanged: (v) => setState(() => _jammerFreq = v),
             ),
+            // Quick frequency buttons
+            Row(
+              children: [
+                _buildQuickFreqButton('2.4G', 2400),
+                _buildQuickFreqButton('5.2G', 5200),
+                _buildQuickFreqButton('5.8G', 5800),
+              ],
+            ),
+
+            const SizedBox(height: 8),
 
             // Power control
             const Text(
@@ -994,31 +1399,93 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
             ),
 
             // Selected signal info
-            if (_selectedSignal != null) ...[
+            if (_selectedSignal != null && _drones.isNotEmpty) ...[
               const Divider(color: AppColors.border, height: 24),
               const Text(
-                'สัญญาณที่เลือก',
+                'เป้าหมายที่เลือก',
                 style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
               const SizedBox(height: 4),
-              Text(
-                '${_selectedSignal!.frequency.toStringAsFixed(0)} MHz',
-                style: const TextStyle(
-                  color: AppColors.accent,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.border),
                 ),
-              ),
-              Text(
-                'ทิศ: ${_selectedSignal!.azimuth.toStringAsFixed(0)}°',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-              ),
-              Text(
-                'ความแรง: ${_selectedSignal!.signalStrength.toStringAsFixed(0)} dBm',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.wifi, color: AppColors.accent, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${_selectedSignal!.frequency.toStringAsFixed(0)} MHz',
+                          style: const TextStyle(
+                            color: AppColors.accent,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'ทิศ: ${_selectedSignal!.azimuth.toStringAsFixed(0)}°',
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                    ),
+                    Text(
+                      'ความแรง: ${_selectedSignal!.signalStrength.toStringAsFixed(0)} dBm',
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                    ),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() => _jammerFreq = _selectedSignal!.frequency);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accent,
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                        ),
+                        child: const Text('ล็อกความถี่', style: TextStyle(fontSize: 11)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickFreqButton(String label, double freq) {
+    bool isSelected = (_jammerFreq - freq).abs() < 100;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _jammerFreq = freq),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primary.withAlpha(30) : AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: isSelected ? AppColors.primary : AppColors.border,
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              fontSize: 10,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
         ),
       ),
     );
@@ -1094,79 +1561,35 @@ class _TacticalSimulatorState extends State<TacticalSimulator>
       ),
     );
   }
+}
 
-  void _showHelp() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
-          'วิธีเล่น',
-          style: TextStyle(color: AppColors.textPrimary),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _helpSection(
-                'Anti-Drone',
-                '• ตรวจจับโดรนที่เข้ามา\n'
-                    '• ปรับความถี่ให้ตรงกับโดรน (2.4-5.8 GHz)\n'
-                    '• เปิด Jamming เพื่อทำลายโดรน\n'
-                    '• ป้องกันไม่ให้โดรนเข้าพื้นที่',
-              ),
-              _helpSection(
-                'SIGINT',
-                '• เปิด Scan เพื่อค้นหาสัญญาณ\n'
-                    '• คลิกที่สัญญาณเพื่อระบุตัวตน\n'
-                    '• ระบุให้ครบตามเป้าหมาย',
-              ),
-              _helpSection(
-                'เคล็ดลับ',
-                '• Barrage ครอบคลุมกว้าง แต่ใช้พลังงานมาก\n'
-                    '• Directional Antenna ไกลกว่า แต่ต้องเล็ง\n'
-                    '• ระวังความร้อนและแบตเตอรี่',
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('เข้าใจแล้ว'),
-          ),
-        ],
-      ),
-    );
-  }
+// === Tutorial Data ===
 
-  Widget _helpSection(String title, String content) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            content,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+enum TutorialHighlight {
+  none,
+  radar,
+  scanButton,
+  jamButton,
+  frequencySlider,
+  powerSlider,
+  modeSelector,
+  antennaSelector,
+  statusBar,
+  startButton,
+}
+
+class TutorialStep {
+  final String title;
+  final String description;
+  final IconData icon;
+  final TutorialHighlight highlightArea;
+
+  TutorialStep({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.highlightArea,
+  });
 }
 
 // === Data Models ===
