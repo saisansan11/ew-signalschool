@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Signal NCO EW to GitHub Pages
 
 on:
   push:
@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: signal_nco_ew
     steps:
       - uses: actions/checkout@v4
 
@@ -44,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/web'
+          path: 'signal_nco_ew/build/web'
 
   deploy:
     environment:
