@@ -34,7 +34,7 @@ class ThailandMapPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()
-      ..color = AppColors.primary.withValues(alpha:0.5)
+      ..color = AppColors.primary.withOpacity(0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -163,7 +163,7 @@ class ThailandMapPainter extends CustomPainter {
     canvas.drawPath(
       path.shift(const Offset(3, 3)),
       Paint()
-        ..color = Colors.black.withValues(alpha:0.3)
+        ..color = Colors.black.withOpacity(0.3)
         ..style = PaintingStyle.fill
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
     );
@@ -200,7 +200,7 @@ class ThailandMapPainter extends CustomPainter {
       textPainter.text = TextSpan(
         text: label,
         style: TextStyle(
-          color: AppColors.textMuted.withValues(alpha:0.7),
+          color: AppColors.textMuted.withOpacity(0.7),
           fontSize: 10,
           fontWeight: FontWeight.w500,
         ),
@@ -231,7 +231,7 @@ class ThailandMapPainter extends CustomPainter {
       canvas.drawCircle(
         pos,
         3,
-        Paint()..color = AppColors.textMuted.withValues(alpha:0.4),
+        Paint()..color = AppColors.textMuted.withOpacity(0.4),
       );
     }
   }

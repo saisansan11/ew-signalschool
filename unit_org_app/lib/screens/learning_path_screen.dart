@@ -111,7 +111,7 @@ class _LearningPathCard extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: _difficultyColor.withValues(alpha: 0.15),
+                      color: _difficultyColor.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     ),
                     child: Icon(
@@ -135,7 +135,7 @@ class _LearningPathCard extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: _difficultyColor.withValues(alpha: 0.15),
+                                color: _difficultyColor.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
                               ),
                               child: Text(
@@ -297,12 +297,12 @@ class _PathDetailScreenState extends State<_PathDetailScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary.withValues(alpha: 0.15),
-            AppColors.accent.withValues(alpha: 0.1),
+            AppColors.primary.withOpacity(0.15),
+            AppColors.accent.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,7 +454,7 @@ class _LessonCard extends StatelessWidget {
                   padding: const EdgeInsets.all(AppSizes.paddingM),
                   decoration: BoxDecoration(
                     color: isNext
-                        ? AppColors.primary.withValues(alpha: 0.1)
+                        ? AppColors.primary.withOpacity(0.1)
                         : AppColors.surface,
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
                     border: Border.all(

@@ -246,7 +246,7 @@ class _QuizScreenState extends State<QuizScreen>
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               margin: const EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
-                color: _getDifficultyColor().withValues(alpha: 0.2),
+                color: _getDifficultyColor().withOpacity(0.2),
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
               ),
               child: Row(
@@ -390,10 +390,10 @@ class _QuizScreenState extends State<QuizScreen>
                   child: Container(
                     padding: const EdgeInsets.all(AppSizes.paddingM),
                     decoration: BoxDecoration(
-                      color: AppColors.info.withValues(alpha: 0.1),
+                      color: AppColors.info.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
                       border: Border.all(
-                        color: AppColors.info.withValues(alpha: 0.3),
+                        color: AppColors.info.withOpacity(0.3),
                       ),
                     ),
                     child: Row(
@@ -467,18 +467,18 @@ class _QuizScreenState extends State<QuizScreen>
 
     if (showResult) {
       if (isCorrect) {
-        bgColor = AppColors.success.withValues(alpha: 0.15);
+        bgColor = AppColors.success.withOpacity(0.15);
         borderColor = AppColors.success;
         textColor = AppColors.success;
         semanticStatus = 'คำตอบที่ถูกต้อง';
       } else if (isSelected && !isCorrect) {
-        bgColor = AppColors.error.withValues(alpha: 0.15);
+        bgColor = AppColors.error.withOpacity(0.15);
         borderColor = AppColors.error;
         textColor = AppColors.error;
         semanticStatus = 'คำตอบผิด';
       }
     } else if (isSelected) {
-      bgColor = AppColors.primary.withValues(alpha: 0.15);
+      bgColor = AppColors.primary.withOpacity(0.15);
       borderColor = AppColors.primary;
       semanticStatus = 'เลือกแล้ว';
     }
@@ -613,8 +613,8 @@ class _QuizResultDialog extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 color: passed
-                    ? AppColors.success.withValues(alpha: 0.2)
-                    : AppColors.error.withValues(alpha: 0.2),
+                    ? AppColors.success.withOpacity(0.2)
+                    : AppColors.error.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -664,9 +664,9 @@ class _QuizResultDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppSizes.paddingM),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.1),
+                  color: AppColors.warning.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                  border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                  border: Border.all(color: AppColors.warning.withOpacity(0.3)),
                 ),
                 child: Column(
                   children: [

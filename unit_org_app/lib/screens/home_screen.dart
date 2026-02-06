@@ -13,6 +13,14 @@ import 'settings_screen.dart';
 import 'achievement_screen.dart';
 import 'learning_path_screen.dart';
 import 'statistics_screen.dart';
+import 'unit_detail_screen.dart';
+import 'unit_statistics_screen.dart';
+import 'unit_comparison_screen.dart';
+import 'favorites_screen.dart';
+import 'notes_screen.dart';
+import '../services/favorites_service.dart';
+import '../services/recent_units_service.dart';
+import '../services/notes_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +38,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _initProgress() async {
     await ProgressService.instance.init();
+    await FavoritesService.instance.init();
+    await RecentUnitsService.instance.init();
     if (mounted) setState(() {});
+  }
+
+  Future<int> _getFavoritesCount() async {
+    await FavoritesService.instance.init();
+    return FavoritesService.instance.count;
+  }
+
+  Future<int> _getNotesCount() async {
+    await NotesService.instance.init();
+    return NotesService.instance.count;
   }
 
   @override
@@ -49,7 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const SizedBox(height: 8),
                     _buildHeader(),
+                    const SizedBox(height: 16),
+                    _buildQuickUnitSearch(),
                     const SizedBox(height: 20),
+                    _buildRecentUnits(),
                     _buildDailyGoalsCard(),
                     const SizedBox(height: 16),
                     _buildReviewReminder(),
@@ -93,22 +116,370 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const SettingsScreen()),
-          ),
-          child: Container(
-            width: 48,
-            height: 48,
-            decoration: BentoDecoration.card(),
-            child: const Icon(
-              Icons.tune_rounded,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.8, 0.8)),
+Row(
+          children: [
+            // Favorites button
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+              ),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BentoDecoration.card(),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(
+                      Icons.favorite_rounded,
+                      color: AppColors.accentPink,
+                    ),
+                    // Badge showing count
+                    FutureBuilder<int>(
+                      future: _getFavoritesCount(),
+                      builder: (context, snapshot) {
+                        final count = snapshot.data ?? 0;
+                        if (count == 0) return const SizedBox.shrink();
+                        return Positioned(
+                          top: 6,
+                          right: 6,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.accentPink,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                            child: Text(
+                              '$count',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.8, 0.8)),
+            const SizedBox(width: 8),
+            // Notes button
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotesScreen()),
+              ),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BentoDecoration.card(),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(
+                      Icons.note_alt_outlined,
+                      color: AppColors.accentTeal,
+                    ),
+                    // Badge showing count
+                    FutureBuilder<int>(
+                      future: _getNotesCount(),
+                      builder: (context, snapshot) {
+                        final count = snapshot.data ?? 0;
+                        if (count == 0) return const SizedBox.shrink();
+                        return Positioned(
+                          top: 6,
+                          right: 6,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.accentTeal,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                            child: Text(
+                              '$count',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ).animate().fadeIn(delay: 225.ms).scale(begin: const Offset(0.8, 0.8)),
+            const SizedBox(width: 8),
+            // Settings button
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              ),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BentoDecoration.card(),
+                child: const Icon(
+                  Icons.tune_rounded,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ).animate().fadeIn(delay: 250.ms).scale(begin: const Offset(0.8, 0.8)),
+          ],
+        ),
       ],
+    );
+  }
+
+  Widget _buildQuickUnitSearch() {
+    return GestureDetector(
+      onTap: () => _showUnitSearchDialog(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.radiusL),
+          border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.search,
+              color: AppColors.textMuted,
+              size: 22,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'ค้นหาหน่วยทหารสื่อสาร...',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textMuted,
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.signalCorps.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${RTASignalCorps.allCombinedUnits.length} หน่วย',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.signalCorps,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(delay: 150.ms).slideY(begin: 0.1);
+  }
+
+  void _showUnitSearchDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _UnitSearchSheet(
+        onUnitSelected: (unit) {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => UnitDetailScreen(unit: unit),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildRecentUnits() {
+    final recentIds = RecentUnitsService.instance.recentIds;
+    if (recentIds.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final recentUnits = recentIds
+        .map((id) => RTASignalCorps.getUnitById(id))
+        .where((u) => u != null)
+        .cast<SignalUnit>()
+        .take(5)
+        .toList();
+
+    if (recentUnits.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: AppColors.accentIndigo.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Icon(
+                Icons.history_rounded,
+                color: AppColors.accentIndigo,
+                size: 16,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text('ดูล่าสุด', style: AppTextStyles.titleMedium),
+            const Spacer(),
+            if (recentIds.length > 5)
+              GestureDetector(
+                onTap: () => _showAllRecentUnits(),
+                child: Text(
+                  'ดูทั้งหมด',
+                  style: AppTextStyles.labelSmall.copyWith(
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 80,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: recentUnits.length,
+            itemBuilder: (context, index) {
+              final unit = recentUnits[index];
+              return Padding(
+                padding: EdgeInsets.only(right: index < recentUnits.length - 1 ? 10 : 0),
+                child: _buildRecentUnitChip(unit),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    ).animate().fadeIn(delay: 180.ms, duration: 400.ms).slideY(begin: 0.1);
+  }
+
+  Widget _buildRecentUnitChip(SignalUnit unit) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => UnitDetailScreen(unit: unit)),
+      ),
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: unit.color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: unit.color.withOpacity(0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: unit.color.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      unit.level.symbol,
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: unit.color,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    unit.abbreviation,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: unit.color,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              unit.location.province,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textMuted,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAllRecentUnits() {
+    final recentIds = RecentUnitsService.instance.recentIds;
+    final recentUnits = recentIds
+        .map((id) => RTASignalCorps.getUnitById(id))
+        .where((u) => u != null)
+        .cast<SignalUnit>()
+        .toList();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _RecentUnitsSheet(
+        units: recentUnits,
+        onUnitSelected: (unit) {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => UnitDetailScreen(unit: unit)),
+          );
+        },
+        onClearAll: () async {
+          Navigator.pop(context);
+          await RecentUnitsService.instance.clearAll();
+          setState(() {});
+        },
+      ),
     );
   }
 
@@ -131,13 +502,13 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.warning.withValues(alpha: 0.15),
-              AppColors.accentOrange.withValues(alpha: 0.1),
+              AppColors.warning.withOpacity(0.15),
+              AppColors.accentOrange.withOpacity(0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(AppSizes.radiusL),
           border: Border.all(
-            color: AppColors.warning.withValues(alpha: 0.4),
+            color: AppColors.warning.withOpacity(0.4),
           ),
         ),
         child: Row(
@@ -146,7 +517,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alpha: 0.2),
+                color: AppColors.warning.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(AppSizes.radiusM),
               ),
               child: const Icon(
@@ -208,7 +579,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
         border: Border.all(
           color: goals.allGoalsMet
-              ? AppColors.success.withValues(alpha: 0.5)
+              ? AppColors.success.withOpacity(0.5)
               : AppColors.border,
         ),
       ),
@@ -222,8 +593,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 40,
                 decoration: BoxDecoration(
                   color: goals.allGoalsMet
-                      ? AppColors.success.withValues(alpha: 0.15)
-                      : AppColors.primary.withValues(alpha: 0.15),
+                      ? AppColors.success.withOpacity(0.15)
+                      : AppColors.primary.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(AppSizes.radiusM),
                 ),
                 child: Icon(
@@ -334,7 +705,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity( 0.25),
+                      color: Colors.white.withOpacity(0.25),
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                     ),
                     child: const Text(
@@ -363,7 +734,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         '${RTASignalCorps.allCombinedUnits.length} หน่วย',
                         style: TextStyle(
-                          color: Colors.white.withOpacity( 0.9),
+                          color: Colors.white.withOpacity(0.9),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -371,7 +742,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_forward_rounded,
-                        color: Colors.white.withOpacity( 0.9),
+                        color: Colors.white.withOpacity(0.9),
                         size: 18,
                       ),
                     ],
@@ -383,7 +754,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity( 0.2),
+                color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(AppSizes.radiusL),
               ),
               child: const Icon(
@@ -472,9 +843,44 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         const SizedBox(height: AppSizes.bentoGap),
-        // Row 3: Achievements
+        // Row 3: Unit Statistics and Comparison
+        Row(
+          children: [
+            Expanded(
+              child: _BentoCard(
+                height: 120,
+                backgroundColor: const Color(0xFFE8F5E9),
+                icon: Icons.analytics_rounded,
+                iconColor: AppColors.signalCorps,
+                title: 'สถิติหน่วย',
+                subtitle: 'ภาพรวมการจัด',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const UnitStatisticsScreen()),
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSizes.bentoGap),
+            Expanded(
+              child: _BentoCard(
+                height: 120,
+                backgroundColor: const Color(0xFFE3F2FD),
+                icon: Icons.compare_arrows_rounded,
+                iconColor: AppColors.primary,
+                title: 'เปรียบเทียบ',
+                subtitle: 'เทียบหน่วยคู่กัน',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const UnitComparisonScreen()),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSizes.bentoGap),
+        // Row 4: Achievements (wide card)
         _BentoCard(
-          height: 100,
+          height: 90,
           backgroundColor: const Color(0xFFFFF8E1),
           icon: Icons.emoji_events_rounded,
           iconColor: AppColors.warning,
@@ -511,7 +917,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppColors.accentPink.withValues(alpha: 0.15),
+                  color: AppColors.accentPink.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(AppSizes.radiusS),
                 ),
                 child: const Icon(
@@ -583,7 +989,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppColors.accentIndigo.withOpacity( 0.15),
+                color: AppColors.accentIndigo.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(AppSizes.radiusS),
               ),
               child: const Icon(
@@ -761,86 +1167,91 @@ class _BentoCard extends StatelessWidget {
           backgroundColor: backgroundColor,
           borderRadius: AppSizes.radiusXL,
         ),
-        child: isWide
-            ? Row(
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: iconColor.withOpacity( 0.15),
-                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                    ),
-                    child: Icon(icon, color: iconColor, size: 28),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          title,
-                          style: AppTextStyles.titleLarge.copyWith(
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: iconColor,
-                    size: 20,
-                  ),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: iconColor.withOpacity( 0.15),
-                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                    ),
-                    child: Icon(icon, color: iconColor, size: 24),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: AppTextStyles.titleMedium.copyWith(
-                          color: AppColors.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.textMuted,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+        child: isWide ? _buildWideLayout() : _buildCompactLayout(),
       ),
+    );
+  }
+
+  Widget _buildWideLayout() {
+    return Row(
+      children: [
+        Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          ),
+          child: Icon(icon, color: iconColor, size: 28),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: AppTextStyles.titleLarge.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.textMuted,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Icon(
+          Icons.arrow_forward_ios_rounded,
+          color: iconColor,
+          size: 20,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactLayout() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          ),
+          child: Icon(icon, color: iconColor, size: 24),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.titleMedium.copyWith(
+                color: AppColors.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              subtitle,
+              style: AppTextStyles.labelSmall.copyWith(
+                color: AppColors.textMuted,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -918,7 +1329,7 @@ class _CategoryTile extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity( 0.1),
+              color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
             ),
             child: Icon(
@@ -972,7 +1383,7 @@ class _CategoryTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity( 0.12),
+        color: color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
       child: Text(
@@ -993,7 +1404,7 @@ class _CategoryTile extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color.withOpacity( 0.12),
+          color: color.withOpacity(0.12),
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
         ),
         child: Icon(icon, color: color, size: 20),
@@ -1146,7 +1557,7 @@ class _OptionsSheet extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: color.withOpacity( 0.12),
+                    color: color.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(AppSizes.radiusM),
                   ),
                   child: Icon(icon, color: color, size: 24),
@@ -1186,6 +1597,605 @@ class _OptionsSheet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Unit Search Sheet for quick navigation to units
+class _UnitSearchSheet extends StatefulWidget {
+  final Function(SignalUnit) onUnitSelected;
+
+  const _UnitSearchSheet({required this.onUnitSelected});
+
+  @override
+  State<_UnitSearchSheet> createState() => _UnitSearchSheetState();
+}
+
+class _UnitSearchSheetState extends State<_UnitSearchSheet> {
+  final TextEditingController _searchController = TextEditingController();
+  List<SignalUnit> _filteredUnits = [];
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredUnits = RTASignalCorps.allCombinedUnits;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query.toLowerCase();
+      if (_searchQuery.isEmpty) {
+        _filteredUnits = RTASignalCorps.allCombinedUnits;
+      } else {
+        _filteredUnits = RTASignalCorps.allCombinedUnits.where((unit) {
+          return unit.name.toLowerCase().contains(_searchQuery) ||
+              unit.abbreviation.toLowerCase().contains(_searchQuery) ||
+              unit.nameEn.toLowerCase().contains(_searchQuery) ||
+              unit.location.province.toLowerCase().contains(_searchQuery);
+        }).toList();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.75,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            children: [
+              // Handle
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppColors.signalCorps.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                          ),
+                          child: const Icon(
+                            Icons.search,
+                            color: AppColors.signalCorps,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'ค้นหาหน่วย',
+                                style: AppTextStyles.titleLarge,
+                              ),
+                              Text(
+                                'พบ ${_filteredUnits.length} หน่วย',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close),
+                          color: AppColors.textMuted,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Search field
+                    TextField(
+                      controller: _searchController,
+                      onChanged: _onSearchChanged,
+                      decoration: InputDecoration(
+                        hintText: 'ค้นหาชื่อหน่วย, ชื่อย่อ, จังหวัด...',
+                        hintStyle: const TextStyle(color: AppColors.textMuted),
+                        prefixIcon: const Icon(Icons.search, color: AppColors.textMuted),
+                        suffixIcon: _searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.close, size: 20),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _onSearchChanged('');
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: AppColors.background,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Results list
+              Expanded(
+                child: _filteredUnits.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 48,
+                              color: AppColors.textMuted,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'ไม่พบหน่วยที่ค้นหา',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: _filteredUnits.length,
+                        itemBuilder: (context, index) {
+                          final unit = _filteredUnits[index];
+                          return _buildUnitItem(unit);
+                        },
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildUnitItem(SignalUnit unit) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => widget.onUnitSelected(unit),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: unit.color.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: unit.color.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      unit.level.symbol,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: unit.color,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            unit.abbreviation,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: unit.color,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (unit.armyArea != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: unit.color.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'ทภ.${unit.armyArea}',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: unit.color,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        unit.name,
+                        style: AppTextStyles.titleSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 12,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            unit.location.province,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          const Icon(
+                            Icons.military_tech,
+                            size: 12,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            unit.commanderRank,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: unit.color.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Recent Units Sheet for viewing all recently viewed units
+class _RecentUnitsSheet extends StatelessWidget {
+  final List<SignalUnit> units;
+  final Function(SignalUnit) onUnitSelected;
+  final VoidCallback onClearAll;
+
+  const _RecentUnitsSheet({
+    required this.units,
+    required this.onUnitSelected,
+    required this.onClearAll,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.6,
+      minChildSize: 0.4,
+      maxChildSize: 0.9,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            children: [
+              // Handle
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.accentIndigo.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                      ),
+                      child: const Icon(
+                        Icons.history_rounded,
+                        color: AppColors.accentIndigo,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'ดูล่าสุด',
+                            style: AppTextStyles.titleLarge,
+                          ),
+                          Text(
+                            '${units.length} หน่วย',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Clear all button
+                    if (units.isNotEmpty)
+                      TextButton.icon(
+                        onPressed: () => _showClearConfirmation(context),
+                        icon: const Icon(Icons.delete_outline, size: 18),
+                        label: const Text('ล้าง'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.error,
+                        ),
+                      ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                      color: AppColors.textMuted,
+                    ),
+                  ],
+                ),
+              ),
+              // List
+              Expanded(
+                child: units.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.history_rounded,
+                              size: 48,
+                              color: AppColors.textMuted,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'ยังไม่มีประวัติการดู',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: units.length,
+                        itemBuilder: (context, index) {
+                          final unit = units[index];
+                          return _buildRecentUnitItem(unit, index);
+                        },
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showClearConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text('ล้างประวัติ?'),
+        content: const Text('ต้องการล้างประวัติการดูหน่วยทั้งหมดหรือไม่?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('ยกเลิก'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onClearAll();
+            },
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('ล้างทั้งหมด'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentUnitItem(SignalUnit unit, int index) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onUnitSelected(unit),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: unit.color.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                // Order indicator
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: AppColors.accentIndigo.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.accentIndigo,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Unit icon
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: unit.color.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      unit.level.symbol,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: unit.color,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            unit.abbreviation,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: unit.color,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (unit.armyArea != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: unit.color.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'ทภ.${unit.armyArea}',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: unit.color,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        unit.name,
+                        style: AppTextStyles.titleSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 12,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            unit.location.province,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: unit.color.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

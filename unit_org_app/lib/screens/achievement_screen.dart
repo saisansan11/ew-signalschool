@@ -79,12 +79,12 @@ class _AchievementScreenState extends State<AchievementScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withValues(alpha:0.2),
-            AppColors.accent.withValues(alpha:0.1),
+            AppColors.primary.withOpacity(0.2),
+            AppColors.accent.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
-        border: Border.all(color: AppColors.primary.withValues(alpha:0.3)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -239,7 +239,7 @@ class _AchievementCard extends StatelessWidget {
         padding: const EdgeInsets.all(AppSizes.paddingM),
         decoration: BoxDecoration(
           color: isUnlocked
-              ? _tierColor.withValues(alpha:0.15)
+              ? _tierColor.withOpacity(0.15)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusL),
           border: Border.all(
@@ -256,7 +256,7 @@ class _AchievementCard extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: isUnlocked
-                    ? _tierColor.withValues(alpha:0.2)
+                    ? _tierColor.withOpacity(0.2)
                     : AppColors.surfaceLight,
                 shape: BoxShape.circle,
               ),
@@ -298,7 +298,7 @@ class _AchievementCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progressValue,
                   backgroundColor: AppColors.border,
-                  valueColor: AlwaysStoppedAnimation(_tierColor.withValues(alpha:0.7)),
+                  valueColor: AlwaysStoppedAnimation(_tierColor.withOpacity(0.7)),
                   minHeight: 4,
                 ),
               )
@@ -342,7 +342,7 @@ class AchievementUnlockedDialog extends StatelessWidget {
           border: Border.all(color: _tierColor, width: 2),
           boxShadow: [
             BoxShadow(
-              color: _tierColor.withValues(alpha:0.3),
+              color: _tierColor.withOpacity(0.3),
               blurRadius: 24,
               spreadRadius: 4,
             ),
@@ -360,7 +360,7 @@ class AchievementUnlockedDialog extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: _tierColor.withValues(alpha:0.2),
+                color: _tierColor.withOpacity(0.2),
                 shape: BoxShape.circle,
                 border: Border.all(color: _tierColor, width: 3),
               ),

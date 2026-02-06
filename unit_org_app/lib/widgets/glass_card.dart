@@ -41,7 +41,7 @@ class GlassCard extends StatelessWidget {
         boxShadow: [
           if (glowColor != null)
             BoxShadow(
-              color: glowColor!.withOpacity( 0.15),
+              color: glowColor!.withOpacity(0.15),
               blurRadius: 24,
               spreadRadius: 0,
             ),
@@ -146,7 +146,7 @@ class _FeatureCardState extends State<FeatureCard>
             borderRadius: BorderRadius.circular(AppSizes.radiusL),
             border: Border.all(
               color: _isPressed
-                  ? widget.color.withOpacity( 0.5)
+                  ? widget.color.withOpacity(0.5)
                   : AppColors.border,
               width: 1,
             ),

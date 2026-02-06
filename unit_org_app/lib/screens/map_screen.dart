@@ -3,9 +3,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../app/constants.dart';
 import '../data/rta_signal_corps.dart';
+import 'unit_detail_screen.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final SignalUnit? focusUnit;
+
+  const MapScreen({super.key, this.focusUnit});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -37,6 +40,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    // Focus on unit if provided
+    if (widget.focusUnit != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _selectUnit(widget.focusUnit!);
+      });
+    }
   }
 
   @override
@@ -225,15 +235,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? color : AppColors.surface.withValues(alpha: 0.95),
+          color: isSelected ? color : AppColors.surface.withOpacity(0.95),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? color : color.withValues(alpha: 0.5),
+            color: isSelected ? color : color.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: Colors.black.withOpacity(0.2),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -370,13 +380,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity( 0.5),
+              color: Colors.black.withOpacity(0.5),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
             if (isSelected)
               BoxShadow(
-                color: unit.color.withOpacity( 0.7),
+                color: unit.color.withOpacity(0.7),
                 blurRadius: 12,
                 spreadRadius: 2,
               ),
@@ -394,12 +404,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget _buildZoomControls() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity( 0.95),
+        color: AppColors.surface.withOpacity(0.95),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity( 0.2),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -440,12 +450,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity( 0.95),
+        color: AppColors.surface.withOpacity(0.95),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity( 0.2),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -489,7 +499,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               border: Border.all(color: Colors.white, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity( 0.2),
+                  color: Colors.black.withOpacity(0.2),
                   blurRadius: 2,
                 ),
               ],
@@ -531,7 +541,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     border: Border.all(color: unit.color, width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: unit.color.withOpacity( 0.3),
+                        color: unit.color.withOpacity(0.3),
                         blurRadius: 30,
                         spreadRadius: 0,
                       ),
@@ -549,7 +559,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: unit.color.withOpacity( 0.2),
+                                color: unit.color.withOpacity(0.2),
                                 shape: BoxShape.circle,
                                 border: Border.all(color: unit.color, width: 2),
                               ),
@@ -570,7 +580,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: unit.color.withOpacity( 0.2),
+                                      color: unit.color.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -720,6 +730,33 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                               ),
                             ),
                         ],
+
+                        // View full detail button
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              _closeDetail();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => UnitDetailScreen(unit: unit),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.open_in_new, size: 18),
+                            label: const Text('ดูรายละเอียดเพิ่มเติม'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: unit.color,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -739,7 +776,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: color.withOpacity( 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, size: 16, color: color),

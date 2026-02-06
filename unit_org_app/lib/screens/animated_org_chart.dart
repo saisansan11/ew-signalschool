@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app/constants.dart';
 import '../data/rta_signal_corps.dart';
+import 'unit_detail_screen.dart';
 
 class AnimatedOrgChartScreen extends StatefulWidget {
   const AnimatedOrgChartScreen({super.key});
@@ -96,11 +97,11 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
   }
 
   void _showUnitDetail(SignalUnit unit) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => _UnitDetailSheet(unit: unit),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => UnitDetailScreen(unit: unit),
+      ),
     );
   }
 
@@ -230,7 +231,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -266,12 +267,12 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.signalCorps.withValues(alpha: 0.1),
-            AppColors.primary.withValues(alpha: 0.05),
+            AppColors.signalCorps.withOpacity(0.1),
+            AppColors.primary.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.signalCorps.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.signalCorps.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +311,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
+          color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -385,16 +386,16 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? color : color.withValues(alpha: 0.1),
+          color: isSelected ? color : color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? color : color.withValues(alpha: 0.3),
+            color: isSelected ? color : color.withOpacity(0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.3),
+                    color: color.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -466,7 +467,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: unit.color.withValues(alpha: 0.3)),
+              border: Border.all(color: unit.color.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -474,7 +475,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: unit.color.withValues(alpha: 0.15),
+                    color: unit.color.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(_getUnitIcon(unit), color: unit.color, size: 20),
@@ -489,7 +490,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: unit.color.withValues(alpha: 0.15),
+                              color: unit.color.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -537,7 +538,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: unit.color.withValues(alpha: 0.5)),
+                Icon(Icons.chevron_right, color: unit.color.withOpacity(0.5)),
               ],
             ),
           ),
@@ -557,10 +558,10 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -574,7 +575,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)],
+                colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
               ),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
             ),
@@ -583,7 +584,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.2),
+                    color: color.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 24),
@@ -645,12 +646,12 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  unit.color.withValues(alpha: 0.2),
-                  unit.color.withValues(alpha: 0.08),
+                  unit.color.withOpacity(0.2),
+                  unit.color.withOpacity(0.08),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: unit.color.withValues(alpha: 0.5)),
+              border: Border.all(color: unit.color.withOpacity(0.5)),
             ),
             child: Row(
               children: [
@@ -662,7 +663,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: unit.color.withValues(alpha: 0.15),
+                        color: unit.color.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: AnimatedRotation(
@@ -684,7 +685,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: unit.color.withValues(alpha: 0.2),
+                    color: unit.color.withOpacity(0.2),
                     shape: BoxShape.circle,
                     border: Border.all(color: unit.color, width: 2),
                   ),
@@ -757,7 +758,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: unit.color.withValues(alpha: 0.15),
+                      color: unit.color.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -832,7 +833,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                 width: 24,
                 child: CustomPaint(
                   painter: _TreeLinePainter(
-                    color: parentColor.withValues(alpha: 0.4),
+                    color: parentColor.withOpacity(0.4),
                     isLast: isLast,
                   ),
                 ),
@@ -868,10 +869,10 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: unit.color.withValues(alpha: 0.3)),
+            border: Border.all(color: unit.color.withOpacity(0.3)),
             boxShadow: [
               BoxShadow(
-                color: unit.color.withValues(alpha: 0.08),
+                color: unit.color.withOpacity(0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -887,7 +888,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                     width: 26,
                     height: 26,
                     decoration: BoxDecoration(
-                      color: unit.color.withValues(alpha: 0.12),
+                      color: unit.color.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: AnimatedRotation(
@@ -906,7 +907,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                   width: 26,
                   child: Icon(
                     _getUnitIcon(unit),
-                    color: unit.color.withValues(alpha: 0.6),
+                    color: unit.color.withOpacity(0.6),
                     size: 18,
                   ),
                 ),
@@ -915,7 +916,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: unit.color.withValues(alpha: 0.15),
+                  color: unit.color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -969,7 +970,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: unit.color.withValues(alpha: 0.12),
+                    color: unit.color.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -1023,9 +1024,9 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: area.color.withValues(alpha: 0.05),
+        color: area.color.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: area.color.withValues(alpha: 0.2)),
+        border: Border.all(color: area.color.withOpacity(0.2)),
       ),
       child: Column(
         children: [
@@ -1033,7 +1034,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: area.color.withValues(alpha: 0.1),
+              color: area.color.withOpacity(0.1),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
             ),
             child: Row(
@@ -1042,7 +1043,7 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: area.color.withValues(alpha: 0.2),
+                    color: area.color.withOpacity(0.2),
                     shape: BoxShape.circle,
                     border: Border.all(color: area.color, width: 2),
                   ),
@@ -1117,10 +1118,10 @@ class _AnimatedOrgChartScreenState extends State<AnimatedOrgChartScreen>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
+          border: Border.all(color: color.withOpacity(0.3)),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
@@ -1199,287 +1200,3 @@ class _TreeLinePainter extends CustomPainter {
   }
 }
 
-/// Unit detail bottom sheet
-class _UnitDetailSheet extends StatelessWidget {
-  final SignalUnit unit;
-
-  const _UnitDetailSheet({required this.unit});
-
-  @override
-  Widget build(BuildContext context) {
-    final subUnits = unit.childUnitIds
-        .map((id) => RTASignalCorps.getUnitById(id))
-        .where((u) => u != null)
-        .cast<SignalUnit>()
-        .toList();
-
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border(top: BorderSide(color: unit.color, width: 3)),
-          ),
-          child: Column(
-            children: [
-              // Handle
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(top: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Content
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    // Header
-                    Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                unit.color.withValues(alpha: 0.3),
-                                unit.color.withValues(alpha: 0.1),
-                              ],
-                            ),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: unit.color, width: 2),
-                          ),
-                          child: Icon(Icons.cell_tower, size: 30, color: unit.color),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: unit.color.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  '${unit.level.symbol} ${unit.level.thaiName}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: unit.color,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(unit.name, style: AppTextStyles.headlineMedium),
-                              Text(
-                                '${unit.nameEn} (${unit.abbreviation})',
-                                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Info cards
-                    _InfoCard(
-                      icon: Icons.location_on,
-                      title: 'ที่ตั้ง',
-                      value: unit.location.fullAddress,
-                      color: unit.color,
-                    ),
-                    const SizedBox(height: 10),
-                    _InfoCard(
-                      icon: Icons.military_tech,
-                      title: 'ผู้บังคับบัญชา',
-                      value: unit.commanderRank,
-                      color: AppColors.officer,
-                    ),
-                    if (unit.personnelMin != null) ...[
-                      const SizedBox(height: 10),
-                      _InfoCard(
-                        icon: Icons.people,
-                        title: 'กำลังพล',
-                        value: unit.personnelRange,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                    const SizedBox(height: 20),
-
-                    // Description
-                    const Text('รายละเอียด', style: AppTextStyles.titleLarge),
-                    const SizedBox(height: 8),
-                    Text(unit.description, style: AppTextStyles.bodyLarge),
-
-                    // Missions
-                    if (unit.missions.isNotEmpty) ...[
-                      const SizedBox(height: 20),
-                      const Text('ภารกิจ', style: AppTextStyles.titleLarge),
-                      const SizedBox(height: 8),
-                      ...unit.missions.map(
-                        (m) => Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(Icons.check_circle, size: 16, color: unit.color),
-                              const SizedBox(width: 8),
-                              Expanded(child: Text(m, style: AppTextStyles.bodyMedium)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-
-                    // Sub-units
-                    if (subUnits.isNotEmpty) ...[
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          const Text('หน่วยรอง', style: AppTextStyles.titleLarge),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: unit.color.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '${subUnits.length} หน่วย',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: unit.color,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ...subUnits.map((sub) => _SubUnitCard(unit: sub, parentColor: unit.color)),
-                    ],
-                    const SizedBox(height: 40),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SubUnitCard extends StatelessWidget {
-  final SignalUnit unit;
-  final Color parentColor;
-
-  const _SubUnitCard({required this.unit, required this.parentColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: parentColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: parentColor.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: parentColor.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                unit.level.symbol,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: parentColor,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  unit.name,
-                  style: AppTextStyles.titleMedium.copyWith(fontSize: 13),
-                ),
-                Text(
-                  '${unit.abbreviation} • ${unit.commanderRank}',
-                  style: TextStyle(fontSize: 11, color: parentColor),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final Color color;
-
-  const _InfoCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTextStyles.labelSmall),
-                Text(
-                  value,
-                  style: AppTextStyles.titleMedium.copyWith(color: color, fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

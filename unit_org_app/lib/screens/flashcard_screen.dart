@@ -418,7 +418,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: AppColors.warning.withValues(alpha: 0.2),
+                              color: AppColors.warning.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(AppSizes.radiusS),
                             ),
                             child: Row(
@@ -1225,7 +1225,7 @@ class _AchievementPopup extends StatelessWidget {
           border: Border.all(color: _tierColor, width: 2),
           boxShadow: [
             BoxShadow(
-              color: _tierColor.withValues(alpha: 0.3),
+              color: _tierColor.withOpacity(0.3),
               blurRadius: 24,
               spreadRadius: 4,
             ),
@@ -1243,7 +1243,7 @@ class _AchievementPopup extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: _tierColor.withValues(alpha: 0.2),
+                color: _tierColor.withOpacity(0.2),
                 shape: BoxShape.circle,
                 border: Border.all(color: _tierColor, width: 3),
               ),

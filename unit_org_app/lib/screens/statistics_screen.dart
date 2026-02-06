@@ -86,12 +86,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withValues(alpha: 0.2),
-            AppColors.accent.withValues(alpha: 0.1),
+            AppColors.primary.withOpacity(0.2),
+            AppColors.accent.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -165,7 +165,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: AppColors.warning.withValues(alpha: 0.15),
+              color: AppColors.warning.withOpacity(0.15),
               borderRadius: BorderRadius.circular(AppSizes.radiusM),
             ),
             child: const Icon(
@@ -224,7 +224,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: achieved
-            ? AppColors.warning.withValues(alpha: 0.2)
+            ? AppColors.warning.withOpacity(0.2)
             : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(AppSizes.radiusS),
         border: Border.all(
@@ -432,13 +432,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       padding: const EdgeInsets.all(AppSizes.paddingL),
       decoration: BoxDecoration(
         color: dueCards.isNotEmpty
-            ? AppColors.warning.withValues(alpha: 0.1)
-            : AppColors.success.withValues(alpha: 0.1),
+            ? AppColors.warning.withOpacity(0.1)
+            : AppColors.success.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusL),
         border: Border.all(
           color: dueCards.isNotEmpty
-              ? AppColors.warning.withValues(alpha: 0.3)
-              : AppColors.success.withValues(alpha: 0.3),
+              ? AppColors.warning.withOpacity(0.3)
+              : AppColors.success.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -550,7 +550,7 @@ class _StatTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: color.withOpacity(0.15),
               borderRadius: BorderRadius.circular(AppSizes.radiusS),
             ),
             child: Icon(icon, color: color, size: 20),

@@ -128,12 +128,12 @@ class AppColors {
   // Shadow presets - Soft Apple-style shadows
   static List<BoxShadow> softShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity( 0.04),
+      color: Colors.black.withOpacity(0.04),
       blurRadius: 10,
       offset: const Offset(0, 2),
     ),
     BoxShadow(
-      color: Colors.black.withOpacity( 0.04),
+      color: Colors.black.withOpacity(0.04),
       blurRadius: 20,
       offset: const Offset(0, 4),
     ),
@@ -141,7 +141,7 @@ class AppColors {
 
   static List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity( 0.06),
+      color: Colors.black.withOpacity(0.06),
       blurRadius: 24,
       offset: const Offset(0, 8),
     ),
@@ -149,7 +149,7 @@ class AppColors {
 
   static List<BoxShadow> elevatedShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity( 0.08),
+      color: Colors.black.withOpacity(0.08),
       blurRadius: 32,
       offset: const Offset(0, 12),
     ),
@@ -157,7 +157,7 @@ class AppColors {
 
   static List<BoxShadow> coloredShadow(Color color) => [
         BoxShadow(
-          color: color.withOpacity( 0.25),
+          color: color.withOpacity(0.25),
           blurRadius: 20,
           offset: const Offset(0, 8),
         ),

@@ -173,7 +173,7 @@ class _OrgChartScreenState extends State<OrgChartScreen> {
         padding: const EdgeInsets.all(AppSizes.paddingM),
         decoration: BoxDecoration(
           color: isSelected
-              ? unit.branch.color.withValues(alpha: 0.2)
+              ? unit.branch.color.withOpacity(0.2)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
           border: Border.all(
@@ -183,7 +183,7 @@ class _OrgChartScreenState extends State<OrgChartScreen> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: unit.branch.color.withValues(alpha: 0.3),
+                    color: unit.branch.color.withOpacity(0.3),
                     blurRadius: 12,
                   ),
                 ]
@@ -196,7 +196,7 @@ class _OrgChartScreenState extends State<OrgChartScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: unit.branch.color.withValues(alpha: 0.2),
+                color: unit.branch.color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -215,7 +215,7 @@ class _OrgChartScreenState extends State<OrgChartScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: unit.branch.color.withValues(alpha: 0.15),
+                color: unit.branch.color.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -422,7 +422,7 @@ class _UnitDetailSheet extends StatelessWidget {
                           width: 60,
                           height: 60,
                           decoration: BoxDecoration(
-                            color: unit.branch.color.withValues(alpha: 0.2),
+                            color: unit.branch.color.withOpacity(0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -445,7 +445,7 @@ class _UnitDetailSheet extends StatelessWidget {
                                     ),
                                     decoration: BoxDecoration(
                                       color: unit.branch.color
-                                          .withValues(alpha: 0.2),
+                                          .withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -591,9 +591,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusM),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         children: [
