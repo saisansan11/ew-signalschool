@@ -36,7 +36,7 @@ jobs:
         run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
 
       - name: Build web
-        run: flutter build web --release --base-href "/signal-nco-ew/"
+        run: flutter build web --release --base-href "/ew-signalschool/"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
