@@ -1,4 +1,4 @@
-name: Deploy Both Apps to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -29,30 +29,14 @@ jobs:
       - name: Check Flutter version
         run: flutter --version
 
-      # Build main app (root project)
-      - name: Build main app
-        run: |
-          flutter pub get
-          flutter analyze --no-fatal-infos --no-fatal-warnings || true
-          flutter build web --release --base-href "/ew-signalschool/"
+      - name: Get dependencies
+        run: flutter pub get
 
-      - name: Copy main app to deploy folder
-        run: |
-          mkdir -p deploy
-          cp -r build/web/* deploy/
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
 
-      # Build signal_nco_ew app
-      - name: Build signal_nco_ew
-        working-directory: signal_nco_ew
-        run: |
-          flutter pub get
-          flutter analyze --no-fatal-infos --no-fatal-warnings || true
-          flutter build web --release --base-href "/ew-signalschool/signal-nco-ew/"
-
-      - name: Copy signal_nco_ew to deploy folder
-        run: |
-          mkdir -p deploy/signal-nco-ew
-          cp -r signal_nco_ew/build/web/* deploy/signal-nco-ew/
+      - name: Build web
+        run: flutter build web --release --base-href "/ew-signalschool/"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -60,7 +44,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'deploy'
+          path: 'build/web'
 
   deploy:
     environment:
