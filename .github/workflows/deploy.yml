@@ -30,12 +30,15 @@ jobs:
         run: flutter --version
 
       - name: Get dependencies
+        working-directory: signal_nco_ew
         run: flutter pub get
 
       - name: Analyze code
+        working-directory: signal_nco_ew
         run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
 
       - name: Build web
+        working-directory: signal_nco_ew
         run: flutter build web --release --base-href "/ew-signalschool/"
 
       - name: Setup Pages
@@ -44,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/web'
+          path: 'signal_nco_ew/build/web'
 
   deploy:
     environment:
