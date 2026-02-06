@@ -110,6 +110,10 @@ coverage/
 /version.json
 /devtools_options.yaml
 
+# Sub-projects with their own repos (prevent accidental cross-push)
+/signal_nco_ew/
+/unit_org_app/
+
 # Temporary/build files
 nul
 *.metadata
